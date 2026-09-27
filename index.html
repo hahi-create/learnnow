@@ -162,6 +162,13 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .hero-txt{flex:1;min-width:170px}
 .hero-hello{font:800 30px/1.05 var(--display);color:var(--ink);padding-top:4px}
 .hero-stat{font:700 15px/1.3 var(--text);color:var(--muted);margin-top:4px}
+.family{font:400 13px/1.5 var(--text);color:var(--muted);margin-top:4px}
+.family b{color:var(--ink);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.family .linkish{display:inline;margin-left:6px}
+.family-join{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.family-join input{width:9.5em;font:700 16px/1.2 var(--text);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);padding:8px 10px;border-radius:10px;border:2px solid #D3E4F1;background:#F7FBFF}
+.family-join input:focus{outline:none;border-color:var(--sky)}
+.family-join .btn-sec{padding:9px 14px}
 .sync-note{font:400 13px/1.4 var(--text);color:var(--muted);margin-top:6px;max-width:46ch}
 .hero-btns{display:flex;gap:10px;flex-wrap:wrap}
 .hbtn{border:0;border-radius:16px;padding:13px 18px 11px;font:800 18px/1 var(--display);cursor:pointer;background:#E4F4FF;color:var(--ink);box-shadow:0 4px 0 #B9DDF3}
@@ -290,7 +297,7 @@ details.more[open] summary{margin-bottom:14px}
     <div id="homeMain" class="view">
       <section class="hcard hero">
         <span id="heroAv" class="hero-av"></span>
-        <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroStat" class="hero-stat"></div><div id="syncNote" class="sync-note">💾 Chỉ lưu trên máy này, chưa đồng bộ.</div></div>
+        <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroStat" class="hero-stat"></div><div id="syncNote" class="sync-note">💾 Chỉ lưu trên máy này, chưa đồng bộ.</div><div id="familyBox" class="family" hidden>Mã gia đình: <b id="familyCode"></b> <button id="familyJoinBtn" class="linkish" type="button">Nhập mã từ máy khác</button><div id="familyJoin" class="family-join" hidden><input id="familyInput" type="text" maxlength="9" placeholder="VD: ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Mã gia đình"><button id="familyGo" class="btn-sec" type="button">Kết nối</button><span id="familyMsg" class="sync-note"></span></div></div></div>
         <div class="hero-btns">
           <button id="toPlayers" class="hbtn">👥 Chọn người chơi</button>
           <button id="toRank" class="hbtn rank">🏆 Bảng xếp hạng</button>
@@ -734,13 +741,16 @@ const pool = () => {
 let ac = null, sfxBus = null, musicBus = null;
 function audio(){
   if (!ac){
+    // Safari on iPad/iPhone treats Web Audio as "ambient" sound, which silent mode mutes (speech still plays).
+    // Declaring the page as media playback keeps the music on (Safari 16.4+).
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e){}
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
       sfxBus = ac.createGain(); sfxBus.gain.value = 1; sfxBus.connect(ac.destination);
       musicBus = ac.createGain(); musicBus.gain.value = settings.music ? MUSIC_VOL : 0; musicBus.connect(ac.destination);
     } catch(e){ ac = null; }
   }
-  if (ac && ac.state === 'suspended') ac.resume();
+  if (ac && ac.state !== 'running') ac.resume().catch(() => {});      // 'suspended', or iOS 'interrupted'
   if (ac && settings.music && !document.hidden) startMusic();
   return ac;
 }
@@ -990,7 +1000,7 @@ function press(k){
     target = c;
   }
   if (target.keys[target.i] === k){
-    speakLetter(k);
+    if (settings.level !== 'hard') speakLetter(k);          // on Khó only the finished word is read
     target.i++;
     const fin = target.i >= target.keys.length;
     if (fin) target.done = true;
@@ -1582,6 +1592,7 @@ cv.addEventListener('pointerdown', e => {
 window.addEventListener('keydown', e => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (state !== 'play'){
+    if (e.target && e.target.id === 'familyInput'){ if (e.key === 'Enter'){ e.preventDefault(); joinFamily(); } return; }
     if (!$('#editor').hidden){
       if (e.key === 'Enter'){ e.preventDefault(); saveEditor(); }
       else if (e.key === 'Escape') closeEditor();
@@ -1726,6 +1737,7 @@ const cloudBody = q => ({ name: q.name, icon: q.icon, counts: q.counts || {}, le
 function setSync(mode){
   $('#syncNote').textContent = {
     on:   '☁️ Đang đồng bộ giữa các máy.',
+    wait: '☁️ Đang kết nối đồng bộ…',
     local:'💾 Chỉ lưu trên máy này, chưa đồng bộ.',
     read: 'Tài khoản này chỉ được xem, nên bộ sưu tập chỉ lưu trên máy này.',
     off:  'Tạm mất kết nối đồng bộ. Bộ sưu tập vẫn được lưu trên máy này.',
@@ -1790,10 +1802,77 @@ function onPlayers(snap){
 async function connectCloud(){
   let db = null;
   try { db = (window.claude && window.claude.use) ? await window.claude.use('db') : null; } catch(e){}
-  if (!db){ setSync('local'); return; }
-  shared = db; setSync('on');
-  db.collection('players').onSnapshot(onPlayers, () => { setSync('off'); });
+  if (db){                                                      // opened inside Claude: Claude's shared store
+    shared = db; setSync('on');
+    db.collection('players').onSnapshot(onPlayers, () => { setSync('off'); });
+    return;
+  }
+  try { await connectFirebase(); } catch(e){ setSync('local'); }   // GitHub page / Desktop file: Firebase
 }
+
+// ---------- Firebase (GitHub page and Desktop file): one "family code" per household ----------
+// Data lives at families/<code>/players/<id>; the database rules only allow that path, with codes of
+// 8+ characters and player documents of the game's own shape. The web config below is public by design.
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyAJByw10PnawX3WFiRGw2-pXH8ZLU8bgAs',
+  authDomain: 'learnnow-bd73f.firebaseapp.com',
+  projectId: 'learnnow-bd73f',
+  storageBucket: 'learnnow-bd73f.firebasestorage.app',
+  messagingSenderId: '571422942969',
+  appId: '1:571422942969:web:30fcb6df56454d2301e428',
+};
+const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
+const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';               // no 0/O, 1/I/L mix-ups
+let fb = null, unsubFamily = null, familyCode = store.get('familyCode', '') || '';
+const newFamilyCode = () => Array.from({ length: 8 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)])
+  .join('').replace(/^(.{4})/, '$1-');
+// the same small surface the Claude store offers, so the sync code above works unchanged
+function firebaseStore(code){
+  const { fs, db } = fb, base = ['families', code, 'players'];
+  return {
+    doc: path => {
+      const ref = fs.doc(db, ...base, path.split('/')[1]);
+      return {
+        set: d => fs.setDoc(ref, d),
+        update: d => fs.setDoc(ref, d, { merge: true }),          // merges nested maps, e.g. one new catch in counts
+        delete: () => fs.deleteDoc(ref),
+      };
+    },
+  };
+}
+async function connectFirebase(){
+  setSync('wait');
+  const [app, fs] = await Promise.all([import(FIREBASE_SDK + 'firebase-app.js'), import(FIREBASE_SDK + 'firebase-firestore.js')]);
+  fb = { fs, db: fs.getFirestore(app.initializeApp(FIREBASE_CONFIG)) };
+  if (!familyCode){ familyCode = newFamilyCode(); store.set('familyCode', familyCode); }
+  subscribeFamily();
+}
+function subscribeFamily(){
+  if (unsubFamily) unsubFamily();
+  cloudReady = false;
+  shared = firebaseStore(familyCode);
+  $('#familyCode').textContent = familyCode;
+  $('#familyBox').hidden = false;
+  setSync('wait');
+  unsubFamily = fb.fs.onSnapshot(fb.fs.collection(fb.db, 'families', familyCode, 'players'),
+    snap => { onPlayers(snap); if (cloudReady) setSync('on'); },
+    () => setSync('off'));
+}
+function joinFamily(){
+  const raw = $('#familyInput').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const msg = $('#familyMsg');
+  if (raw.length !== 8){ msg.textContent = 'Mã gồm 8 chữ và số, ví dụ ABCD-EFGH.'; return; }
+  const code = raw.slice(0, 4) + '-' + raw.slice(4);
+  if (code === familyCode){ msg.textContent = 'Máy này đang dùng mã đó rồi.'; return; }
+  familyCode = code; store.set('familyCode', code);
+  store.set('cloudMerged', false);                              // bring this device's children into that family
+  msg.textContent = '';
+  $('#familyJoin').hidden = true; $('#familyInput').value = '';
+  subscribeFamily();
+  audio(); speak('Đã kết nối', 'vi');
+}
+$('#familyJoinBtn').addEventListener('click', () => { $('#familyJoin').hidden = !$('#familyJoin').hidden; if (!$('#familyJoin').hidden) $('#familyInput').focus(); });
+$('#familyGo').addEventListener('click', joinFamily);
 connectCloud();
 if (document.fonts && document.fonts.load) document.fonts.load(`700 20px ${TEXT_FONT}`).catch(() => {});
 })();
