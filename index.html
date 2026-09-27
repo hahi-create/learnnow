@@ -215,6 +215,9 @@ details.more[open] summary{margin-bottom:14px}
 .rank .fam.none{font-style:italic;opacity:.75}
 .rank .fam{font:700 12.5px/1.2 var(--text);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank li.rank-empty{display:block;padding:22px 16px;text-align:center;color:var(--muted);font:700 16px/1.5 var(--text)}
+.rank-hint{background:#FFF3C4;border:3px solid var(--sun);border-radius:18px;padding:14px 16px;margin-bottom:14px;color:var(--ink);font:700 17px/1.45 var(--text)}
+.rank-hint .rh-title{font:800 21px/1.15 var(--display);padding-top:3px;margin-bottom:4px}
+.rank-hint .rh-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .rank-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .rank-tabs button{border:0;border-radius:999px;padding:9px 13px 8px;font:700 14px/1 var(--text);background:#EEF6FC;color:var(--ink);cursor:pointer}
 .rank-tabs button[aria-pressed="true"]{background:var(--sky);color:#fff}
@@ -340,6 +343,7 @@ details.more[open] summary{margin-bottom:14px}
     <div id="homeRankView" class="view" hidden>
       <div class="hv-head"><button class="btn-sec" data-back>← Quay lại</button><h2>🏆 Bảng xếp hạng</h2></div>
       <section class="hcard">
+        <div id="rankHint" class="rank-hint" hidden></div>
         <div id="rankTabs" class="rank-tabs"></div>
         <ol id="rankList" class="rank"></ol>
         <p id="rankNote" class="fine">Xếp hạng theo số món khác nhau mỗi bé đã sưu tầm.</p>
@@ -1717,7 +1721,7 @@ function renderHome(){
   if (familyName) hf.textContent = '🏠 ' + familyName;
   else {                                                        // nudge: a family name shows on the leaderboard
     const b = mkEl('button', 'linkish', '👪 Đặt tên gia đình'); b.type = 'button';
-    b.addEventListener('click', () => { audio(); speak('Gia đình', 'vi'); showHomeView('family'); });
+    b.addEventListener('click', () => { audio(); speak('Gia đình', 'vi'); showHomeView('family'); const i = $('#familyNameInput'); i.focus(); i.select(); });
     hf.appendChild(b);
   }
   if (document.activeElement !== $('#familyNameInput')) $('#familyNameInput').value = familyName;
@@ -1816,13 +1820,23 @@ function renderRank(){
     tabs.appendChild(b);
   });
   const list = byTheme(rankTheme), total = list.length;
-  const missing = players.filter(q => !onBoard(q)).map(q => q.name);
-  $('#rankNote').textContent = (scope === 'world'
+  $('#rankNote').textContent = scope === 'world'
     ? 'Top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
-    : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.')
-    + (scope === 'world' && missing.length
-      ? ' Chưa lên bảng: ' + missing.join(', ') + '. Muốn lên bảng, hãy đặt tên riêng cho bé' + (familyName ? '' : ' và đặt tên gia đình') + '.'
-      : '');
+    : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
+  // a clear call-out on top when some of our children can't be on the board yet
+  const missing = players.filter(q => !onBoard(q));
+  const hint = $('#rankHint'); hint.innerHTML = '';
+  hint.hidden = !(scope === 'world' && missing.length);
+  if (!hint.hidden){
+    const needKid = missing.some(q => !hasOwnName(q.name));
+    hint.append(mkEl('div', 'rh-title', '⭐ Chưa lên bảng: ' + missing.map(q => q.name).join(', ')));
+    hint.append(mkEl('div', null, 'Muốn lên bảng, hãy ' + [needKid ? 'đặt tên riêng cho bé' : '', familyName ? '' : 'đặt tên gia đình'].filter(Boolean).join(' và ') + '.'));
+    const acts = mkEl('div', 'rh-acts');
+    if (!familyName){ const b = mkEl('button', 'hbtn small', '👪 Đặt tên gia đình'); b.addEventListener('click', () => { showHomeView('family'); const i = $('#familyNameInput'); i.focus(); i.select(); }); acts.append(b); }
+    if (needKid){ const b = mkEl('button', 'hbtn small', '✏️ Đặt tên cho bé'); const kid = missing.find(q => !hasOwnName(q.name));
+      b.addEventListener('click', () => openEditor(kid.id, 'home')); acts.append(b); }
+    hint.append(acts);
+  }
   if (scope === 'home'){
     drawRankRows(players.map(q => ({ id: q.id, name: q.name, icon: q.icon, family: familyName, n: gotOf(q, list) })).sort((a, b) => b.n - a.n), total);
     return;
