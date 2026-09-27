@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
-<title>Luyện Chữ Tiếng Anh</title>
+<title>LearnNow</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
@@ -40,9 +40,9 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 .brand{flex:0 1 auto;min-width:0;display:flex;align-items:center;gap:6px;height:40px;padding:0 10px 0 6px;border:0;border-radius:14px;background:transparent;cursor:pointer;font:800 19px/1 var(--display);color:var(--coral);white-space:nowrap;overflow:hidden}
 .brand:hover,.brand[aria-expanded="true"]{background:var(--panel)}
 .brand .ticon{font-size:22px;line-height:1}
-.brand .tt,.brand .bp{padding-top:4px}
-.brand .tt{overflow:hidden;text-overflow:ellipsis}
+.brand .tt{padding-top:4px}
 .brand .bp{color:var(--grape)}
+.brand .tn{font:700 13px/1 var(--text);color:var(--ink);background:var(--panel);border-radius:999px;padding:6px 10px 5px;overflow:hidden;text-overflow:ellipsis}
 .brand .caret{font-size:12px;color:var(--muted)}
 .spacer{flex:1}
 .tmenu{left:0;right:auto}
@@ -167,7 +167,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 <div id="app">
   <header class="top">
     <button id="pauseBtn" class="icon-btn" aria-label="Tạm dừng"></button>
-    <button id="themeBtn" class="brand" aria-label="Chọn chủ đề" aria-expanded="false" aria-controls="themeMenu"><span id="themeIcon" class="ticon"></span><span id="themeTitle" class="tt">Vườn Thú</span><span class="bp">Bàn Phím</span><span class="caret" aria-hidden="true">▾</span></button>
+    <button id="themeBtn" class="brand" aria-label="Chọn chủ đề" aria-expanded="false" aria-controls="themeMenu"><span id="themeIcon" class="ticon"></span><span class="tt">Learn<span class="bp">Now</span></span><span id="themeTitle" class="tn">Vườn Thú</span><span class="caret" aria-hidden="true">▾</span></button>
     <div id="themeMenu" class="pmenu tmenu" hidden>
       <div class="view"><span class="opt-label">Chọn chủ đề</span><div id="themes" class="players"></div></div>
     </div>
@@ -203,7 +203,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
     <div id="popup" class="popup" hidden></div>
     <div id="overlay" class="overlay">
       <div class="card">
-        <h1 id="ovTitle">Vườn Thú <span>Bàn Phím</span></h1>
+        <h1 id="ovTitle">Learn<span>Now</span></h1>
         <p class="lead" id="ovLead">Gõ đúng tên để bắt về bộ sưu tập bên dưới.</p>
         <div id="mainView" class="view">
         <div class="opts">
@@ -1269,7 +1269,7 @@ const leadText = () => ovMode === 'start'
 function openOverlay(mode){
   ovMode = mode;
   state = mode === 'start' ? 'menu' : 'paused';
-  $('#ovTitle').innerHTML = mode === 'start' ? THEMES[settings.theme].vi + ' <span>Bàn Phím</span>' : 'Nghỉ <span>một chút</span>';
+  $('#ovTitle').innerHTML = mode === 'start' ? 'Learn<span>Now</span>' : 'Nghỉ <span>một chút</span>';
   $('#goBtn').textContent = mode === 'start' ? 'Chơi nào!' : 'Chơi tiếp';
   overlay.hidden = false; hideTip(); syncSeg(); syncButtons(); syncPlayer();
 }
@@ -1408,7 +1408,6 @@ function syncTheme(){
   const t = THEMES[settings.theme];
   setIcon($('#themeIcon'), t.icon);
   $('#themeTitle').textContent = t.vi;
-  if (ovMode === 'start') $('#ovTitle').innerHTML = t.vi + ' <span>Bàn Phím</span>';
 }
 function renderThemes(){
   const box = $('#themes'); box.innerHTML = '';

@@ -1,4 +1,4 @@
-# Luyện Chữ Tiếng Anh
+# LearnNow
 
 Luyện chữ bằng tiếng Anh cho trẻ dưới 7 tuổi: gõ đúng tên để bắt con vật, xe cộ, rau củ quả và nghề nghiệp về bộ sưu tập.
 
