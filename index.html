@@ -358,7 +358,7 @@ details.more[open] summary{margin-bottom:14px}
         <p class="fine" id="levelNote"></p>
       </section>
       <section class="hcard"><h2>Âm lượng</h2>
-        <label class="vol"><span>🎵 Nhạc nền</span><input id="musicVol" type="range" min="0" max="2" step="0.1"><b id="musicVolV"></b></label>
+        <label class="vol"><span>🎵 Nhạc nền</span><input id="musicVol" type="range" min="0" max="1" step="0.05"><b id="musicVolV"></b></label>
         <label class="vol"><span>🗣️ Giọng đọc</span><input id="voiceVol" type="range" min="0" max="1" step="0.1"><b id="voiceVolV"></b></label>
       </section>
       <details class="hcard more" hidden><summary>⚙️ Cài đặt khác</summary>
@@ -807,7 +807,9 @@ const store = {
   get(k, d){ try { const v = localStorage.getItem('vtbp:' + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem('vtbp:' + k, JSON.stringify(v)); } catch(e){} }
 };
-const settings = Object.assign({ level:'easy', caps:'lower', kbd:'on', sound:true, music:true, enVoice:'', lang:'en', kana:'hira', musicVol:1, voiceVol:1 }, store.get('settings', {}));
+const settings = Object.assign({ level:'easy', caps:'lower', kbd:'on', sound:true, music:true, enVoice:'', lang:'en', kana:'hira', musicVol:.5, voiceVol:1 }, store.get('settings', {}));
+// music slider: 100% is twice the normal level, the default sits at 50% (older saves went 0-2 with 1 as normal)
+if (!settings.volScale){ settings.musicVol = Math.min(1, (store.get('settings', {}).musicVol ?? 1) / 2); settings.volScale = 1; }
 // players: each child has a name, an avatar, their own collection and level
 const AVATARS = ['👦','👧','🧒','👶','🦸','🧚','🧜‍♀️','👸','🤴','🧙','👩‍🚀','🤖','🦖','🦄','🐯','🐼','🐰','🐸','🚀','⚽','🌈','⭐','🌻','🎈','🐶','🐱','🦊','🐧','🍦','🎨'].filter(a => ICONS[a] || emojiProbe(a));
 const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -957,7 +959,7 @@ function pad(freq, t0, dur, vol){
 }
 // Japanese voices are quieter than the English ones: while one speaks, the music steps back
 let ducked = false;
-const musicLevel = () => settings.music ? MUSIC_VOL * settings.musicVol * (ducked ? .4 : 1) : 0;
+const musicLevel = () => settings.music ? MUSIC_VOL * 2 * settings.musicVol * (ducked ? .4 : 1) : 0;
 function duck(on){
   if (ducked === on) return;
   ducked = on;
