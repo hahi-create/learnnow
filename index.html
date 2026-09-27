@@ -207,6 +207,9 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .bar i{display:block;height:100%;background:var(--grass);border-radius:8px}
 .seg[data-key="lang"] button{font-family:var(--text),"Zen Maru Gothic",sans-serif}
 .seg.big button{font-size:19px;padding:14px 6px}
+.vol{display:grid;grid-template-columns:8.2em 1fr 3.4em;align-items:center;gap:10px;font:700 16px/1.2 var(--text);color:var(--ink);padding:4px 0}
+.vol input{width:100%;height:30px;margin:0;accent-color:var(--sky);cursor:pointer}
+.vol b{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
 .lang-sub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .lang-sub .seg button{font-size:17px;padding:10px 4px;font-family:var(--text),"Zen Maru Gothic",sans-serif}
 .lang-sub .seg.dim{opacity:.5}
@@ -353,6 +356,10 @@ details.more[open] summary{margin-bottom:14px}
       <section class="hcard"><h2>Mức độ</h2>
         <div class="seg big" data-key="level"><button data-v="easy">Dễ</button><button data-v="mid">Vừa</button><button data-v="hard">Khó</button></div>
         <p class="fine" id="levelNote"></p>
+      </section>
+      <section class="hcard"><h2>Âm lượng</h2>
+        <label class="vol"><span>🎵 Nhạc nền</span><input id="musicVol" type="range" min="0" max="2" step="0.1"><b id="musicVolV"></b></label>
+        <label class="vol"><span>🗣️ Giọng đọc</span><input id="voiceVol" type="range" min="0" max="1" step="0.1"><b id="voiceVolV"></b></label>
       </section>
       <details class="hcard more" hidden><summary>⚙️ Cài đặt khác</summary>
         <div class="opts">
@@ -800,7 +807,7 @@ const store = {
   get(k, d){ try { const v = localStorage.getItem('vtbp:' + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem('vtbp:' + k, JSON.stringify(v)); } catch(e){} }
 };
-const settings = Object.assign({ level:'easy', caps:'lower', kbd:'on', sound:true, music:true, enVoice:'', lang:'en', kana:'hira' }, store.get('settings', {}));
+const settings = Object.assign({ level:'easy', caps:'lower', kbd:'on', sound:true, music:true, enVoice:'', lang:'en', kana:'hira', musicVol:1, voiceVol:1 }, store.get('settings', {}));
 // players: each child has a name, an avatar, their own collection and level
 const AVATARS = ['👦','👧','🧒','👶','🦸','🧚','🧜‍♀️','👸','🤴','🧙','👩‍🚀','🤖','🦖','🦄','🐯','🐼','🐰','🐸','🚀','⚽','🌈','⭐','🌻','🎈','🐶','🐱','🦊','🐧','🍦','🎨'].filter(a => ICONS[a] || emojiProbe(a));
 const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -886,7 +893,7 @@ function audio(){
     try {
       ac = new (window.AudioContext || window.webkitAudioContext)();
       sfxBus = ac.createGain(); sfxBus.gain.value = 1; sfxBus.connect(ac.destination);
-      musicBus = ac.createGain(); musicBus.gain.value = settings.music ? MUSIC_VOL : 0; musicBus.connect(ac.destination);
+      musicBus = ac.createGain(); musicBus.gain.value = musicLevel(); musicBus.connect(ac.destination);
     } catch(e){ ac = null; }
   }
   if (ac && ac.state !== 'running') ac.resume().catch(() => {});      // 'suspended', or iOS 'interrupted'
@@ -948,9 +955,17 @@ function pad(freq, t0, dur, vol){
   o.connect(g).connect(musicBus);
   o.start(t0); o.stop(t0 + dur + .05);
 }
+// Japanese voices are quieter than the English ones: while one speaks, the music steps back
+let ducked = false;
+const musicLevel = () => settings.music ? MUSIC_VOL * settings.musicVol * (ducked ? .4 : 1) : 0;
+function duck(on){
+  if (ducked === on) return;
+  ducked = on;
+  if (musicBus) musicBus.gain.setTargetAtTime(musicLevel(), ac.currentTime, on ? .05 : .25);
+}
 // turning music off silences it at once (also the notes already queued)
 function applyMusic(){
-  if (musicBus) musicBus.gain.setTargetAtTime(settings.music ? MUSIC_VOL : 0, ac.currentTime, .03);
+  if (musicBus) musicBus.gain.setTargetAtTime(musicLevel(), ac.currentTime, .03);
   if (settings.music) audio(); else stopMusic();
 }
 function startMusic(){
@@ -960,19 +975,21 @@ function startMusic(){
 }
 function stopMusic(){ clearInterval(music.timer); music.timer = null; }
 function scheduleMusic(){
+  if (ducked && !speechSynthesis.speaking) duck(false);        // some browsers never report the end of speech
   while (music.next < ac.currentTime + .2){ playStep(music.step, music.next); music.next += STEP; music.step = (music.step + 1) % 64; }
 }
 function playStep(i, t0){
   const bar = i >> 3, s = i & 7;
   if (isJa()){                                                  // koto-like pluck, open fifths, no chords
-    const m = MEL_JA[i], root = ROOTS_JA[bar];
+    // an octave up from the written tune: tablet and phone speakers lose the low notes
+    const m = MEL_JA[i] && MEL_JA[i] + 12, root = ROOTS_JA[bar] + 12;
     if (m){
-      voice(mtof(m), t0, 1.5, 'triangle', .06, musicBus);      // plucked string
-      voice(mtof(m + 12), t0, .22, 'sine', .018, musicBus);    // bright attack
+      voice(mtof(m), t0, 1.5, 'triangle', .085, musicBus);     // plucked string
+      voice(mtof(m + 12), t0, .22, 'sine', .025, musicBus);    // bright attack
     }
     if (s === 0){
-      voice(mtof(root), t0, STEP * 7, 'triangle', .04, musicBus);
-      pad(mtof(root + 12), t0, STEP * 8, .012); pad(mtof(root + 19), t0, STEP * 8, .009);
+      voice(mtof(root), t0, STEP * 7, 'triangle', .055, musicBus);
+      pad(mtof(root + 12), t0, STEP * 8, .016); pad(mtof(root + 19), t0, STEP * 8, .012);
     }
     return;
   }
@@ -1038,6 +1055,11 @@ function speakSeq(parts, queue){
       // Vietnamese menu words: a little higher and brighter
       u.rate = rate || (lang === 'vi' ? .95 : lang === 'ja' ? .9 : 1);
       u.pitch = lang === 'vi' ? 1.2 : lang === 'ja' ? 1.1 : 1;
+      u.volume = settings.voiceVol;                            // 1 is the loudest a voice can go
+      if (lang === 'ja'){
+        u.onstart = () => duck(true);
+        u.onend = u.onerror = () => setTimeout(() => { if (!speechSynthesis.speaking) duck(false); }, 200);
+      }
       speechSynthesis.speak(u);
     });
   } catch(e){}
@@ -1817,6 +1839,23 @@ $('#capsBtn').addEventListener('click', () => {
   renderShelf();
   syncSeg(); audio(); speak(SAY.caps[settings.caps], 'vi');
 });
+// volume sliders on the home screen (kept per device)
+const pct = v => Math.round(v * 100) + '%';
+function syncVolume(){
+  $('#musicVol').value = settings.musicVol; $('#musicVolV').textContent = pct(settings.musicVol);
+  $('#voiceVol').value = settings.voiceVol; $('#voiceVolV').textContent = pct(settings.voiceVol);
+}
+$('#musicVol').addEventListener('input', e => {
+  settings.musicVol = +e.target.value;
+  if (settings.musicVol > 0 && !settings.music){ settings.music = true; syncButtons(); }
+  saveSettings(); syncVolume(); audio(); applyMusic();
+});
+$('#voiceVol').addEventListener('input', e => { settings.voiceVol = +e.target.value; saveSettings(); syncVolume(); });
+$('#voiceVol').addEventListener('change', () => {               // let them hear the new level
+  if (!settings.sound){ settings.sound = true; saveSettings(); syncButtons(); }
+  audio(); isJa() ? speak('こんにちは', 'ja') : speak('Hello!', 'en');
+});
+syncVolume();
 $('#musicBtn').addEventListener('click', () => {
   settings.music = !settings.music; saveSettings(); syncButtons();
   applyMusic();
@@ -1827,6 +1866,9 @@ window.addEventListener('storage', e => {
   const s = store.get('settings', {});
   settings.music = s.music !== false;
   settings.sound = s.sound !== false;
+  if (typeof s.musicVol === 'number') settings.musicVol = s.musicVol;
+  if (typeof s.voiceVol === 'number') settings.voiceVol = s.voiceVol;
+  syncVolume();
   if (!settings.sound) { try { speechSynthesis.cancel(); } catch(err){} }
   if (ac) applyMusic();
   syncButtons();
