@@ -321,7 +321,7 @@ details.more[open] summary{margin-bottom:14px}
         <div class="seg big" data-key="level"><button data-v="easy">Dễ</button><button data-v="mid">Vừa</button><button data-v="hard">Khó</button></div>
         <p class="fine" id="levelNote"></p>
       </section>
-      <details class="hcard more"><summary>⚙️ Cài đặt khác</summary>
+      <details class="hcard more" hidden><summary>⚙️ Cài đặt khác</summary>
         <div class="opts">
           <div class="opt wide"><label class="opt-label" for="voiceSel">Giọng đọc tiếng Anh</label>
             <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button">▶ Nghe thử</button></div></div>
@@ -887,7 +887,7 @@ function voiceScore(v, lang){
   return s;
 }
 function pickVoice(lang){
-  if (lang === 'en' && settings.enVoice){            // the voice picked in the menu wins
+  if (lang === 'en' && settings.enVoice && !$('details.more').hidden){            // the voice picked in the menu wins
     const chosen = voices.find(v => v.name === settings.enVoice);
     if (chosen) return chosen;
   }
