@@ -18,7 +18,7 @@ service cloud.firestore {
       allow read: if true;
       allow delete: if player.size() >= 8;
       allow create, update: if player.size() >= 8
-        && request.resource.data.keys().hasOnly(['name','icon','family','zoo','car','food','job','all','updated'])
+        && request.resource.data.keys().hasOnly(['name','icon','family','zoo','car','food','job','all','stars','updated'])
         && request.resource.data.name is string && request.resource.data.name.size() <= 20
         && request.resource.data.icon is string && request.resource.data.icon.size() <= 32
         && request.resource.data.family is string && request.resource.data.family.size() <= 30
@@ -27,6 +27,7 @@ service cloud.firestore {
         && request.resource.data.food is int && request.resource.data.food >= 0 && request.resource.data.food <= 60
         && request.resource.data.job is int && request.resource.data.job >= 0 && request.resource.data.job <= 60
         && request.resource.data.all is int && request.resource.data.all >= 0 && request.resource.data.all <= 300
+        && (!('stars' in request.resource.data) || (request.resource.data.stars is int && request.resource.data.stars >= 0 && request.resource.data.stars <= 100000))
         && request.resource.data.updated is int;
     }
     match /{document=**} { allow read, write: if false; }

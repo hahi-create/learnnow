@@ -60,15 +60,12 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 .pp{font:800 24px/1.1 var(--display);color:var(--grape);text-shadow:0 2px 0 #fff}
 .pw{font:800 58px/1 var(--display);color:var(--coral);text-shadow:0 4px 0 #FFFFFF,0 8px 16px rgba(30,58,95,.2);padding-top:6px}
 .ps{font:700 18px/1.3 var(--text);color:var(--ink);margin-top:4px;text-shadow:0 2px 0 rgba(255,255,255,.8)}
-.stars{display:inline-flex;gap:2px;font-size:22px;line-height:1;vertical-align:middle}
-.stars i{font-style:normal;color:#D3E1EC}
-.stars i.on{color:var(--sun);text-shadow:0 2px 0 var(--sun-deep)}
 .hero-stars{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font:700 14px/1.3 var(--text);color:var(--muted)}
-.hero-stars .stars{font-size:26px}
+.hero-stars .hs-big{font:800 22px/1 var(--display);color:#B07A00}
 .hero-stars b{color:var(--ink)}
-#shelfStars .stars{font-size:17px}
+#shelfStars{font:800 15px/1 var(--display);color:#B07A00;margin-right:10px}
 .pstar{display:inline-block;margin:8px 0 0 6px;background:var(--sun);color:var(--ink);font:800 17px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--sun-deep)}
-.madeby{text-align:center;font:700 14px/1.4 var(--text);color:var(--muted);padding-top:6px}
+.madeby{text-align:right;font:700 14px/1.4 var(--text);color:var(--muted);padding-top:6px}
 .pnew{display:inline-block;margin-top:8px;background:var(--grass);color:#fff;font:800 16px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--grass-deep)}
 
 /* overlay */
@@ -117,6 +114,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .slot.got{border:2px solid transparent;background:var(--tint,#EAFBEA);cursor:pointer;color:var(--ink)}
 .slot.got .em{filter:none;opacity:1}
 .slot .nm{font-size:12px;font-weight:700;max-width:54px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot .sk{position:absolute;top:2px;left:2px;background:var(--sun);color:#7A5200;font:800 11px/1 var(--display);padding:3px 4px 1px;border-radius:999px}
 .slot .ct{position:absolute;top:2px;right:2px;background:var(--coral);color:#fff;font:800 11px/1 var(--display);padding:3px 4px 1px;border-radius:999px}
 .slot.pop{animation:slotPop .55s ease}
 
@@ -207,6 +205,9 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .bar i{display:block;height:100%;background:var(--grass);border-radius:8px}
 .seg[data-key="lang"] button{font-family:var(--text),"Zen Maru Gothic",sans-serif}
 .seg.big button{font-size:19px;padding:14px 6px}
+.lang-sub{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.lang-sub .seg button{font-size:17px;padding:10px 4px;font-family:var(--text),"Zen Maru Gothic",sans-serif}
+.lang-sub .seg.dim{opacity:.5}
 details.more summary{cursor:pointer;font:800 19px/1 var(--display);color:var(--ink);padding-top:3px}
 details.more[open] summary{margin-bottom:14px}
 .hplay{position:sticky;bottom:12px;align-self:center;width:min(440px,100%);font-size:34px;padding:18px 16px 13px}
@@ -342,6 +343,10 @@ details.more[open] summary{margin-bottom:14px}
       <section class="hcard"><h2>Chọn chủ đề</h2><div id="homeThemes" class="hthemes"></div></section>
       <section class="hcard"><h2>Ngôn ngữ luyện tập</h2>
         <div class="seg big" data-key="lang"><button data-v="en">English</button><button data-v="ja">日本語</button></div>
+        <div class="lang-sub">
+          <div id="subEn" class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div>
+          <div id="subJa" class="seg" data-key="kana"><button data-v="hira">ひらがな</button><button data-v="kata">カタカナ</button></div>
+        </div>
       </section>
       <section class="hcard"><h2>Mức độ</h2>
         <div class="seg big" data-key="level"><button data-v="easy">Dễ</button><button data-v="mid">Vừa</button><button data-v="hard">Khó</button></div>
@@ -810,17 +815,11 @@ const keyFor = (d, mode = curMode()) => MODE_KEY[mode] + d.id;
 const ck = d => keyFor(d);
 const hasName = (d, mode = curMode()) => (mode === 'hira' || mode === 'kata') ? !!d.ja : true;
 const inLang = list => list.filter(d => hasName(d));
-// gold stars: each collection (abc, ABC, ひらがな, カタカナ) earns up to 5 as it grows
-const STAR_STEPS = [[5, 1], [15, 3], [30, 5]];                   // 5 cards → 1 star, 15 → 3 stars, 30 → 5 stars
-const starsFor = n => STAR_STEPS.reduce((k, [cards, stars]) => n >= cards ? stars : k, 0);
-const nextStepFor = n => (STAR_STEPS.find(([cards]) => n < cards) || [])[0];   // undefined once all 5 are earned
-const modeCount = (q, mode = curMode()) => ALL_ITEMS.filter(d => hasName(d, mode) && (q.counts || {})[keyFor(d, mode)]).length;
-const totalStars = q => MODES.reduce((sum, m) => sum + starsFor(modeCount(q, m)), 0);
-function starsEl(k, max = 5){
-  const w = document.createElement('span'); w.className = 'stars'; w.setAttribute('aria-label', k + ' sao');
-  for (let i = 0; i < max; i++){ const s = document.createElement('i'); s.textContent = '★'; if (i < k) s.className = 'on'; w.appendChild(s); }
-  return w;
-}
+// gold stars: every 5 catches of the same card = 1 star; abc, ABC, ひらがな, カタカナ each count on their own
+const STAR_EVERY = 5;
+const cardStars = n => Math.floor((n | 0) / STAR_EVERY);
+const modeStars = (q, mode = curMode()) => ALL_ITEMS.reduce((sum, d) => sum + (hasName(d, mode) ? cardStars((q.counts || {})[keyFor(d, mode)]) : 0), 0);
+const totalStars = q => MODES.reduce((sum, m) => sum + modeStars(q, m), 0);
 const keysLen = w => w.replace(/ /g, '').length;
 const capsOf = s => isJa() ? (settings.kana === 'kata' ? toKata(s) : s) : (settings.caps === 'upper' ? s.toLocaleUpperCase('vi') : s);
 // the keys that type one kana: が is か then ゛, ぱ is は then ゜, everything else one key
@@ -1180,9 +1179,8 @@ function capture(a){
   burst(x, y, 34, CONFETTI, 320);
   sfx.win();
   const isNew = !counts[ck(a.def)];
-  const starsBefore = starsFor(modeCount(me()));
   counts[ck(a.def)] = (counts[ck(a.def)] || 0) + 1;
-  const newStars = starsFor(modeCount(me())) - starsBefore;
+  const newStars = counts[ck(a.def)] % STAR_EVERY === 0 ? 1 : 0;
   savePlayers(); cloudCount(me(), ck(a.def)); publishScore(me());
   caught++;
   $('#caught').textContent = caught;
@@ -1190,7 +1188,7 @@ function capture(a){
   // after the spelled letters: the word the child just typed, then the English cheer
   const cheer = showPopup(a.def, isNew, newStars);
   const lines = [{ text: sayWord(a.def), lang:LANG() }, { text: cheer, lang:LANG() }];
-  if (newStars > 0){ lines.push({ text: 'Bé được thêm ' + (newStars === 1 ? 'một' : 'hai') + ' ngôi sao vàng!', lang:'vi' }); sfx.star(); }
+  if (newStars > 0){ lines.push({ text: 'Bé được thêm một ngôi sao vàng!', lang:'vi' }); sfx.star(); }
   speakSeq(lines, true);
   flyToShelf(a.def, x, y);
 }
@@ -1242,7 +1240,7 @@ function renderShelf(){
     const b = document.createElement('button');
     b.className = 'slot';
     b.style.setProperty('--tint', TINTS[d.ci]);
-    b.innerHTML = '<span class="em"></span><span class="nm"></span><span class="ct" hidden></span>';
+    b.innerHTML = '<span class="em"></span><span class="nm"></span><span class="ct" hidden></span><span class="sk" hidden></span>';
     setIcon(b.querySelector('.em'), d.e);
     b.addEventListener('click', () => {
       if (!counts[ck(d)]) return;
@@ -1259,11 +1257,12 @@ function updateSlot(d, animate){
   b.classList.toggle('got', n > 0);
   b.querySelector('.nm').textContent = n ? capsOf(wordOf(d)) : '?';
   const ct = b.querySelector('.ct'); ct.hidden = n < 2; ct.textContent = '×' + n;
+  const sk = b.querySelector('.sk'), k = cardStars(n); sk.hidden = !k; sk.textContent = '★' + k;
   b.setAttribute('aria-label', n ? `${wordOf(d)}, đã bắt ${n} lần` : 'Chưa bắt được');
   if (animate){ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
   const shown = inLang(THEME_ITEMS), got = shown.filter(a => counts[ck(a)]).length;
   $('#shelfCount').innerHTML = `<b>${got}</b> / ${shown.length}`;
-  const ss = $('#shelfStars'); ss.innerHTML = ''; ss.appendChild(starsEl(starsFor(modeCount(me()))));
+  $('#shelfStars').textContent = '⭐ ' + modeStars(me());
 }
 
 // ---------- on-screen keyboard ----------
@@ -1546,6 +1545,7 @@ function syncSeg(){
   kbd.hidden = false;                                         // the helper keyboard is always shown
   labelKeys();
   $('#capsBtn').textContent = isJa() ? (settings.kana === 'kata' ? 'ア' : 'あ') : (settings.caps === 'upper' ? 'ABC' : 'abc');
+  $('#subEn').classList.toggle('dim', isJa()); $('#subJa').classList.toggle('dim', !isJa());
 }
 // what the menu buttons say out loud (Vietnamese, so the kids know what they picked)
 const SAY = {
@@ -1760,7 +1760,11 @@ document.querySelectorAll('.seg[data-key]').forEach(seg => seg.addEventListener(
   if (key === 'level' || key === 'caps'){ me()[key] = b.dataset.v; savePlayers(); cloudSave(me()); }
   if (key === 'level') resetField();
   if (key === 'lang'){ resetField(); renderShelf(); $('#shelfRow').scrollLeft = 0; renderHome(); }
-  if (key === 'caps') THEME_ITEMS.forEach(d => updateSlot(d, false));
+  if (key === 'caps' || key === 'kana'){                        // abc/ABC or ひらがな/カタカナ also picks its language
+    const lang = key === 'caps' ? 'en' : 'ja';
+    if (settings.lang !== lang){ settings.lang = lang; saveSettings(); resetField(); }
+    renderShelf(); $('#shelfRow').scrollLeft = 0; renderHome();
+  }
   syncSeg();
   speak(SAY[key][b.dataset.v], 'vi');
 }));
@@ -1891,11 +1895,9 @@ function renderHome(){
   hf.textContent = familyName ? '🏠 ' + familyName : ''; hf.hidden = !familyName;
   if (document.activeElement !== $('#familyNameInput')) $('#familyNameInput').value = familyName;
   $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + totalOf(ITEMS) + ' món';
-  const hs = $('#heroStars'), n = modeCount(p), next = nextStepFor(n);
+  const hs = $('#heroStars');
   hs.innerHTML = '';
-  hs.append(starsEl(starsFor(n)), mkEl('span', null, MODE_LABEL[curMode()]));
-  const tot = mkEl('span'); tot.append('· Tổng '); tot.append(mkEl('b', null, totalStars(p) + ' ⭐')); hs.append(tot);
-  hs.append(mkEl('span', null, next ? '· Còn ' + (next - n) + ' thẻ nữa đến sao tiếp theo' : '· Đủ 5 sao rồi!'));
+  hs.append(mkEl('span', 'hs-big', '⭐ ' + totalStars(p) + ' sao'));   // all four collections together
   // themes, "Tổng Hợp" last across the full width
   const ht = $('#homeThemes'); ht.innerHTML = '';
   THEME_ORDER.forEach(k => {
@@ -1945,12 +1947,14 @@ const onBoard = q => hasOwnName(q.name) && !!familyName;
 function publishScore(q){
   if (!fb || !q) return;
   MODES.forEach(mode => {
-    const id = boardId(q.id, mode), sc = scoresOf(q, mode), key = JSON.stringify([q.name, q.icon, familyName, sc, onBoard(q)]);
+    const id = boardId(q.id, mode), sc = scoresOf(q, mode), stars = modeStars(q, mode), key = JSON.stringify([q.name, q.icon, familyName, sc, stars, onBoard(q)]);
     if (lbSent[id] === key) return;                             // nothing new to tell
     lbSent[id] = key;
     const ref = fb.fs.doc(fb.db, 'leaderboard', id);
+    const body = Object.assign({ name: q.name, icon: q.icon, family: familyName, updated: Date.now() }, sc);
+    // "stars" needs the newer security rules; until they are published, keep sending the rest
     const write = sc.all > 0 && onBoard(q)
-      ? fb.fs.setDoc(ref, Object.assign({ name: q.name, icon: q.icon, family: familyName, updated: Date.now() }, sc))
+      ? fb.fs.setDoc(ref, Object.assign({ stars }, body)).catch(() => fb.fs.setDoc(ref, body))
       : fb.fs.deleteDoc(ref);                                   // nothing collected yet, or names not set: stay off the board
     write.then(() => { Object.keys(worldCache).forEach(k => delete worldCache[k]); }).catch(() => { delete lbSent[id]; });
   });
@@ -1996,7 +2000,7 @@ function drawRankRows(rows, total, byStars){
     ol.appendChild(li);
   });
 }
-// total stars from everyone's public entries: each entry holds that collection's card count ("all")
+// total stars from everyone's public entries: each entry holds that collection's stars
 async function loadStars(){
   const c = worldCache.stars;
   if (c && Date.now() - c.at < 20000) return c.rows;
@@ -2007,7 +2011,7 @@ async function loadStars(){
     const v = d.data(), mode = modeOfBoard(d.id), id = d.id.slice(0, d.id.length - MODE_BOARD[mode].length);
     if (!v.family || !hasOwnName(v.name)) return;
     const k = kids[id] || (kids[id] = { id, name: String(v.name), icon: String(v.icon || ''), family: String(v.family), n: 0, at: 0 });
-    k.n += starsFor(v.all | 0);
+    k.n += v.stars | 0;
     if ((v.updated | 0) > k.at){ k.at = v.updated | 0; k.name = String(v.name); k.icon = String(v.icon || ''); k.family = String(v.family); }
   });
   const rows = Object.values(kids).filter(r => r.n > 0).sort((a, b) => b.n - a.n).slice(0, 50);
@@ -2034,7 +2038,7 @@ function renderRank(){
   tabs.hidden = byStars;                                        // the star board has no theme tabs
   const list = byTheme(rankTheme), total = byStars ? MODES.length * 5 : totalOf(list, rankMode);
   $('#rankNote').textContent = byStars
-    ? 'Tổng số sao vàng của mỗi bé. Mỗi bộ abc, ABC, ひらがな, カタカナ: 5 thẻ được 1 sao, 15 thẻ 3 sao, 30 thẻ 5 sao.'
+    ? 'Tổng số sao vàng của mỗi bé. Gõ đúng 1 thẻ đủ 5 lần được 1 sao; abc, ABC, ひらがな, カタカナ tính riêng.'
     : scope === 'world'
     ? 'Bảng ' + MODE_LABEL[rankMode] + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm.'
     : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
