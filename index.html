@@ -84,13 +84,13 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 
 /* on-screen keyboard */
-.kbd{display:flex;flex-direction:column;gap:6px}
-.krow{display:flex;gap:6px;justify-content:center}
+.kbd{display:flex;flex-direction:column;gap:8px}
+.krow{display:flex;gap:8px;justify-content:center}
 .krow:nth-child(2){padding-inline:4%}
 .krow:nth-child(3){padding-inline:13%}
-.key{flex:1 1 0;min-width:0;max-width:58px;height:46px;border-radius:12px;border:0;background:var(--panel);color:var(--ink);font:700 22px/1 var(--text);cursor:pointer;padding:0;box-shadow:0 3px 0 rgba(30,58,95,.16);transition:transform .08s,background .15s,color .15s}
-.key.hint{background:#FFF3C4;box-shadow:0 4px 0 var(--sun)}
-.key.next{background:var(--sun);color:var(--ink);box-shadow:0 4px 0 var(--sun-deep);animation:pulse 1s ease-in-out infinite}
+.key{flex:1 1 0;min-width:0;max-width:77px;height:61px;border-radius:16px;border:0;background:var(--panel);color:var(--ink);font:700 29px/1 var(--text);cursor:pointer;padding:0;box-shadow:0 4px 0 rgba(30,58,95,.16);transition:transform .08s,background .15s,color .15s}
+.key.hint{background:#FFF3C4;box-shadow:0 5px 0 var(--sun)}
+.key.next{background:var(--sun);color:var(--ink);box-shadow:0 5px 0 var(--sun-deep);animation:pulse 1s ease-in-out infinite}
 .key.press{transform:translateY(2px) scale(.92)}
 @media (max-height:600px){ .kbd{display:none} }
 
@@ -323,8 +323,6 @@ details.more[open] summary{margin-bottom:14px}
         <div class="opts">
           <div class="opt"><span class="opt-label">Kiểu chữ</span>
             <div class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div></div>
-          <div class="opt"><span class="opt-label">Bàn phím gợi ý</span>
-            <div class="seg" data-key="kbd"><button data-v="on">Hiện</button><button data-v="off">Ẩn</button></div></div>
           <div class="opt wide"><label class="opt-label" for="voiceSel">Giọng đọc tiếng Anh</label>
             <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button">▶ Nghe thử</button></div></div>
         </div>
@@ -1401,14 +1399,13 @@ function syncSeg(){
     seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(settings[seg.dataset.key] === b.dataset.v)));
   });
   $('#levelNote').textContent = LEVELS[settings.level].note;
-  kbd.hidden = settings.kbd === 'off';
+  kbd.hidden = false;                                         // the helper keyboard is always shown
   labelKeys();
 }
 // what the menu buttons say out loud (Vietnamese, so the kids know what they picked)
 const SAY = {
   level: { easy:'Mức độ dễ', mid:'Mức độ vừa', hard:'Mức độ khó' },
   caps:  { lower:'Chữ thường', upper:'Chữ in hoa' },
-  kbd:   { on:'Hiện bàn phím', off:'Ẩn bàn phím' },
 };
 let ovMode = 'start';
 const leadText = () => ovMode === 'start'
