@@ -36,6 +36,7 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 /* top bar */
 .top{position:relative;z-index:30;display:flex;align-items:center;gap:8px}
 .icon-btn{width:36px;height:36px;flex:0 0 36px;border-radius:12px;border:0;background:var(--panel);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 3px 0 rgba(30,58,95,.14)}
+.caps-btn{width:auto;flex:0 0 auto;padding:0 11px;font:800 17px/1 var(--text);letter-spacing:.02em}
 .icon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(30,58,95,.14)}
 .icon-btn.off{color:#A9BACB}
 .homebtn{flex:0 0 auto;display:flex;align-items:center;gap:8px;height:40px;padding:0 14px 0 10px;border:0;border-radius:14px;background:var(--panel);color:var(--ink);font:800 17px/1 var(--display);cursor:pointer;white-space:nowrap;box-shadow:0 3px 0 rgba(30,58,95,.14)}
@@ -269,6 +270,7 @@ details.more[open] summary{margin-bottom:14px}
         </div>
       </div>
     </div>
+    <button id="capsBtn" class="icon-btn caps-btn" aria-label="Đổi chữ thường / chữ in hoa">abc</button>
     <button id="musicBtn" class="icon-btn" aria-label="Nhạc nền"></button>
     <button id="soundBtn" class="icon-btn" aria-label="Âm thanh"></button>
     <div id="hex" class="hex" title="Số con đã bắt trong lượt này"><span id="caught">0</span></div>
@@ -321,8 +323,6 @@ details.more[open] summary{margin-bottom:14px}
       </section>
       <details class="hcard more"><summary>⚙️ Cài đặt khác</summary>
         <div class="opts">
-          <div class="opt"><span class="opt-label">Kiểu chữ</span>
-            <div class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div></div>
           <div class="opt wide"><label class="opt-label" for="voiceSel">Giọng đọc tiếng Anh</label>
             <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button">▶ Nghe thử</button></div></div>
         </div>
@@ -1401,6 +1401,7 @@ function syncSeg(){
   $('#levelNote').textContent = LEVELS[settings.level].note;
   kbd.hidden = false;                                         // the helper keyboard is always shown
   labelKeys();
+  $('#capsBtn').textContent = settings.caps === 'upper' ? 'ABC' : 'abc';
 }
 // what the menu buttons say out loud (Vietnamese, so the kids know what they picked)
 const SAY = {
@@ -1600,6 +1601,13 @@ $('#pauseBtn').addEventListener('click', () => state === 'play' ? openOverlay('p
 $('#soundBtn').addEventListener('click', () => {
   settings.sound = !settings.sound; saveSettings(); syncButtons();
   if (!settings.sound) { try { speechSynthesis.cancel(); } catch(e){} } else { audio(); sfx.pop(); }
+});
+// abc / ABC next to the music button: switch letter case while playing
+$('#capsBtn').addEventListener('click', () => {
+  settings.caps = settings.caps === 'upper' ? 'lower' : 'upper'; saveSettings();
+  me().caps = settings.caps; savePlayers(); cloudSave(me());
+  THEME_ITEMS.forEach(d => updateSlot(d, false));
+  syncSeg(); audio(); speak(SAY.caps[settings.caps], 'vi');
 });
 $('#musicBtn').addEventListener('click', () => {
   settings.music = !settings.music; saveSettings(); syncButtons();
