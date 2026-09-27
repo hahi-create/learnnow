@@ -291,63 +291,63 @@ details.more[open] summary{margin-bottom:14px}
 
 <div id="app">
   <header class="top">
-    <button id="pauseBtn" class="icon-btn" aria-label="Tạm dừng"></button>
-    <button id="themeBtn" class="homebtn" aria-label="Về màn hình chính"><span id="homeIcon" class="hi"></span><span class="lbl">Màn hình chính</span></button>
-    <span class="tn" title="Chủ đề đang chơi"><span id="themeIcon" class="ticon"></span><span id="themeTitle">Vườn Thú</span></span>
+    <button id="pauseBtn" class="icon-btn" aria-label="Pause"></button>
+    <button id="themeBtn" class="homebtn" data-t-aria="homeAria"><span id="homeIcon" class="hi"></span><span class="lbl" data-t="home"></span></button>
+    <span class="tn" data-t-title="themeNow"><span id="themeIcon" class="ticon"></span><span id="themeTitle">Vườn Thú</span></span>
     <div class="spacer"></div>
-    <button id="playerChip" class="chip" hidden aria-label="Chọn người chơi" aria-expanded="false" aria-controls="playerMenu"><span id="chipAv" class="av"></span><span id="chipName" class="nm"></span><span class="caret" aria-hidden="true">▾</span></button>
+    <button id="playerChip" class="chip" hidden data-t-aria="whoPlays" aria-expanded="false" aria-controls="playerMenu"><span id="chipAv" class="av"></span><span id="chipName" class="nm"></span><span class="caret" aria-hidden="true">▾</span></button>
     <div id="playerMenu" class="pmenu" hidden>
       <div id="pmList" class="view">
-        <span class="opt-label">Ai đang chơi?</span>
+        <span class="opt-label" data-t="whoPlays"></span>
         <div id="players" class="players"></div>
       </div>
       <div id="editor" class="view editor" hidden>
-        <span class="pm-title" id="edTitle">Thêm bạn chơi mới</span>
-        <input id="pName" aria-label="Tên của bé" type="text" maxlength="14" autocomplete="off" spellcheck="false">
-        <span class="pm-title">Chọn hình đại diện</span>
+        <span class="pm-title" id="edTitle"></span>
+        <input id="pName" data-t-aria="kidName" type="text" maxlength="14" autocomplete="off" spellcheck="false">
+        <span class="pm-title" data-t="pickAvatar"></span>
         <div id="pIcons" class="icons"></div>
         <div class="ed-actions">
-          <button id="pDelete" class="linkish danger">Xoá người chơi này</button>
+          <button id="pDelete" class="linkish danger"></button>
           <span id="edMsg" class="sync-note"></span>
-          <button id="pCancel" class="btn-sec">Huỷ</button>
-          <button id="pSave" class="btn-pri">Lưu</button>
+          <button id="pCancel" class="btn-sec" data-t="cancel"></button>
+          <button id="pSave" class="btn-pri" data-t="save"></button>
         </div>
       </div>
     </div>
-    <button id="capsBtn" class="icon-btn caps-btn" aria-label="Đổi kiểu chữ (abc/ABC, あ/ア)">abc</button>
-    <button id="musicBtn" class="icon-btn" aria-label="Nhạc nền"></button>
-    <button id="soundBtn" class="icon-btn" aria-label="Âm thanh"></button>
-    <div id="hex" class="hex" title="Số con đã bắt trong lượt này"><span id="caught">0</span></div>
+    <button id="capsBtn" class="icon-btn caps-btn" data-t-aria="capsAria">abc</button>
+    <button id="musicBtn" class="icon-btn"></button>
+    <button id="soundBtn" class="icon-btn"></button>
+    <div id="hex" class="hex" data-t-title="hexTitle"><span id="caught">0</span></div>
   </header>
 
   <main id="stage">
-    <canvas id="cv" aria-label="Sân chơi: các con vật bay xuống, gõ tên để bắt"></canvas>
+    <canvas id="cv" data-t-aria="stageAria"></canvas>
     <div id="popup" class="popup" hidden></div>
     <div id="overlay" class="overlay">
       <div class="card">
         <h1 id="ovTitle">Learn<span>Now</span></h1>
-        <p class="lead" id="ovLead">Gõ đúng tên để bắt về bộ sưu tập bên dưới.</p>
+        <p class="lead" id="ovLead"></p>
         <div id="mainView" class="view">
-        <button id="goBtn" class="go">Chơi tiếp</button>
-        <button id="homeBtn" class="btn-sec home-btn">🏠 Màn hình chính</button>
+        <button id="goBtn" class="go"></button>
+        <button id="homeBtn" class="btn-sec home-btn">🏠 <span data-t="home"></span></button>
         </div>
       </div>
     </div>
   </main>
 
-  <section class="shelf" aria-label="Bộ sưu tập">
-    <div class="shelf-head"><h2>Bộ sưu tập của <span id="shelfOwner"></span></h2><span class="shelf-right"><span id="shelfStars"></span> <span id="shelfCount"></span></span></div>
+  <section class="shelf" data-t-aria="shelfAria">
+    <div class="shelf-head"><h2><span data-t="shelfPre"></span><span id="shelfOwner"></span><span data-t="shelfPost"></span></h2><span class="shelf-right"><span id="shelfStars"></span> <span id="shelfCount"></span></span></div>
     <div id="shelfRow" class="shelf-row"></div>
   </section>
 
-  <div id="kbd" class="kbd" aria-label="Bàn phím gợi ý"></div>
+  <div id="kbd" class="kbd" data-t-aria="kbdAria"></div>
 </div>
 
 <div id="home" class="home" hidden>
   <div class="home-in">
     <div class="home-top">
-      <div><div class="logo">Learn<span>Now</span></div><div class="tag">Luyện chữ cho bé</div></div>
-      <div class="home-actions"><button id="toFamily" class="hbtn small"><span id="famIcon" class="bi"></span>Gia đình</button><button id="homeMusic" class="icon-btn" aria-label="Nhạc nền"></button></div>
+      <div><div class="logo">Learn<span>Now</span></div><div class="tag" data-t="tagline"></div></div>
+      <div class="home-actions"><button id="toFamily" class="hbtn small"><span id="famIcon" class="bi"></span><span data-t="family"></span></button><button id="homeMusic" class="icon-btn"></button></div>
     </div>
 
     <div id="homeMain" class="view">
@@ -355,78 +355,73 @@ details.more[open] summary{margin-bottom:14px}
         <span id="heroAv" class="hero-av"></span>
         <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroFamily" class="hero-stat" hidden></div><div id="heroStat" class="hero-stat"></div><div id="heroStars" class="hero-stars"></div><div id="syncNote" class="sync-note" hidden></div></div>
         <div class="hero-btns">
-          <button id="toPlayers" class="hbtn">👥 Chọn người chơi</button>
-          <button id="toRank" class="hbtn gold">🏆 Bảng xếp hạng</button>
+          <button id="toPlayers" class="hbtn" data-t="choosePlayer"></button>
+          <button id="toRank" class="hbtn gold" data-t="leaderboard"></button>
         </div>
       </section>
-      <section id="homeThemesCard" class="hcard"><h2>Chọn chủ đề</h2><div id="homeThemes" class="hthemes"></div></section>
-      <section class="hcard"><h2>Ngôn ngữ luyện tập</h2>
+      <section id="homeThemesCard" class="hcard"><h2 data-t="chooseTheme"></h2><div id="homeThemes" class="hthemes"></div></section>
+      <section class="hcard"><h2 data-t="practiceLang"></h2>
         <div class="seg big" data-key="lang"><button data-v="en">English</button><button data-v="ja">日本語</button></div>
         <div class="lang-sub">
           <div id="subEn" class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div>
           <div id="subJa" class="seg" data-key="kana"><button data-v="hira">ひらがな</button><button data-v="kata">カタカナ</button><button data-v="kanji">漢字</button></div>
         </div>
       </section>
-      <section class="hcard"><h2>Mức độ</h2>
-        <div class="seg big" data-key="level"><button data-v="easy">Dễ</button><button data-v="mid">Vừa</button><button data-v="hard">Khó</button></div>
+      <section class="hcard"><h2 data-t="level"></h2>
+        <div class="seg big" data-key="level"><button data-v="easy" data-t="easy"></button><button data-v="mid" data-t="mid"></button><button data-v="hard" data-t="hard"></button></div>
         <p class="fine" id="levelNote"></p>
       </section>
-      <section class="hcard"><h2>Âm lượng</h2>
-        <label class="vol"><span>🎵 Nhạc nền</span><input id="musicVol" type="range" min="0" max="1" step="0.05"><b id="musicVolV"></b></label>
-        <label class="vol"><span>🗣️ Giọng đọc</span><input id="voiceVol" type="range" min="0" max="1" step="0.1"><b id="voiceVolV"></b></label>
+      <section class="hcard"><h2 data-t="volume"></h2>
+        <label class="vol"><span data-t="volMusic"></span><input id="musicVol" type="range" min="0" max="1" step="0.05"><b id="musicVolV"></b></label>
+        <label class="vol"><span data-t="volVoice"></span><input id="voiceVol" type="range" min="0" max="1" step="0.1"><b id="voiceVolV"></b></label>
       </section>
-      <details class="hcard more" hidden><summary>⚙️ Cài đặt khác</summary>
+      <details class="hcard more" hidden><summary data-t="moreSettings"></summary>
         <div class="opts">
-          <div class="opt wide"><label class="opt-label" for="voiceSel">Giọng đọc tiếng Anh</label>
-            <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button">▶ Nghe thử</button></div></div>
+          <div class="opt wide"><label class="opt-label" for="voiceSel" data-t="enVoice"></label>
+            <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button" data-t="tryVoice"></button></div></div>
         </div>
       </details>
-      <button id="homePlay" class="go hplay">Bắt đầu</button>
+      <button id="homePlay" class="go hplay" data-t="start"></button>
     </div>
 
     <div id="homePlayersView" class="view" hidden>
-      <div class="hv-head"><button class="btn-sec" data-back>← Quay lại</button><h2>Ai đang chơi?</h2></div>
+      <div class="hv-head"><button class="btn-sec" data-back data-t="back"></button><h2 data-t="whoPlays"></h2></div>
       <section class="hcard"><div id="homePlayers" class="hplayers"></div></section>
     </div>
 
     <div id="homeRankView" class="view" hidden>
-      <div class="hv-head"><button class="btn-sec" data-back>← Quay lại</button><h2>🏆 Bảng xếp hạng</h2></div>
+      <div class="hv-head"><button class="btn-sec" data-back data-t="back"></button><h2 data-t="leaderboard"></h2></div>
       <section class="hcard">
         <div id="rankHint" class="rank-hint" hidden></div>
         <div id="rankModes" class="seg rank-modes"></div>
         <div id="rankTabs" class="rank-tabs"></div>
         <ol id="rankList" class="rank"></ol>
-        <p id="rankNote" class="fine">Xếp hạng theo số món khác nhau mỗi bé đã sưu tầm.</p>
+        <p id="rankNote" class="fine"></p>
       </section>
-      <section class="hcard star-rules"><h2>⭐ Cách tích sao</h2>
-        <ul>
-          <li>Gõ đúng cùng một thẻ đủ <b>5 lần</b> được <b>1 sao vàng</b> (10 lần 2 sao, 15 lần 3 sao…).</li>
-          <li>Mức <b>Dễ</b> và <b>Vừa</b>: mỗi thẻ tích tối đa <b>15 lần</b> (3 sao).</li>
-          <li>Mức <b>Khó</b>: tích <b>không giới hạn</b>.</li>
-          <li>abc, ABC, ひらがな, カタカナ, 漢字 tính riêng. <b>Tổng sao</b> là sao của cả 5 bộ cộng lại.</li>
-        </ul>
+      <section class="hcard star-rules"><h2 data-t="rulesTitle"></h2>
+        <ul data-t-html="rules"></ul>
       </section>
     </div>
 
     <div id="homeFamilyView" class="view" hidden>
-      <div class="hv-head"><button class="btn-sec" data-back>← Quay lại</button><h2><span id="famIcon2" class="bi"></span>Gia đình</h2></div>
+      <div class="hv-head"><button class="btn-sec" data-back data-t="back"></button><h2><span id="famIcon2" class="bi"></span><span data-t="family"></span></h2></div>
       <section class="hcard"><div class="opts fam-opts">
-          <div class="opt wide"><label class="opt-label" for="familyNameInput">Tên gia đình</label>
-            <div class="family-join"><input id="familyNameInput" class="fname" type="text" maxlength="24" placeholder="VD: Nhà Bông" autocomplete="off" spellcheck="false">
-              <button id="familyNameSave" class="btn-sec" type="button">Lưu</button><span id="familyNameMsg" class="sync-note"></span></div></div>
-          <div id="familyBox" class="opt wide" hidden><span class="opt-label">Mã gia đình</span>
+          <div class="opt wide"><label class="opt-label" for="familyNameInput" data-t="familyName"></label>
+            <div class="family-join"><input id="familyNameInput" class="fname" type="text" maxlength="24" data-t-ph="familyPh" autocomplete="off" spellcheck="false">
+              <button id="familyNameSave" class="btn-sec" type="button" data-t="save"></button><span id="familyNameMsg" class="sync-note"></span></div></div>
+          <div id="familyBox" class="opt wide" hidden><span class="opt-label" data-t="familyCode"></span>
             <div class="family"><b id="familyCode" class="fcode"></b>
-              <button id="familyJoinBtn" class="linkish" type="button">Nhập mã từ máy khác</button>
+              <button id="familyJoinBtn" class="linkish" type="button" data-t="enterCode"></button>
               <div id="familyJoin" class="family-join" hidden>
-                <input id="familyInput" type="text" maxlength="8" placeholder="VD: ABCD1234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Mã gia đình">
-                <button id="familyGo" class="btn-sec" type="button">Kết nối</button>
+                <input id="familyInput" type="text" maxlength="8" data-t-ph="codePh" autocomplete="off" autocapitalize="characters" spellcheck="false" data-t-aria="familyCode">
+                <button id="familyGo" class="btn-sec" type="button" data-t="connect"></button>
                 <span id="familyMsg" class="sync-note"></span>
               </div>
-              <p class="fine">Mã được tạo tự động khi mở game lần đầu. Để các máy khác trong nhà dùng chung các bé và bộ sưu tập: trên máy đó bấm "Nhập mã từ máy khác" rồi gõ mã này.</p>
+              <p class="fine" data-t="codeNote"></p>
             </div></div>
       </div>
-        <p id="familyOffline" class="fine" hidden>Cần kết nối mạng để dùng mã gia đình và đồng bộ giữa các máy.</p>
-        <p class="fine">Tên gia đình hiện dưới tên các bé trên bảng xếp hạng. Mọi máy dùng chung mã gia đình sẽ thấy cùng tên.</p>
+        <p id="familyOffline" class="fine" hidden data-t="offline"></p>
+        <p class="fine" data-t="familyNote"></p>
       </section>
     </div>
 
@@ -435,16 +430,16 @@ details.more[open] summary{margin-bottom:14px}
   </div>
   <div id="nameModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalHi">
     <div class="modal-card">
-      <div id="modalHi" class="modal-hi">👋 Xin chào!</div>
-      <p>Hãy đặt tên cho bé trước khi chơi nhé.</p>
+      <div id="modalHi" class="modal-hi" data-t="hello"></div>
+      <p data-t="helloNote"></p>
       <div id="modalSlot"></div>
     </div>
   </div>
   <div id="updateModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="updHi">
     <div class="modal-card upd-card">
-      <div id="updHi" class="modal-hi">🎉 Có phiên bản mới!</div>
-      <p>LearnNow vừa được cập nhật. Bấm “Tải lại” để dùng bản mới nhất nhé.</p>
-      <div class="upd-btns"><button id="updLater" class="btn-sec">Để sau</button><button id="updGo" class="go">Tải lại</button></div>
+      <div id="updHi" class="modal-hi" data-t="newVersion"></div>
+      <p data-t="newVersionNote"></p>
+      <div class="upd-btns"><button id="updLater" class="btn-sec" data-t="later"></button><button id="updGo" class="go" data-t="reload"></button></div>
     </div>
   </div>
 </div>
@@ -470,13 +465,14 @@ const TINTS = ['#FFE8EE', '#FFF5D6', '#E6F9EA', '#E4F4FF', '#F0EAFF', '#FFEFE4']
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const THEMES = {
-  zoo:  { vi:'Vườn Thú',    icon:'🦁', say:'Chủ đề vườn thú',    fresh:'New animal!' },
-  car:  { vi:'Xe Cộ',       icon:'🚗', say:'Chủ đề xe cộ',       fresh:'New vehicle!' },
-  food: { vi:'Rau Củ Quả',  icon:'🥕', say:'Chủ đề rau củ quả',  fresh:'New food!' },
-  job:  { vi:'Nghề Nghiệp', icon:'👩‍🚒', say:'Chủ đề nghề nghiệp', fresh:'New job!' },
-  all:  { vi:'Tổng Hợp',    icon:'🌈', say:'Chủ đề tổng hợp',    fresh:'New!' },
+  zoo:  { en:'Animals', ja:'どうぶつ', vi:'Vườn Thú',    icon:'🦁', say:'Chủ đề vườn thú',    fresh:'New animal!' },
+  car:  { en:'Vehicles', ja:'のりもの', vi:'Xe Cộ',       icon:'🚗', say:'Chủ đề xe cộ',       fresh:'New vehicle!' },
+  food: { en:'Fruits & Veggies', ja:'やさい・くだもの', vi:'Rau Củ Quả',  icon:'🥕', say:'Chủ đề rau củ quả',  fresh:'New food!' },
+  job:  { en:'Jobs', ja:'おしごと', vi:'Nghề Nghiệp', icon:'👩‍🚒', say:'Chủ đề nghề nghiệp', fresh:'New job!' },
+  all:  { en:'Everything', ja:'ぜんぶ', vi:'Tổng Hợp',    icon:'🌈', say:'Chủ đề tổng hợp',    fresh:'New!' },
 };
-const KANJI_THEME = { vi:'Chữ Hán', icon:'漢', say:'Chữ Hán' };   // 漢字 is one set, without themes
+const KANJI_THEME = { en:'Kanji', ja:'漢字', vi:'Chữ Hán', icon:'漢', say:'Chữ Hán' };   // 漢字 is one set, without themes
+const tname = t => t[settings.lang] || t.en;                     // a theme's name in the language being practised
 const themeOf = (k, mode) => (mode || curMode()) === 'kanji' ? KANJI_THEME : THEMES[k];
 const THEME_ORDER = ['zoo', 'car', 'food', 'job', 'all'];   // "all" mixes every theme and sits last
 const RAW_THEMES = {
@@ -1344,6 +1340,118 @@ const store = {
 };
 const settings = Object.assign({ level:'easy', caps:'lower', kbd:'on', sound:true, music:true, enVoice:'', lang:'en', kana:'hira', musicVol:.5, voiceVol:1 }, store.get('settings', {}));
 // music slider: 100% is twice the normal level, the default sits at 50% (older saves went 0-2 with 1 as normal)
+// the screens speak the language being practised: English, or Japanese in simple kana for young readers
+const UI_TEXT = {
+  en: {
+    pause:'Pause', play:'Play', home:'Home', homeAria:'Back to the home screen', themeNow:'Theme being played',
+    choosePlayer:'👥 Choose player', whoPlays:'Who is playing?', newPlayer:'New player', editPlayer:'Edit player',
+    kidName:"Child's name", pickAvatar:'Choose a picture', delPlayer:'Delete this player', cancel:'Cancel', save:'Save',
+    delConfirm: n => 'Press again to delete ' + n + ' and the collection', needName:'Please type a name.',
+    capsAria:'Letter style', music:'Music', sound:'Sound', hexTitle:'Caught this round',
+    stageAria:'Play area: type the names to catch them', kbdAria:'Keyboard', shelfAria:'Collection',
+    leadStart:'Type the names to catch them for your collection below.', leadPause:'Press “Keep playing” when you are ready.',
+    restTitle:'Take a <span>break</span>', start:'Start', keepPlaying:'Keep playing',
+    shelfPre:'', shelfPost:"'s collection", tagline:'Letters for kids', family:'Family', leaderboard:'🏆 Leaderboard',
+    leaderboardPlain:'Leaderboard', chooseTheme:'Choose a theme', practiceLang:'Practice language', level:'Level',
+    easy:'Easy', mid:'Medium', hard:'Hard', volume:'Volume', volMusic:'🎵 Music', volVoice:'🗣️ Voice', back:'← Back',
+    moreSettings:'⚙️ Other settings', enVoice:'English voice', tryVoice:'▶ Try', bestVoice:'Best voice (automatic)', needsNet:' · needs internet',
+    rulesTitle:'⭐ How to earn stars',
+    rules:'<li>Type the same card correctly <b>5 times</b> to earn <b>1 gold star</b> (10 times 2 stars, 15 times 3 stars…).</li>'
+      + '<li>On <b>Easy</b> and <b>Medium</b>, each card counts up to <b>15 times</b> (3 stars).</li>'
+      + '<li>On <b>Hard</b> there is <b>no limit</b>.</li>'
+      + '<li>abc, ABC, ひらがな, カタカナ and 漢字 count separately. <b>Total stars</b> adds all 5 together.</li>',
+    familyName:'Family name', familyPh:'e.g. The Bongs', familyCode:'Family code', enterCode:'Enter a code from another device',
+    codePh:'e.g. ABCD1234', connect:'Connect',
+    codeNote:'The code is made automatically the first time the game opens. To share the children and their collections with another device at home, press “Enter a code from another device” there and type this code.',
+    offline:'An internet connection is needed for the family code and syncing between devices.',
+    familyNote:'The family name shows under the children’s names on the leaderboard. Every device with the same family code sees the same name.',
+    hello:'👋 Hello!', helloNote:"Please type your child's name before playing.",
+    newVersion:'🎉 New version!', newVersionNote:'LearnNow has been updated. Press “Reload” to use the newest version.', later:'Later', reload:'Reload',
+    starGain: n => '⭐ +' + n + (n === 1 ? ' star!' : ' stars!'),
+    slotAria: (w, n) => w + ', caught ' + n + (n === 1 ? ' time' : ' times'), notCaught:'Not caught yet',
+    soundOff:'Mute sounds and voice', soundOn:'Turn sounds and voice on', musicOff:'Turn music off', musicOn:'Turn music on',
+    editOf: n => 'Edit ' + n, addKid:'Add child', picture: a => 'Picture ' + a,
+    hi: n => 'Hi, ' + n + '!', collected: (a, b) => 'Collected ' + a + ' / ' + b, cardsStars: (a, s) => a + ' cards · ' + s + '⭐',
+    starsTotal: n => '⭐ ' + n + (n === 1 ? ' star' : ' stars'),
+    boardEmpty:'Nobody on the board yet. Catch your first card to get on it!', noFamily:'No family name yet',
+    all:'All', totalStars:'⭐ Total stars',
+    noteStars:'Total gold stars of each child, adding up abc, ABC, ひらがな, カタカナ and 漢字.',
+    noteWorld: m => m + ' board: top 50 children on LearnNow, by the number of different cards collected.',
+    noteHome:'Children in our family, by the number of different cards collected.',
+    notOnBoard: names => '⭐ Not on the board yet: ' + names,
+    howToJoin: (kid, fam) => 'To get on the board, ' + [kid ? "give the child a real name" : '', fam ? 'set a family name' : ''].filter(Boolean).join(' and ') + '.',
+    setFamily:'👪 Set family name', nameKid:'✏️ Name the child', loading:'Loading the leaderboard…',
+    loadFail:"Couldn't load the leaderboard. Check the internet and try again.",
+    syncLocal:'💾 Saved on this device only, not synced.', syncRead:'This account can only view, so the collection is saved on this device only.',
+    syncOff:'Lost the sync connection. The collection is still saved on this device.', syncFull:'The shared storage is full, no new children can be added.',
+    saved:'Saved.', famRemoved:'Family name removed.', saveFail:"Couldn't save online; the name is kept on this device.",
+    codeFormat:'The code is 4 letters then 4 digits, e.g. ABCD1234.', codeSame:'This device already uses that code.',
+    lvl: {
+      easy:'Easy: names of 2–4 letters, 2 at a time, moving slowly. Each card counts up to 15.',
+      mid:'Medium: names of 4–8 letters, 3 at a time. Each card counts up to 15.',
+      hard:'Hard: names of 8 letters or more, 4 at a time, moving faster. No limit on cards.' },
+  },
+  ja: {
+    pause:'ていし', play:'あそぶ', home:'ホーム', homeAria:'ホームに もどる', themeNow:'いまの テーマ',
+    choosePlayer:'👥 だれが あそぶ？', whoPlays:'だれが あそぶ？', newPlayer:'あたらしい おともだち', editPlayer:'へんしゅう',
+    kidName:'なまえ', pickAvatar:'えを えらぶ', delPlayer:'この こを けす', cancel:'やめる', save:'ほぞん',
+    delConfirm: n => 'もう いちど おすと ' + n + ' と コレクションを けします', needName:'なまえを いれてね。',
+    capsAria:'もじの しゅるい', music:'おんがく', sound:'おと', hexTitle:'この かいで あつめた かず',
+    stageAria:'なまえを うって つかまえよう', kbdAria:'キーボード', shelfAria:'コレクション',
+    leadStart:'なまえを うって、したの コレクションに あつめよう。', leadPause:'じゅんびが できたら「つづける」を おしてね。',
+    restTitle:'ちょっと <span>きゅうけい</span>', start:'はじめる', keepPlaying:'つづける',
+    shelfPre:'', shelfPost:'の コレクション', tagline:'こどもの もじれんしゅう', family:'かぞく', leaderboard:'🏆 ランキング',
+    leaderboardPlain:'ランキング', chooseTheme:'テーマを えらぶ', practiceLang:'れんしゅうする ことば', level:'レベル',
+    easy:'かんたん', mid:'ふつう', hard:'むずかしい', volume:'おんりょう', volMusic:'🎵 おんがく', volVoice:'🗣️ こえ', back:'← もどる',
+    moreSettings:'⚙️ そのほかの せってい', enVoice:'えいごの こえ', tryVoice:'▶ きいてみる', bestVoice:'いちばん いい こえ（じどう）', needsNet:'・ネットが ひつよう',
+    rulesTitle:'⭐ ほしの もらいかた',
+    rules:'<li>おなじ カードを <b>5かい</b> うつと <b>ほし 1こ</b>（10かいで 2こ、15かいで 3こ…）。</li>'
+      + '<li><b>かんたん</b>と<b>ふつう</b>：1まいの カードは <b>15かい</b>まで（ほし 3こ）。</li>'
+      + '<li><b>むずかしい</b>：<b>かぎりなし</b>。</li>'
+      + '<li>abc・ABC・ひらがな・カタカナ・漢字は べつべつに かぞえます。<b>ほしの ごうけい</b>は 5つを たした かずです。</li>',
+    familyName:'かぞくの なまえ', familyPh:'れい：たなかけ', familyCode:'かぞくの コード', enterCode:'ほかの きかいの コードを いれる',
+    codePh:'れい：ABCD1234', connect:'つなぐ',
+    codeNote:'コードは はじめて ひらいた ときに じどうで つくられます。いえの ほかの きかいで おなじ こどもと コレクションを つかうには、その きかいで「ほかの きかいの コードを いれる」を おして、この コードを いれてね。',
+    offline:'かぞくの コードと どうきには インターネットが ひつようです。',
+    familyNote:'かぞくの なまえは ランキングで こどもの なまえの したに でます。おなじ コードの きかいでは おなじ なまえが みえます。',
+    hello:'👋 こんにちは！', helloNote:'あそぶ まえに なまえを いれてね。',
+    newVersion:'🎉 あたらしい バージョン！', newVersionNote:'LearnNow が あたらしく なりました。「よみこみ」を おしてね。', later:'あとで', reload:'よみこみ',
+    starGain: n => '⭐ ほし +' + n + '！',
+    slotAria: (w, n) => w + '、' + n + 'かい', notCaught:'まだ',
+    soundOff:'おとを けす', soundOn:'おとを だす', musicOff:'おんがくを けす', musicOn:'おんがくを ながす',
+    editOf: n => n + ' を へんしゅう', addKid:'ふやす', picture: a => 'え ' + a,
+    hi: n => n + '、こんにちは！', collected: (a, b) => 'あつめた かず ' + a + ' / ' + b, cardsStars: (a, s) => a + 'まい · ' + s + '⭐',
+    starsTotal: n => '⭐ ほし ' + n,
+    boardEmpty:'まだ だれも いません。さいしょの カードを あつめよう！', noFamily:'かぞくの なまえ なし',
+    all:'ぜんぶ', totalStars:'⭐ ほしの ごうけい',
+    noteStars:'ほしの ごうけい（abc・ABC・ひらがな・カタカナ・漢字）。',
+    noteWorld: m => m + ' の ランキング：あつめた カードの かず トップ50。',
+    noteHome:'かぞくの こどもたち（あつめた カードの かず）。',
+    notOnBoard: names => '⭐ まだ ランキングに いない：' + names,
+    howToJoin: (kid, fam) => 'ランキングに のるには、' + [kid ? 'こどもの なまえ' : '', fam ? 'かぞくの なまえ' : ''].filter(Boolean).join('と') + 'を きめてね。',
+    setFamily:'👪 かぞくの なまえ', nameKid:'✏️ なまえを きめる', loading:'よみこみちゅう…',
+    loadFail:'ランキングを よみこめませんでした。インターネットを たしかめてね。',
+    syncLocal:'💾 この きかいだけに ほぞん しています。', syncRead:'みるだけの アカウントなので、この きかいだけに ほぞん します。',
+    syncOff:'どうきが きれました。この きかいには ほぞん されています。', syncFull:'データが いっぱいで、あたらしい こを ふやせません。',
+    saved:'ほぞん しました。', famRemoved:'かぞくの なまえを けしました。', saveFail:'ネットに ほぞん できませんでした。この きかいには のこっています。',
+    codeFormat:'コードは アルファベット 4つ と すうじ 4つ です（れい：ABCD1234）。', codeSame:'この きかいは もう その コードを つかっています。',
+    lvl: {
+      easy:'かんたん：2もじの なまえ、2つずつ、ゆっくり。1まいの カードは 15かいまで。',
+      mid:'ふつう：2〜4もじの なまえ、3つずつ。1まいの カードは 15かいまで。',
+      hard:'むずかしい：5もじ いじょうの なまえ、4つずつ、すこし はやい。カードは かぎりなし。' },
+    lvlKanjiEasy:'かんたん：よみかた 1〜2もじ、2つずつ、ゆっくり。1まいの カードは 15かいまで。',
+  },
+};
+const ui = (k, ...a) => { const v = (UI_TEXT[settings.lang] || UI_TEXT.en)[k]; return typeof v === 'function' ? v(...a) : v; };
+// fill every marked element with the current language (called whenever the practice language changes)
+function applyUI(){
+  document.documentElement.lang = settings.lang;
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = ui(el.dataset.t); });
+  document.querySelectorAll('[data-t-html]').forEach(el => { el.innerHTML = ui(el.dataset.tHtml); });
+  document.querySelectorAll('[data-t-aria]').forEach(el => { el.setAttribute('aria-label', ui(el.dataset.tAria)); });
+  document.querySelectorAll('[data-t-ph]').forEach(el => { el.placeholder = ui(el.dataset.tPh); });
+  document.querySelectorAll('[data-t-title]').forEach(el => { el.title = ui(el.dataset.tTitle); });
+}
 if (!settings.volScale){ settings.musicVol = Math.min(1, (store.get('settings', {}).musicVol ?? 1) / 2); settings.volScale = 1; }
 // players: each child has a name, an avatar, their own collection and level
 const AVATARS = ['👦','👧','🧒','👶','🦸','🧚','🧜‍♀️','👸','🤴','🧙','👩‍🚀','🤖','🦖','🦄','🐯','🐼','🐰','🐸','🚀','⚽','🌈','⭐','🌻','🎈','🐶','🐱','🦊','🐧','🍦','🎨'].filter(a => ICONS[a] || emojiProbe(a));
@@ -1410,7 +1518,7 @@ function buildChars(word){
   return out;
 }
 const curLevel = () => !isJa() ? LEVELS[settings.level]
-  : Object.assign({}, LEVELS[settings.level], LEVELS_JA[settings.level], curMode() === 'kanji' && settings.level === 'easy' ? { min:1, note:'Dễ: cách đọc 1–2 chữ, mỗi lần 2 chữ Hán, di chuyển chậm. Mỗi thẻ tích tối đa 15.' } : {});
+  : Object.assign({}, LEVELS[settings.level], LEVELS_JA[settings.level], curMode() === 'kanji' && settings.level === 'easy' ? { min:1 } : {});
 const pool = () => {
   const L = curLevel(), n = d => keysLen(wordOf(d));
   const items = inLang(playItems());
@@ -1614,7 +1722,7 @@ function speakSeq(parts, queue){
     parts.forEach(({ text, lang, rate, keep }) => {           // keep: say it in Vietnamese anyway (a kanji's meaning)
       if (lang === 'vi' && !keep){ text = isJa() ? jaFor(text) : enFor(text); lang = isJa() ? 'ja' : 'en'; if (!text) return; }
       const v = pickVoice(lang);
-      if (!v && lang === 'vi') return;          // no Vietnamese voice on this computer: skip the cheer
+      if (!v && lang === 'vi' && !keep) return;          // no Vietnamese voice on this computer: skip the cheer
       const u = new SpeechSynthesisUtterance(text);
       u.lang = { vi:'vi-VN', ja:'ja-JP' }[lang] || 'en-US';
       if (v) u.voice = v;
@@ -1764,7 +1872,8 @@ function pressRomaji(ch){
 // after a finished word the keyboard rests for 3 s, so the cheer and the name can be heard
 const REST_MS = 3000;
 let restUntil = 0;
-const resting = () => performance.now() < restUntil;
+let restSpeech = 0;                                             // 漢字: also wait for the reading and meaning to be said (7 s at most)
+const resting = () => performance.now() < restUntil || (performance.now() < restSpeech && speechSynthesis.speaking);
 function press(k){
   flashKey(k);
   if (state !== 'play') return;
@@ -1783,7 +1892,7 @@ function press(k){
     const fin = target.i >= target.keys.length;
     if (fin) target.done = true;
     fire(target, fin);
-    if (fin){ target = null; restUntil = performance.now() + REST_MS; }
+    if (fin){ restUntil = performance.now() + REST_MS; restSpeech = target.def.kanji ? performance.now() + 7000 : 0; target = null; }
   } else {
     target.shake = 1; sfx.miss();
   }
@@ -1823,7 +1932,7 @@ function showPopup(d, isNew, newStars){
   mk('pw', capsOf(main));
   if (d.kanji) mk('pmean', d.e + ' = ' + d.vi);
   if (isNew) mk('pnew', isJa() ? 'はじめて！' : THEMES[d.theme].fresh);
-  if (newStars > 0) mk('pstar', '⭐ Được thêm ' + newStars + ' sao!');
+  if (newStars > 0) mk('pstar', ui('starGain', newStars));
   popup.hidden = false;
   popup.classList.remove('show'); void popup.offsetWidth; popup.classList.add('show');
   clearTimeout(popT); popT = setTimeout(() => { popup.hidden = true; }, newStars > 0 ? 2600 : 1650);
@@ -1878,7 +1987,7 @@ function updateSlot(d, animate){
   b.querySelector('.nm').textContent = n ? capsOf(wordOf(d)) : '?';
   const ct = b.querySelector('.ct'); ct.hidden = n < 2; ct.textContent = '×' + n;
   const sk = b.querySelector('.sk'), k = cardStars(n); sk.hidden = !k; sk.textContent = '★' + k;
-  b.setAttribute('aria-label', n ? `${wordOf(d)}, đã bắt ${n} lần` : 'Chưa bắt được');
+  b.setAttribute('aria-label', n ? ui('slotAria', wordOf(d), n) : ui('notCaught'));
   if (animate){ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
   const shown = inLang(playItems()), got = shown.filter(a => counts[ck(a)]).length;
   $('#shelfCount').innerHTML = `<b>${got}</b> / ${shown.length}`;
@@ -2154,19 +2263,20 @@ const UI_ICONS = {
 };
 function syncButtons(){
   $('#pauseBtn').innerHTML = state === 'play' ? UI_ICONS.pause : UI_ICONS.play;
-  $('#pauseBtn').setAttribute('aria-label', state === 'play' ? 'Tạm dừng' : 'Chơi');
+  $('#pauseBtn').setAttribute('aria-label', ui(state === 'play' ? 'pause' : 'play'));
   const sb = $('#soundBtn'), mb = $('#musicBtn');
   sb.innerHTML = settings.sound ? UI_ICONS.sound : UI_ICONS.mute; sb.classList.toggle('off', !settings.sound);
-  sb.setAttribute('aria-label', settings.sound ? 'Tắt tiếng hiệu ứng và giọng đọc' : 'Bật tiếng hiệu ứng và giọng đọc');
+  sb.setAttribute('aria-label', ui(settings.sound ? 'soundOff' : 'soundOn'));
   mb.innerHTML = settings.music ? UI_ICONS.music : UI_ICONS.musicOff; mb.classList.toggle('off', !settings.music);
-  mb.setAttribute('aria-label', settings.music ? 'Tắt nhạc nền' : 'Bật nhạc nền');
+  mb.setAttribute('aria-label', ui(settings.music ? 'musicOff' : 'musicOn'));
   const hm = $('#homeMusic'); hm.innerHTML = mb.innerHTML; hm.className = mb.className; hm.setAttribute('aria-label', mb.getAttribute('aria-label'));
 }
 function syncSeg(){
   document.querySelectorAll('.seg[data-key]').forEach(seg => {
     seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(settings[seg.dataset.key] === b.dataset.v)));
   });
-  $('#levelNote').textContent = curLevel().note;
+  $('#levelNote').textContent = curMode() === 'kanji' && settings.level === 'easy' ? ui('lvlKanjiEasy') || ui('lvl').easy : ui('lvl')[settings.level];
+  applyUI();
   kbd.hidden = false;                                         // the helper keyboard is always shown
   labelKeys();
   $('#capsBtn').textContent = isJa() ? ({ kata:'ア', kanji:'漢' }[settings.kana] || 'あ') : (settings.caps === 'upper' ? 'ABC' : 'abc');
@@ -2181,13 +2291,13 @@ const SAY = {
 };
 let ovMode = 'start';
 const leadText = () => ovMode === 'start'
-  ? 'Gõ đúng tên để bắt về bộ sưu tập bên dưới.'
-  : 'Bấm Chơi tiếp khi con sẵn sàng nhé.';
+  ? ui('leadStart')
+  : ui('leadPause');
 function openOverlay(mode){
   ovMode = mode;
   state = mode === 'start' ? 'menu' : 'paused';
-  $('#ovTitle').innerHTML = mode === 'start' ? 'Learn<span>Now</span>' : 'Nghỉ <span>một chút</span>';
-  $('#goBtn').textContent = mode === 'start' ? 'Bắt đầu' : 'Chơi tiếp';
+  $('#ovTitle').innerHTML = mode === 'start' ? 'Learn<span>Now</span>' : ui('restTitle');
+  $('#goBtn').textContent = ui(mode === 'start' ? 'start' : 'keepPlaying');
   overlay.hidden = false; syncSeg(); syncButtons(); syncPlayer();
 }
 
@@ -2214,13 +2324,13 @@ function renderPlayers(){
     b.append(av, nm, pc);
     b.addEventListener('click', () => { switchPlayer(p.id); closeMenu(); });
     const ed = document.createElement('button');
-    ed.className = 'edit'; setIcon(ed, '✏️'); ed.setAttribute('aria-label', 'Sửa tên và hình của ' + p.name);
+    ed.className = 'edit'; setIcon(ed, '✏️'); ed.setAttribute('aria-label', ui('editOf', p.name));
     ed.addEventListener('click', () => openEditor(p.id));
     w.append(b, ed);
     box.appendChild(w);
   });
   const add = document.createElement('button');
-  add.className = 'pl add'; add.innerHTML = '<span class="av">+</span><span class="nm">Thêm bé</span>';
+  add.className = 'pl add'; add.innerHTML = '<span class="av">+</span><span class="nm"></span>'; add.lastChild.textContent = ui('addKid');
   add.addEventListener('click', () => { audio(); speak('Thêm bạn chơi mới', 'vi'); openEditor(null); });
   box.appendChild(add);
 }
@@ -2248,7 +2358,7 @@ function renderIcons(){
   const g = $('#pIcons'); g.innerHTML = '';
   AVATARS.forEach(a => {
     const b = document.createElement('button');
-    setIcon(b, a); b.setAttribute('aria-pressed', String(a === pickIcon)); b.setAttribute('aria-label', 'Hình ' + a);
+    setIcon(b, a); b.setAttribute('aria-pressed', String(a === pickIcon)); b.setAttribute('aria-label', ui('picture', a));
     b.addEventListener('click', () => { pickIcon = a; renderIcons(); });
     g.appendChild(b);
   });
@@ -2258,18 +2368,18 @@ function openEditor(id, where){
   const p = id ? players.find(q => q.id === id) : null;
   const used = new Set(players.map(q => q.icon));
   $('#pName').value = p && (where !== 'modal' || hasOwnName(p.name)) ? p.name : '';
-  $('#pName').placeholder = 'Tên của bé';
+  $('#pName').placeholder = ui('kidName');
   $('#edMsg').textContent = '';
   pickIcon = p ? p.icon : (AVATARS.find(a => !used.has(a)) || AVATARS[0]);
   renderIcons();
   clearTimeout(delArm); delArm = 0;
   const del = $('#pDelete');
-  del.hidden = !p || players.length < 2; del.textContent = 'Xoá người chơi này'; del.classList.remove('armed');
-  $('#edTitle').textContent = p ? 'Sửa người chơi' : 'Thêm bạn chơi mới';
+  del.hidden = !p || players.length < 2; del.textContent = ui('delPlayer'); del.classList.remove('armed');
+  $('#edTitle').textContent = ui(p ? 'editPlayer' : 'newPlayer');
   const ed = $('#editor');
   $('#pCancel').hidden = where === 'modal';
   if (where === 'modal'){                                       // the "name your child first" popup
-    $('#edTitle').textContent = 'Tên của bé';
+    $('#edTitle').textContent = ui('kidName');
     del.hidden = true;
     $('#modalSlot').appendChild(ed); $('#nameModal').hidden = false;
   } else if (where === 'home'){
@@ -2304,7 +2414,7 @@ document.addEventListener('pointerdown', e => {
 function saveEditor(){
   const name = $('#pName').value.trim().slice(0, 14);
   if ((!editingId || $('#editor').parentNode.id === 'modalSlot') && !hasOwnName(name)){
-    $('#edMsg').textContent = 'Hãy nhập tên của bé nhé.'; $('#pName').focus(); return;
+    $('#edMsg').textContent = ui('needName'); $('#pName').focus(); return;
   }
   if (editingId){
     const p = players.find(q => q.id === editingId);
@@ -2325,8 +2435,8 @@ $('#pDelete').addEventListener('click', () => {
   const b = $('#pDelete'), p = players.find(q => q.id === editingId);
   if (!p || players.length < 2) return;
   if (!delArm){
-    b.textContent = 'Bấm lần nữa để xoá ' + p.name + ' và bộ sưu tập'; b.classList.add('armed');
-    delArm = setTimeout(() => { delArm = 0; b.textContent = 'Xoá người chơi này'; b.classList.remove('armed'); }, 3500);
+    b.textContent = ui('delConfirm', p.name); b.classList.add('armed');
+    delArm = setTimeout(() => { delArm = 0; b.textContent = ui('delPlayer'); b.classList.remove('armed'); }, 3500);
     return;
   }
   clearTimeout(delArm); delArm = 0;
@@ -2347,7 +2457,7 @@ function syncTheme(){
   if (!$('#home').hidden) renderHome();
   const t = themeOf(settings.theme);
   setIcon($('#themeIcon'), t.icon);
-  $('#themeTitle').textContent = t.vi;
+  $('#themeTitle').textContent = tname(t);
 }
 function switchTheme(k){
   if (k === settings.theme) return;
@@ -2384,11 +2494,11 @@ document.querySelectorAll('.seg[data-key]').forEach(seg => seg.addEventListener(
   settings[key] = b.dataset.v; saveSettings();
   if (key === 'level' || key === 'caps'){ me()[key] = b.dataset.v; savePlayers(); cloudSave(me()); }
   if (key === 'level') resetField();
-  if (key === 'lang'){ resetField(); renderShelf(); $('#shelfRow').scrollLeft = 0; syncTheme(); renderHome(); }
+  if (key === 'lang'){ resetField(); renderShelf(); $('#shelfRow').scrollLeft = 0; syncTheme(); renderHome(); renderPlayers(); syncButtons(); }
   if (key === 'caps' || key === 'kana'){                        // abc/ABC or ひらがな/カタカナ/漢字 also picks its language
     const lang = key === 'caps' ? 'en' : 'ja';
     if (settings.lang !== lang || key === 'kana'){ settings.lang = lang; saveSettings(); resetField(); }   // 漢字 plays other cards
-    renderShelf(); $('#shelfRow').scrollLeft = 0; syncTheme(); renderHome();
+    renderShelf(); $('#shelfRow').scrollLeft = 0; syncTheme(); renderHome(); renderPlayers(); syncButtons();
   }
   syncSeg();
   speak(SAY[key][b.dataset.v], 'vi');
@@ -2499,8 +2609,8 @@ const englishVoices = () => voices
 function fillVoiceSel(){
   const sel = $('#voiceSel'), list = englishVoices();
   sel.innerHTML = '';
-  sel.add(new Option('Tự chọn giọng tốt nhất', ''));
-  list.forEach(v => sel.add(new Option(v.name + ' · ' + v.lang + (v.localService ? '' : ' · cần mạng'), v.name)));
+  sel.add(new Option(ui('bestVoice'), ''));
+  list.forEach(v => sel.add(new Option(v.name + ' · ' + v.lang + (v.localService ? '' : ui('needsNet')), v.name)));
   sel.value = list.some(v => v.name === settings.enVoice) ? settings.enVoice : '';
 }
 const trySample = () => { audio(); speakSeq([{ text:'Hello! Let us find a cat and a dog.', lang:'en' }]); };
@@ -2535,28 +2645,28 @@ const totalOf = (list, mode = curMode()) => list.filter(d => hasName(d, mode)).l
 function renderHome(){
   const p = me();
   setIcon($('#heroAv'), p.icon);
-  $('#heroHello').textContent = 'Chào ' + p.name + '!';
+  $('#heroHello').textContent = ui('hi', p.name);
   const hf = $('#heroFamily');                                  // the family name, once set (set it via 👪 Gia đình)
   hf.textContent = familyName ? '🏠 ' + familyName : ''; hf.hidden = !familyName;
   if (document.activeElement !== $('#familyNameInput')) $('#familyNameInput').value = familyName;
-  $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + totalOf(ITEMS) + ' món';
+  $('#heroStat').textContent = ui('collected', gotOf(p, ITEMS), totalOf(ITEMS));
   const hs = $('#heroStars');
   hs.innerHTML = '';
-  hs.append(mkEl('span', 'hs-big', '⭐ ' + totalStars(p) + ' sao'));   // all four collections together
+  hs.append(mkEl('span', 'hs-big', ui('starsTotal', totalStars(p))));   // all four collections together
   // themes, "Tổng Hợp" last across the full width
   const ht = $('#homeThemes'); ht.innerHTML = '';
-  $('#homeThemesCard').hidden = curMode() === 'kanji';
-  THEME_ORDER.forEach(k => {
+  const kanji = curMode() === 'kanji';                          // 漢字: one card with the whole set
+  (kanji ? ['all'] : THEME_ORDER).forEach(k => {
     const t = themeOf(k), list = byTheme(k), got = gotOf(p, list);
     const b = mkEl('button', 'tcard' + (k === 'all' ? ' all' : ''));
-    b.setAttribute('aria-pressed', String(k === settings.theme));
+    b.setAttribute('aria-pressed', String(kanji || k === settings.theme));
     const ic = mkEl('span', 'ic'); setIcon(ic, t.icon);
     const tx = mkEl('div', 'tx'), bar = mkEl('div', 'bar'), fill = mkEl('i');
     const tot = totalOf(list);
     fill.style.width = (tot ? got / tot * 100 : 0) + '%'; bar.appendChild(fill);
-    tx.append(mkEl('div', 'tnm', t.vi), mkEl('div', 'tpc', got + ' / ' + tot), bar);
+    tx.append(mkEl('div', 'tnm', tname(t)), mkEl('div', 'tpc', got + ' / ' + tot), bar);
     b.append(ic, tx);
-    b.addEventListener('click', () => { switchTheme(k); renderHome(); });
+    b.addEventListener('click', () => { if (kanji){ audio(); sfx.pop(); return; } switchTheme(k); renderHome(); });
     ht.appendChild(b);
   });
   // players
@@ -2565,14 +2675,14 @@ function renderHome(){
     const w = mkEl('div', 'hp'), b = mkEl('button', 'tile');
     b.setAttribute('aria-pressed', String(q.id === currentId));
     const av = mkEl('span', 'av'); setIcon(av, q.icon);
-    b.append(av, mkEl('span', 'nm', q.name), mkEl('span', 'pc', gotOf(q, ITEMS) + ' món · ' + totalStars(q) + '⭐'));
+    b.append(av, mkEl('span', 'nm', q.name), mkEl('span', 'pc', ui('cardsStars', gotOf(q, ITEMS), totalStars(q))));
     b.addEventListener('click', () => { switchPlayer(q.id); showHomeView('main'); });
-    const ed = mkEl('button', 'edit'); setIcon(ed, '✏️'); ed.setAttribute('aria-label', 'Sửa tên và hình của ' + q.name);
+    const ed = mkEl('button', 'edit'); setIcon(ed, '✏️'); ed.setAttribute('aria-label', ui('editOf', q.name));
     ed.addEventListener('click', () => openEditor(q.id, 'home'));
     w.append(b, ed); hp.appendChild(w);
   });
   const add = mkEl('button', 'tile add');
-  add.append(mkEl('span', 'av', '+'), mkEl('span', 'nm', 'Thêm bé'));
+  add.append(mkEl('span', 'av', '+'), mkEl('span', 'nm', ui('addKid')));
   add.addEventListener('click', () => { audio(); speak('Thêm bạn chơi mới', 'vi'); openEditor(null, 'home'); });
   hp.appendChild(add);
   renderRank();
@@ -2626,7 +2736,7 @@ async function loadWorld(theme, mode){
 }
 function drawRankRows(rows, total, byStars){
   const ol = $('#rankList'); ol.innerHTML = '';
-  if (!rows.length){ ol.appendChild(mkEl('li', 'rank-empty', 'Chưa có ai trên bảng. Bắt món đầu tiên để lên bảng nào!')); return; }
+  if (!rows.length){ ol.appendChild(mkEl('li', 'rank-empty', ui('boardEmpty'))); return; }
   const mine = new Set(players.map(q => q.id));
   let place = 0, prev = -1;
   rows.forEach((r, i) => {
@@ -2640,7 +2750,7 @@ function drawRankRows(rows, total, byStars){
     // the child's total stars, once there is at least one
     if (!byStars && r.stars > 0){ nm.append(' '); nm.append(mkEl('span', 'kstar', '★ ' + r.stars)); }
     who.append(nm);
-    who.append(mkEl('div', r.family ? 'fam' : 'fam none', r.family || 'Chưa đặt tên gia đình'));
+    who.append(mkEl('div', r.family ? 'fam' : 'fam none', r.family || ui('noFamily')));
     who.append(bar);
     li.append(pos, av, who, mkEl('span', 'n', byStars ? r.n + ' ⭐' : r.n + ' / ' + total));
     ol.appendChild(li);
@@ -2668,14 +2778,14 @@ function renderRank(){
   const scope = fb ? 'world' : 'home';                           // one board for everyone; our family only when offline
   const tabs = $('#rankTabs'); tabs.innerHTML = '';
   ['all', 'zoo', 'car', 'food', 'job'].forEach(k => {
-    const b = mkEl('button', null, k === 'all' ? 'Tất cả' : themeOf(k, rankMode).vi);
+    const b = mkEl('button', null, k === 'all' ? ui('all') : tname(themeOf(k, rankMode)));
     b.setAttribute('aria-pressed', String(k === rankTheme));
     b.addEventListener('click', () => { rankTheme = k; renderRank(); });
     tabs.appendChild(b);
   });
   const modes = $('#rankModes'); modes.innerHTML = '';
   [...MODES, 'stars'].forEach(m => {
-    const b = mkEl('button', null, m === 'stars' ? '⭐ Tổng sao' : MODE_LABEL[m]);
+    const b = mkEl('button', null, m === 'stars' ? ui('totalStars') : MODE_LABEL[m]);
     b.setAttribute('aria-pressed', String(m === rankMode));
     b.addEventListener('click', () => { rankMode = m; renderRank(); });
     modes.appendChild(b);
@@ -2684,21 +2794,21 @@ function renderRank(){
   tabs.hidden = byStars || rankMode === 'kanji';               // the star board and 漢字 have no theme tabs
   const list = byTheme(rankMode === 'kanji' ? 'all' : rankTheme), total = byStars ? MODES.length * 5 : totalOf(list, rankMode);
   $('#rankNote').textContent = byStars
-    ? 'Tổng số sao vàng của mỗi bé, cộng cả 5 bộ abc, ABC, ひらがな, カタカナ, 漢字.'
+    ? ui('noteStars')
     : scope === 'world'
-    ? 'Bảng ' + MODE_LABEL[rankMode] + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm.'
-    : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
+    ? ui('noteWorld', MODE_LABEL[rankMode])
+    : ui('noteHome');
   // a clear call-out on top when some of our children can't be on the board yet
   const missing = players.filter(q => !onBoard(q));
   const hint = $('#rankHint'); hint.innerHTML = '';
   hint.hidden = !(scope === 'world' && missing.length);
   if (!hint.hidden){
     const needKid = missing.some(q => !hasOwnName(q.name));
-    hint.append(mkEl('div', 'rh-title', '⭐ Chưa lên bảng: ' + missing.map(q => q.name).join(', ')));
-    hint.append(mkEl('div', null, 'Muốn lên bảng, hãy ' + [needKid ? 'đặt tên riêng cho bé' : '', familyName ? '' : 'đặt tên gia đình'].filter(Boolean).join(' và ') + '.'));
+    hint.append(mkEl('div', 'rh-title', ui('notOnBoard', missing.map(q => q.name).join(', '))));
+    hint.append(mkEl('div', null, ui('howToJoin', needKid, !familyName)));
     const acts = mkEl('div', 'rh-acts');
-    if (!familyName){ const b = mkEl('button', 'hbtn small', '👪 Đặt tên gia đình'); b.addEventListener('click', () => { showHomeView('family'); const i = $('#familyNameInput'); i.focus(); i.select(); }); acts.append(b); }
-    if (needKid){ const b = mkEl('button', 'hbtn small', '✏️ Đặt tên cho bé'); const kid = missing.find(q => !hasOwnName(q.name));
+    if (!familyName){ const b = mkEl('button', 'hbtn small', ui('setFamily')); b.addEventListener('click', () => { showHomeView('family'); const i = $('#familyNameInput'); i.focus(); i.select(); }); acts.append(b); }
+    if (needKid){ const b = mkEl('button', 'hbtn small', ui('nameKid')); const kid = missing.find(q => !hasOwnName(q.name));
       b.addEventListener('click', () => openEditor(kid.id, 'home')); acts.append(b); }
     hint.append(acts);
   }
@@ -2710,13 +2820,13 @@ function renderRank(){
   if ($('#homeRankView').hidden) return;                        // only fetch while the board is on screen
   const want = rankMode === 'kanji' ? 'all' : rankTheme;
   const wantMode = rankMode;
-  if (!worldCache[byStars ? 'stars' : wantMode + ':' + want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
+  if (!worldCache[byStars ? 'stars' : wantMode + ':' + want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', ui('loading'))); }
   // each row also shows the child's total stars, taken from the star board
   (byStars ? loadStars() : Promise.all([loadWorld(want, wantMode), loadStars().catch(() => [])]).then(([rows, starRows]) => {
     const st = Object.fromEntries(starRows.map(r => [r.id, r.n]));
     return rows.map(r => Object.assign({}, r, { stars: st[r.id] || 0 }));
   })).then(rows => { if (want === rankTheme && wantMode === rankMode) drawRankRows(rows, total, byStars); })
-    .catch(() => { if (want !== rankTheme) return; $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Chưa tải được bảng xếp hạng chung. Kiểm tra mạng rồi thử lại.')); });
+    .catch(() => { if (want !== rankTheme) return; $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', ui('loadFail'))); });
 }
 $('#toPlayers').addEventListener('click', () => { audio(); speak('Chọn người chơi', 'vi'); showHomeView('players'); });
 setIcon($('#famIcon'), '👪'); setIcon($('#famIcon2'), '👪');
@@ -2878,10 +2988,10 @@ function setFamilyName(name){
 function saveFamilyName(){
   const name = $('#familyNameInput').value.trim().slice(0, 24);
   setFamilyName(name);
-  $('#familyNameMsg').textContent = name ? 'Đã lưu.' : 'Đã xoá tên gia đình.';
+  $('#familyNameMsg').textContent = ui(name ? 'saved' : 'famRemoved');
   setTimeout(() => { $('#familyNameMsg').textContent = ''; }, 2500);
   if (fb) fb.fs.setDoc(fb.fs.doc(fb.db, 'families', familyCode), { name }).catch(() => {
-    $('#familyNameMsg').textContent = 'Chưa lưu lên mạng được, tên vẫn giữ trên máy này.';
+    $('#familyNameMsg').textContent = ui('saveFail');
   });
   audio(); speak(name ? 'Đã lưu tên gia đình' : 'Đã xoá tên gia đình', 'vi');
 }
@@ -2889,8 +2999,8 @@ $('#familyNameSave').addEventListener('click', saveFamilyName);
 function joinFamily(){
   const code = $('#familyInput').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   const msg = $('#familyMsg');
-  if (!isFamilyCode(code)){ msg.textContent = 'Mã gồm 4 chữ cái rồi 4 chữ số, ví dụ ABCD1234.'; return; }
-  if (code === familyCode){ msg.textContent = 'Máy này đang dùng mã đó rồi.'; return; }
+  if (!isFamilyCode(code)){ msg.textContent = ui('codeFormat'); return; }
+  if (code === familyCode){ msg.textContent = ui('codeSame'); return; }
   familyCode = code; store.set('familyCode', code);
   store.set('cloudMerged', false);                              // bring this device's children into that family
   msg.textContent = '';
@@ -2902,7 +3012,7 @@ $('#familyJoinBtn').addEventListener('click', () => { $('#familyJoin').hidden = 
 $('#familyGo').addEventListener('click', joinFamily);
 connectCloud();
 // a newer copy on the server: offer to reload it (the build stamps APP_VERSION; checked only on a web address)
-const APP_VERSION = '20260927213806';
+const APP_VERSION = '20260927214705';
 let newVersion = '', updSnooze = 0;
 async function checkUpdate(){
   if (!/^https?:$/.test(location.protocol) || !/^\d+$/.test(APP_VERSION) || newVersion) return offerUpdate();
