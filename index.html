@@ -68,6 +68,7 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 .hero-stars b{color:var(--ink)}
 #shelfStars .stars{font-size:17px}
 .pstar{display:inline-block;margin:8px 0 0 6px;background:var(--sun);color:var(--ink);font:800 17px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--sun-deep)}
+.madeby{text-align:center;font:700 14px/1.4 var(--text);color:var(--muted);padding-top:6px}
 .pnew{display:inline-block;margin-top:8px;background:var(--grass);color:#fff;font:800 16px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--grass-deep)}
 
 /* overlay */
@@ -96,6 +97,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .kana{display:grid;grid-auto-flow:column;grid-template-rows:repeat(5,auto);grid-auto-columns:minmax(42px,62px);gap:6px;width:max-content;max-width:100%;margin:0 auto;overflow-x:auto;padding-bottom:4px}
 .kana .key{max-width:none;height:48px;font:700 25px/1 "Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif}
 .kana .grp{margin-left:10px}
+.kbd-en{display:flex;flex-direction:column;gap:8px}
 .krow{display:flex;gap:8px;justify-content:center}
 .krow:nth-child(2){padding-inline:4%}
 .krow:nth-child(3){padding-inline:13%}
@@ -221,6 +223,7 @@ details.more[open] summary{margin-bottom:14px}
 .tile.add .av{font:800 46px/1 var(--display);color:var(--sky)}
 .hp .edit{position:absolute;top:-6px;right:-6px}
 .rank li.home{background:#FFF8DD}
+.rank .kstar{display:inline-block;margin-left:4px;padding:2px 8px 1px;border-radius:999px;background:#FFF3C4;color:#9A6B00;font:800 14px/1.2 var(--display);vertical-align:2px}
 .rank .fam.none{font-style:italic;opacity:.75}
 .rank .fam{font:700 12.5px/1.2 var(--text);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank li.rank-empty{display:block;padding:22px 16px;text-align:center;color:var(--muted);font:700 16px/1.5 var(--text)}
@@ -392,6 +395,7 @@ details.more[open] summary{margin-bottom:14px}
     </div>
 
     <div id="homeEditSlot" class="hcard" hidden></div>
+    <footer class="madeby">Made by fb Hữu Phú</footer>
   </div>
   <div id="nameModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalHi">
     <div class="modal-card">
@@ -896,6 +900,14 @@ const MEL = [
 ];
 const ROOTS = [48,45,41,43, 48,41,43,48];
 const CHORD = [[0,4,7],[0,3,7],[0,4,7],[0,4,7], [0,4,7],[0,4,7],[0,4,7],[0,4,7]];
+// Japanese mode: "Sakura Sakura" (traditional folk song) on a koto-like pluck, over an A / E drone
+const MEL_JA = [
+  69,0,69,0, 71,0,0,0,     69,0,69,0, 71,0,0,0,      // さくら さくら
+  69,0,71,0, 72,0,71,0,    69,0,71,0, 69,0,65,0,     // やよいの そらは
+  64,0,60,0, 64,0,65,0,    64,0,64,0, 60,0,59,0,     // みわたす かぎり
+  69,0,71,0, 72,0,71,0,    69,0,71,0, 69,0,65,0      // かすみか くもか
+];
+const ROOTS_JA = [45,45,45,45, 40,40,45,45];
 const mtof = m => 440 * Math.pow(2, (m - 69) / 12);
 const music = { timer:null, step:0, next:0 };
 const STEP = 60 / 76 / 2;
@@ -925,7 +937,20 @@ function scheduleMusic(){
   while (music.next < ac.currentTime + .2){ playStep(music.step, music.next); music.next += STEP; music.step = (music.step + 1) % 64; }
 }
 function playStep(i, t0){
-  const bar = i >> 3, s = i & 7, root = ROOTS[bar];
+  const bar = i >> 3, s = i & 7;
+  if (isJa()){                                                  // koto-like pluck, open fifths, no chords
+    const m = MEL_JA[i], root = ROOTS_JA[bar];
+    if (m){
+      voice(mtof(m), t0, 1.5, 'triangle', .06, musicBus);      // plucked string
+      voice(mtof(m + 12), t0, .22, 'sine', .018, musicBus);    // bright attack
+    }
+    if (s === 0){
+      voice(mtof(root), t0, STEP * 7, 'triangle', .04, musicBus);
+      pad(mtof(root + 12), t0, STEP * 8, .012); pad(mtof(root + 19), t0, STEP * 8, .009);
+    }
+    return;
+  }
+  const root = ROOTS[bar];
   const m = MEL[i];
   if (m){
     voice(mtof(m), t0, 1.6, 'sine', .055, musicBus);           // music-box note with a long ring
@@ -1961,7 +1986,10 @@ function drawRankRows(rows, total, byStars){
     const av = mkEl('span', 'av'); setIcon(av, r.icon);
     const who = mkEl('div', 'who'), bar = mkEl('div', 'bar'), fill = mkEl('i');
     fill.style.width = (total ? Math.min(1, r.n / total) * 100 : 0) + '%'; bar.appendChild(fill);
-    who.append(mkEl('div', 'nm', r.name));
+    const nm = mkEl('div', 'nm', r.name);
+    // the child's total stars, once there is at least one
+    if (!byStars && r.stars > 0){ nm.append(' '); nm.append(mkEl('span', 'kstar', '★ ' + r.stars)); }
+    who.append(nm);
     who.append(mkEl('div', r.family ? 'fam' : 'fam none', r.family || 'Chưa đặt tên gia đình'));
     who.append(bar);
     li.append(pos, av, who, mkEl('span', 'n', byStars ? r.n + ' ⭐' : r.n + ' / ' + total));
@@ -2006,9 +2034,9 @@ function renderRank(){
   tabs.hidden = byStars;                                        // the star board has no theme tabs
   const list = byTheme(rankTheme), total = byStars ? MODES.length * 5 : totalOf(list, rankMode);
   $('#rankNote').textContent = byStars
-    ? 'Tổng số sao vàng của mỗi bé. Mỗi bộ abc, ABC, ひらがな, カタカナ: 5 thẻ được 1 sao, 15 thẻ 3 sao, 30 thẻ 5 sao. Bé nhà mình được tô màu.'
+    ? 'Tổng số sao vàng của mỗi bé. Mỗi bộ abc, ABC, ひらがな, カタカナ: 5 thẻ được 1 sao, 15 thẻ 3 sao, 30 thẻ 5 sao.'
     : scope === 'world'
-    ? 'Bảng ' + MODE_LABEL[rankMode] + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
+    ? 'Bảng ' + MODE_LABEL[rankMode] + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm.'
     : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
   // a clear call-out on top when some of our children can't be on the board yet
   const missing = players.filter(q => !onBoard(q));
@@ -2025,7 +2053,7 @@ function renderRank(){
     hint.append(acts);
   }
   if (scope === 'home'){
-    drawRankRows(players.map(q => ({ id: q.id, name: q.name, icon: q.icon, family: familyName,
+    drawRankRows(players.map(q => ({ id: q.id, name: q.name, icon: q.icon, family: familyName, stars: totalStars(q),
       n: byStars ? totalStars(q) : gotOf(q, list, rankMode) })).sort((a, b) => b.n - a.n), total, byStars);
     return;
   }
@@ -2033,7 +2061,11 @@ function renderRank(){
   const want = rankTheme;
   const wantMode = rankMode;
   if (!worldCache[byStars ? 'stars' : wantMode + ':' + want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
-  (byStars ? loadStars() : loadWorld(want, wantMode)).then(rows => { if (want === rankTheme && wantMode === rankMode) drawRankRows(rows, total, byStars); })
+  // each row also shows the child's total stars, taken from the star board
+  (byStars ? loadStars() : Promise.all([loadWorld(want, wantMode), loadStars().catch(() => [])]).then(([rows, starRows]) => {
+    const st = Object.fromEntries(starRows.map(r => [r.id, r.n]));
+    return rows.map(r => Object.assign({}, r, { stars: st[r.id] || 0 }));
+  })).then(rows => { if (want === rankTheme && wantMode === rankMode) drawRankRows(rows, total, byStars); })
     .catch(() => { if (want !== rankTheme) return; $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Chưa tải được bảng xếp hạng chung. Kiểm tra mạng rồi thử lại.')); });
 }
 $('#toPlayers').addEventListener('click', () => { audio(); speak('Chọn người chơi', 'vi'); showHomeView('players'); });
