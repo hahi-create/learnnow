@@ -219,6 +219,8 @@ details.more[open] summary{margin-bottom:14px}
 .rank-hint{background:#FFF3C4;border:3px solid var(--sun);border-radius:18px;padding:14px 16px;margin-bottom:14px;color:var(--ink);font:700 17px/1.45 var(--text)}
 .rank-hint .rh-title{font:800 21px/1.15 var(--display);padding-top:3px;margin-bottom:4px}
 .rank-hint .rh-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rank-modes{margin-bottom:10px;max-width:520px}
+.rank-modes button{font-family:var(--text),"Zen Maru Gothic",sans-serif}
 .rank-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .rank-tabs button{border:0;border-radius:999px;padding:9px 13px 8px;font:700 14px/1 var(--text);background:#EEF6FC;color:var(--ink);cursor:pointer}
 .rank-tabs button[aria-pressed="true"]{background:var(--sky);color:#fff}
@@ -352,6 +354,7 @@ details.more[open] summary{margin-bottom:14px}
       <div class="hv-head"><button class="btn-sec" data-back>← Quay lại</button><h2>🏆 Bảng xếp hạng</h2></div>
       <section class="hcard">
         <div id="rankHint" class="rank-hint" hidden></div>
+        <div id="rankModes" class="seg rank-modes"></div>
         <div id="rankTabs" class="rank-tabs"></div>
         <ol id="rankList" class="rank"></ol>
         <p id="rankNote" class="fine">Xếp hạng theo số món khác nhau mỗi bé đã sưu tầm.</p>
@@ -785,15 +788,33 @@ const LANG = () => isJa() ? 'ja' : 'en';
 const wordOf = d => isJa() ? (d.ja || '') : d.en;
 const toKata = s => s.replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
 // each language keeps its own collection: English under the item id, Japanese under "ja:" + id
-const keyFor = (d, lang = settings.lang) => (lang === 'ja' ? 'ja:' : '') + d.id;
+// four ways to play, each with its own collection and leaderboard: abc, ABC, ひらがな, カタカナ
+const MODES = ['abc', 'ABC', 'hira', 'kata'];
+const MODE_LABEL = { abc:'abc', ABC:'ABC', hira:'ひらがな', kata:'カタカナ' };
+const MODE_KEY = { abc:'', ABC:'up:', hira:'ja:', kata:'kata:' };   // collection keys (abc keeps the plain id)
+const MODE_BOARD = { abc:'', ABC:'-up', hira:'-ja', kata:'-kata' };  // leaderboard/<child id><suffix>
+const curMode = () => isJa() ? (settings.kana === 'kata' ? 'kata' : 'hira') : (settings.caps === 'upper' ? 'ABC' : 'abc');
+const keyFor = (d, mode = curMode()) => MODE_KEY[mode] + d.id;
 const ck = d => keyFor(d);
-const hasName = (d, lang = settings.lang) => lang === 'ja' ? !!d.ja : true;
+const hasName = (d, mode = curMode()) => (mode === 'hira' || mode === 'kata') ? !!d.ja : true;
 const inLang = list => list.filter(d => hasName(d));
 const keysLen = w => w.replace(/ /g, '').length;
 const capsOf = s => isJa() ? (settings.kana === 'kata' ? toKata(s) : s) : (settings.caps === 'upper' ? s.toLocaleUpperCase('vi') : s);
+// the keys that type one kana: が is か then ゛, ぱ is は then ゜, everything else one key
+function kanaKeys(ch){
+  const n = ch.normalize('NFD');
+  if (n.length === 2 && (n[1] === '\u3099' || n[1] === '\u309A')) return [n[0], n[1] === '\u3099' ? '゛' : '゜'];
+  return [ch];
+}
+// one entry per shown character: ki = index of its first key, kn = how many keys it takes
 function buildChars(word){
   const out = []; let ki = 0;
-  for (const ch of word) out.push(ch === ' ' ? { d:' ', k:null, ki:-1 } : { d:ch, k: isJa() ? ch : baseOf(ch), ki:ki++ });
+  for (const ch of word){
+    if (ch === ' '){ out.push({ d:' ', k:null, ks:[], kn:0, ki:-1 }); continue; }
+    const ks = isJa() ? kanaKeys(ch) : [baseOf(ch)];
+    out.push({ d:ch, k: isJa() ? ch : ks[0], ks, kn: ks.length, ki });
+    ki += ks.length;
+  }
   return out;
 }
 const pool = () => {
@@ -1016,7 +1037,7 @@ function spawn(){
   const onIds = new Set(animals.map(a => a.def.id));
   const firsts = new Set(animals.filter(a => !a.done).map(a => a.keys[a.i]));
   let cands = pool().filter(d => !onIds.has(d.id) && d.id !== lastId);
-  const distinct = cands.filter(d => { const w = wordOf(d); return !firsts.has(isJa() ? w[0] : baseOf(w[0])); });
+  const distinct = cands.filter(d => { const w = wordOf(d); return !firsts.has(isJa() ? kanaKeys(w[0])[0] : baseOf(w[0])); });
   if (distinct.length) cands = distinct;
   if (!cands.length) return false;
   const bag = [];
@@ -1025,7 +1046,7 @@ function spawn(){
   const word = wordOf(def), chars = buildChars(word);
   const ang = Math.random() * Math.PI * 2, sp = LEVELS[settings.level].speed;
   const a = {
-    def, word, chars, keys: chars.filter(c => c.k).map(c => c.k), i:0, done:false,
+    def, word, chars, keys: chars.flatMap(c => c.ks), i:0, done:false,
     x:0, y:0, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp,
     age:0, phase: Math.random() * 6.28, shake:0, flash:0
   };
@@ -1072,10 +1093,12 @@ let romaji = '';
 function pressRomaji(ch){
   if (state !== 'play' || resting()){ romaji = ''; return; }
   romaji += ch;
-  const expected = target ? [target.keys[target.i]] : animals.filter(a => !a.done).map(a => a.keys[a.i]);
-  const hit = expected.find(kana => (ROMAJI[kana] || []).includes(romaji));
-  if (hit){ romaji = ''; press(hit); return; }
-  if (expected.some(kana => (ROMAJI[kana] || []).some(r => r.startsWith(romaji)))) return;   // keep typing
+  // what may come next: the rest of the kana being typed, or the first kana of any word ("gi" types き then ゛)
+  const nextOf = a => { const c = a.chars.find(c => c.kn && a.i >= c.ki && a.i < c.ki + c.kn); return c && { kana: c.k, keys: c.ks.slice(a.i - c.ki) }; };
+  const opts = (target ? [target] : animals.filter(a => !a.done)).map(nextOf).filter(Boolean);
+  const hit = opts.find(o => (ROMAJI[o.kana] || []).includes(romaji));
+  if (hit){ romaji = ''; hit.keys.forEach(k => press(k)); return; }
+  if (opts.some(o => (ROMAJI[o.kana] || []).some(r => r.startsWith(romaji)))) return;   // keep typing
   romaji = ''; press('\u0000');                                 // no match: the usual "wrong" sound
 }
 // after a finished word the keyboard rests for 3 s, so the cheer and the name can be heard
@@ -1093,7 +1116,9 @@ function press(k){
     target = c;
   }
   if (target.keys[target.i] === k){
-    if (settings.level !== 'hard') speakLetter(k);          // on Khó only the finished word is read
+    // say the key; when it finishes a kana with ゛/゜ say the whole kana (き… then ぎ)
+    const c = target.chars.find(c => c.kn && target.i >= c.ki && target.i < c.ki + c.kn);
+    if (settings.level !== 'hard') speakLetter(c && target.i + 1 === c.ki + c.kn ? c.k : k);   // on Khó only the finished word is read
     target.i++;
     const fin = target.i >= target.keys.length;
     if (fin) target.done = true;
@@ -1197,7 +1222,7 @@ const kbdJa = document.createElement('div'); kbdJa.className = 'kana';
 kbd.append(kbdEn, kbdJa);
 // あいうえお down the first column, かきくけこ in the next, and so on from left to right
 const KANA_COLS = ['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','や ゆ よ','らりるれろ','わ を ん',
-  'がぎぐげご','ざじずぜぞ','だぢづでど','ばびぶべぼ','ぱぴぷぺぽ','ゃ ゅ ょ','っー   '];
+  '゛゜ー  ','ゃゅょっ '];                                         // が = か + ゛, ぱ = は + ゜
 KANA_COLS.forEach((col, ci) => {
   for (const k of col){
     if (k === ' '){ kbdJa.appendChild(mkBlank(ci)); continue; }
@@ -1379,7 +1404,7 @@ function drawAnimal(a){
   disp.forEach((s, j) => {
     const c = a.chars[j];
     if (c.k){
-      const typed = c.ki < a.i, isNext = c.ki === a.i && !a.done;
+      const typed = c.ki + c.kn <= a.i, isNext = !typed && c.ki <= a.i && !a.done;
       if (isNext && (locked || showFirst)){
         ctx.fillStyle = locked ? C.coral : 'rgba(255,201,60,.9)';
         roundRect(cx + 1, ly + h - 7, ws[j] - 2, 3.5, 1.5); ctx.fill();
@@ -1698,13 +1723,13 @@ $('#soundBtn').addEventListener('click', () => {
 $('#capsBtn').addEventListener('click', () => {
   if (isJa()){                                                  // hiragana <-> katakana
     settings.kana = settings.kana === 'kata' ? 'hira' : 'kata'; saveSettings();
-    THEME_ITEMS.forEach(d => updateSlot(d, false));
+    renderShelf();
     syncSeg(); audio(); speak(SAY.kana[settings.kana], 'vi');
     return;
   }
   settings.caps = settings.caps === 'upper' ? 'lower' : 'upper'; saveSettings();
   me().caps = settings.caps; savePlayers(); cloudSave(me());
-  THEME_ITEMS.forEach(d => updateSlot(d, false));
+  renderShelf();
   syncSeg(); audio(); speak(SAY.caps[settings.caps], 'vi');
 });
 $('#musicBtn').addEventListener('click', () => {
@@ -1789,7 +1814,7 @@ renderShelf();
 
 // ---------- home screen: shown first, and from the pause card ----------
 const mkEl = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
-let rankTheme = 'all';
+let rankTheme = 'all', rankMode = 'abc';
 function showHomeView(v){
   $('#homeMain').hidden = v !== 'main';
   $('#homePlayersView').hidden = v !== 'players';
@@ -1805,8 +1830,8 @@ function showHome(){
   $('#home').hidden = false;
   showHomeView('main'); syncSeg(); syncButtons(); syncPlayer();
 }
-const gotOf = (q, list, lang = settings.lang) => list.filter(d => hasName(d, lang) && (q.counts || {})[keyFor(d, lang)]).length;
-const totalOf = (list, lang = settings.lang) => list.filter(d => hasName(d, lang)).length;
+const gotOf = (q, list, mode = curMode()) => list.filter(d => hasName(d, mode) && (q.counts || {})[keyFor(d, mode)]).length;
+const totalOf = (list, mode = curMode()) => list.filter(d => hasName(d, mode)).length;
 function renderHome(){
   const p = me();
   setIcon($('#heroAv'), p.icon);
@@ -1853,17 +1878,18 @@ function renderHome(){
 // Each child's public entry is leaderboard/<child id>: name, avatar and how many different items they
 // collected per theme. It holds no family code, so it can't be used to reach anyone's collection.
 const worldCache = {};                                          // theme -> { at, rows } (refetched after 20 s)
-const scoresOf = (q, lang) => ({ zoo: gotOf(q, byTheme('zoo'), lang), car: gotOf(q, byTheme('car'), lang), food: gotOf(q, byTheme('food'), lang),
-  job: gotOf(q, byTheme('job'), lang), all: gotOf(q, ITEMS, lang) });
-const boardId = (id, lang) => lang === 'ja' ? id + '-ja' : id;     // one board per language
+const scoresOf = (q, mode) => ({ zoo: gotOf(q, byTheme('zoo'), mode), car: gotOf(q, byTheme('car'), mode), food: gotOf(q, byTheme('food'), mode),
+  job: gotOf(q, byTheme('job'), mode), all: gotOf(q, ITEMS, mode) });
+const boardId = (id, mode) => id + MODE_BOARD[mode];            // one board per way of playing
+const modeOfBoard = id => (MODES.find(m => MODE_BOARD[m] && id.endsWith(MODE_BOARD[m])) || 'abc');
 const lbSent = {};
 // a child goes on the public board only with a real name (not the default "Bé 1") and a family name
 const hasOwnName = name => !!name && !/^Bé \d+$/.test(String(name).trim());
 const onBoard = q => hasOwnName(q.name) && !!familyName;
 function publishScore(q){
   if (!fb || !q) return;
-  ['en', 'ja'].forEach(lang => {
-    const id = boardId(q.id, lang), sc = scoresOf(q, lang), key = JSON.stringify([q.name, q.icon, familyName, sc, onBoard(q)]);
+  MODES.forEach(mode => {
+    const id = boardId(q.id, mode), sc = scoresOf(q, mode), key = JSON.stringify([q.name, q.icon, familyName, sc, onBoard(q)]);
     if (lbSent[id] === key) return;                             // nothing new to tell
     lbSent[id] = key;
     const ref = fb.fs.doc(fb.db, 'leaderboard', id);
@@ -1874,20 +1900,20 @@ function publishScore(q){
   });
 }
 function unpublishScore(id){
-  ['en', 'ja'].forEach(lang => {
-    if (fb) fb.fs.deleteDoc(fb.fs.doc(fb.db, 'leaderboard', boardId(id, lang))).catch(() => {});
-    delete lbSent[boardId(id, lang)];
+  MODES.forEach(mode => {
+    if (fb) fb.fs.deleteDoc(fb.fs.doc(fb.db, 'leaderboard', boardId(id, mode))).catch(() => {});
+    delete lbSent[boardId(id, mode)];
   });
 }
-async function loadWorld(theme){
-  const lang = settings.lang, cacheKey = lang + ':' + theme;
+async function loadWorld(theme, mode){
+  const cacheKey = mode + ':' + theme;
   const c = worldCache[cacheKey];
   if (c && Date.now() - c.at < 20000) return c.rows;
   const { fs, db } = fb;
-  const snap = await fs.getDocs(fs.query(fs.collection(db, 'leaderboard'), fs.orderBy(theme, 'desc'), fs.limit(120)));
+  const snap = await fs.getDocs(fs.query(fs.collection(db, 'leaderboard'), fs.orderBy(theme, 'desc'), fs.limit(200)));
   const rows = snap.docs.map(d => { const v = d.data(); return { id: d.id, name: String(v.name || ''), icon: String(v.icon || ''), family: String(v.family || ''), n: v[theme] | 0 }; })
-    .filter(r => r.n > 0 && r.family && hasOwnName(r.name) && r.id.endsWith('-ja') === (lang === 'ja'))
-    .map(r => Object.assign(r, { id: r.id.replace(/-ja$/, '') }))
+    .filter(r => r.n > 0 && r.family && hasOwnName(r.name) && modeOfBoard(r.id) === mode)
+    .map(r => Object.assign(r, { id: r.id.slice(0, r.id.length - MODE_BOARD[mode].length) }))
     .slice(0, 50);
   worldCache[cacheKey] = { at: Date.now(), rows };
   return rows;
@@ -1920,9 +1946,16 @@ function renderRank(){
     b.addEventListener('click', () => { rankTheme = k; renderRank(); });
     tabs.appendChild(b);
   });
-  const list = byTheme(rankTheme), total = totalOf(list);
+  const modes = $('#rankModes'); modes.innerHTML = '';
+  MODES.forEach(m => {
+    const b = mkEl('button', null, MODE_LABEL[m]);
+    b.setAttribute('aria-pressed', String(m === rankMode));
+    b.addEventListener('click', () => { rankMode = m; renderRank(); });
+    modes.appendChild(b);
+  });
+  const list = byTheme(rankTheme), total = totalOf(list, rankMode);
   $('#rankNote').textContent = scope === 'world'
-    ? 'Bảng ' + (isJa() ? 'tiếng Nhật' : 'tiếng Anh') + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
+    ? 'Bảng ' + MODE_LABEL[rankMode] + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
     : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
   // a clear call-out on top when some of our children can't be on the board yet
   const missing = players.filter(q => !onBoard(q));
@@ -1939,19 +1972,21 @@ function renderRank(){
     hint.append(acts);
   }
   if (scope === 'home'){
-    drawRankRows(players.map(q => ({ id: q.id, name: q.name, icon: q.icon, family: familyName, n: gotOf(q, list) })).sort((a, b) => b.n - a.n), total);
+    drawRankRows(players.map(q => ({ id: q.id, name: q.name, icon: q.icon, family: familyName, n: gotOf(q, list, rankMode) })).sort((a, b) => b.n - a.n), total);
     return;
   }
   if ($('#homeRankView').hidden) return;                        // only fetch while the board is on screen
   const want = rankTheme;
-  if (!worldCache[settings.lang + ':' + want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
-  loadWorld(want).then(rows => { if (want === rankTheme) drawRankRows(rows, total); })
+  const wantMode = rankMode;
+  if (!worldCache[wantMode + ':' + want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
+  loadWorld(want, wantMode).then(rows => { if (want === rankTheme && wantMode === rankMode) drawRankRows(rows, total); })
     .catch(() => { if (want !== rankTheme) return; $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Chưa tải được bảng xếp hạng chung. Kiểm tra mạng rồi thử lại.')); });
 }
 $('#toPlayers').addEventListener('click', () => { audio(); speak('Chọn người chơi', 'vi'); showHomeView('players'); });
 setIcon($('#famIcon'), '👪'); setIcon($('#famIcon2'), '👪');
 $('#toFamily').addEventListener('click', () => { audio(); speak('Gia đình', 'vi'); showHomeView('family'); });
-$('#toRank').addEventListener('click', () => { audio(); speak('Bảng xếp hạng', 'vi'); showHomeView('rank'); });
+$('#toRank').addEventListener('click', () => {
+  rankMode = curMode(); audio(); speak('Bảng xếp hạng', 'vi'); showHomeView('rank'); });
 document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => showHomeView('main')));
 $('#homePlay').addEventListener('click', go);
 $('#homeMusic').addEventListener('click', () => $('#musicBtn').click());
