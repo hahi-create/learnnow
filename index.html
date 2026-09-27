@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1554D1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LearnNow">
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
 <title>LearnNow</title>
 <!-- Icons: Twemoji by Twitter/X and contributors (github.com/jdecked/twemoji), CC-BY 4.0 -->
@@ -252,6 +259,9 @@ details.more[open] summary{margin-bottom:14px}
 .modal{position:fixed;inset:0;z-index:80;display:flex;padding:16px;background:rgba(30,58,95,.38);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);overflow-y:auto}
 .modal-card{margin:auto;width:min(580px,100%);background:var(--panel);border-radius:26px;padding:22px 20px 20px;box-shadow:0 8px 0 rgba(30,58,95,.12),0 24px 50px rgba(30,58,95,.25)}
 .modal-hi{font:800 32px/1.1 var(--display);color:var(--coral);padding-top:4px}
+.upd-card{width:min(440px,100%);text-align:center}
+.upd-btns{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap}
+.upd-btns .go{margin-top:0;padding-inline:34px}
 .modal-card > p{margin:6px 0 14px;font:700 17px/1.45 var(--text);color:var(--ink)}
 #edMsg{color:var(--coral);font-weight:700}
 #homeEditSlot{align-self:center;width:min(640px,100%)}
@@ -424,6 +434,13 @@ details.more[open] summary{margin-bottom:14px}
       <div id="modalHi" class="modal-hi">👋 Xin chào!</div>
       <p>Hãy đặt tên cho bé trước khi chơi nhé.</p>
       <div id="modalSlot"></div>
+    </div>
+  </div>
+  <div id="updateModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="updHi">
+    <div class="modal-card upd-card">
+      <div id="updHi" class="modal-hi">🎉 Có phiên bản mới!</div>
+      <p>LearnNow vừa được cập nhật. Bấm “Tải lại” để dùng bản mới nhất nhé.</p>
+      <div class="upd-btns"><button id="updLater" class="btn-sec">Để sau</button><button id="updGo" class="go">Tải lại</button></div>
     </div>
   </div>
 </div>
@@ -1040,6 +1057,31 @@ function pickVoice(lang){
   const list = voices.filter(v => (v.lang || '').toLowerCase().replace('_', '-').startsWith(lang) && !NOVELTY.test(v.name || ''));
   return list.sort((a, b) => voiceScore(b, lang) - voiceScore(a, lang))[0] || null;
 }
+// nothing is said in Vietnamese: the same message in the language being practised, read by that language's voice
+const VI_TO_JA = {
+  'Bé được thêm một ngôi sao vàng!':'ほしを ひとつ もらったよ！',
+  'Thêm bạn chơi mới':'あたらしい おともだち', 'Màn hình chính':'ホーム',
+  'Bắt đầu nào!':'はじめよう！', 'Chơi tiếp nào!':'つづけよう！',
+  'Chủ đề vườn thú':'どうぶつ', 'Chủ đề xe cộ':'のりもの', 'Chủ đề rau củ quả':'やさいと くだもの',
+  'Chủ đề nghề nghiệp':'おしごと', 'Chủ đề tổng hợp':'ぜんぶ',
+  'Mức độ dễ':'かんたん', 'Mức độ vừa':'ふつう', 'Mức độ khó':'むずかしい',
+  'Chữ Hiragana':'ひらがな', 'Chữ Katakana':'カタカナ', 'Tiếng Nhật':'にほんご',
+  'Chọn người chơi':'だれが あそぶ？', 'Gia đình':'かぞく', 'Bảng xếp hạng':'ランキング',
+  'Đã lưu tên gia đình':'ほぞん しました', 'Đã xoá tên gia đình':'けしました', 'Đã kết nối':'つながりました',
+};
+const VI_TO_EN = {
+  'Bé được thêm một ngôi sao vàng!':'You got a gold star!',
+  'Thêm bạn chơi mới':'New player', 'Màn hình chính':'Home',
+  'Bắt đầu nào!':"Let's go!", 'Chơi tiếp nào!':"Let's keep going!",
+  'Chủ đề vườn thú':'Animals', 'Chủ đề xe cộ':'Vehicles', 'Chủ đề rau củ quả':'Fruits and vegetables',
+  'Chủ đề nghề nghiệp':'Jobs', 'Chủ đề tổng hợp':'Everything',
+  'Mức độ dễ':'Easy', 'Mức độ vừa':'Medium', 'Mức độ khó':'Hard',
+  'Chữ thường':'Small letters', 'Chữ in hoa':'Capital letters', 'Tiếng Anh':'English',
+  'Chọn người chơi':'Who is playing?', 'Gia đình':'Family', 'Bảng xếp hạng':'Leaderboard',
+  'Đã lưu tên gia đình':'Family name saved', 'Đã xoá tên gia đình':'Family name removed', 'Đã kết nối':'Connected',
+};
+const jaFor = text => VI_TO_JA[text] || (/^Chào /.test(text) ? 'こんにちは！' : '');
+const enFor = text => VI_TO_EN[text] || (/^Chào /.test(text) ? 'Hello!' : '');
 // speak several short phrases in a row, e.g. a Vietnamese cheer then the English animal name
 // queue = true: wait for what is being said now (so the last letter is not cut off)
 function speakSeq(parts, queue){
@@ -1048,6 +1090,7 @@ function speakSeq(parts, queue){
     if (!voices.length) loadVoices();
     if (!queue) speechSynthesis.cancel();
     parts.forEach(({ text, lang, rate }) => {
+      if (lang === 'vi'){ text = isJa() ? jaFor(text) : enFor(text); lang = isJa() ? 'ja' : 'en'; if (!text) return; }
       const v = pickVoice(lang);
       if (!v && lang === 'vi') return;          // no Vietnamese voice on this computer: skip the cheer
       const u = new SpeechSynthesisUtterance(text);
@@ -2329,6 +2372,29 @@ function joinFamily(){
 $('#familyJoinBtn').addEventListener('click', () => { $('#familyJoin').hidden = !$('#familyJoin').hidden; if (!$('#familyJoin').hidden) $('#familyInput').focus(); });
 $('#familyGo').addEventListener('click', joinFamily);
 connectCloud();
+// a newer copy on the server: offer to reload it (the build stamps APP_VERSION; checked only on a web address)
+const APP_VERSION = '20260927212716';
+let newVersion = '', updSnooze = 0;
+async function checkUpdate(){
+  if (!/^https?:$/.test(location.protocol) || !/^\d+$/.test(APP_VERSION) || newVersion) return offerUpdate();
+  try {
+    const r = await fetch(location.pathname + '?check=' + Date.now(), { cache:'no-store' });
+    const m = (await r.text()).match(/const APP_VERSION = '(\d+)'/);
+    if (m && Number(m[1]) > Number(APP_VERSION)) newVersion = m[1];
+  } catch(e){}
+  offerUpdate();
+}
+// never in the middle of a round: wait for the home screen or a pause
+function offerUpdate(){
+  if (!newVersion || state === 'play' || Date.now() < updSnooze || !$('#updateModal').hidden) return;
+  $('#updateModal').hidden = false;
+}
+$('#updGo').addEventListener('click', () => location.replace(location.pathname + '?v=' + newVersion));   // a new address skips the cached copy
+$('#updLater').addEventListener('click', () => { $('#updateModal').hidden = true; updSnooze = Date.now() + 10 * 60e3; });
+setTimeout(checkUpdate, 5000);
+setInterval(checkUpdate, 5 * 60e3);
+setInterval(offerUpdate, 3000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(); });
 if (document.fonts && document.fonts.load){
   document.fonts.load(`700 20px ${TEXT_FONT}`).catch(() => {});
   document.fonts.load('700 20px "Zen Maru Gothic"', 'あア').catch(() => {});   // kana on the play field

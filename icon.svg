@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="LearnNow app icon">
+  <rect width="1024" height="1024" rx="220" fill="#1554D1"/>
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="38">
+    <path d="M512 718C405 637 290 640 190 688V437c116-55 224-41 322 41 98-82 206-96 322-41v251c-100-48-215-51-322 30Z"/>
+    <path d="M512 478v240"/>
+  </g>
+  <g stroke="#FFD83D" stroke-linecap="round" stroke-width="34">
+    <path d="M512 194v82"/>
+    <path d="m391 230 43 70"/>
+    <path d="m633 230-43 70"/>
+    <path d="m313 315 71 42"/>
+    <path d="m711 315-71 42"/>
+  </g>
+  <path d="M438 420a74 74 0 0 1 148 0c0 37-29 54-74 96-45-42-74-59-74-96Z" fill="#FFD83D"/>
+</svg>
