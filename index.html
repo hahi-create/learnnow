@@ -85,7 +85,8 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 
 /* on-screen keyboard */
-.kbd{display:flex;flex-direction:column;gap:8px}
+.kbd{display:flex;flex-direction:column;gap:8px;transition:opacity .25s}
+.kbd.rest{opacity:.35;pointer-events:none}
 .krow{display:flex;gap:8px;justify-content:center}
 .krow:nth-child(2){padding-inline:4%}
 .krow:nth-child(3){padding-inline:13%}
@@ -1030,9 +1031,14 @@ function fire(a, final){
   sfx.shoot();
 }
 
+// after a finished word the keyboard rests for 3 s, so the cheer and the name can be heard
+const REST_MS = 3000;
+let restUntil = 0;
+const resting = () => performance.now() < restUntil;
 function press(k){
   flashKey(k);
   if (state !== 'play') return;
+  if (resting()) return;                                        // ignore keys while resting (no "wrong" sound)
   audio();
   hideTip();
   if (!target){
@@ -1046,7 +1052,7 @@ function press(k){
     const fin = target.i >= target.keys.length;
     if (fin) target.done = true;
     fire(target, fin);
-    if (fin) target = null;
+    if (fin){ target = null; restUntil = performance.now() + REST_MS; }
   } else {
     target.shake = 1; sfx.miss();
   }
@@ -1152,8 +1158,10 @@ const kbd = $('#kbd'), keyEls = {};
 function labelKeys(){ for (const k in keyEls) keyEls[k].textContent = settings.caps === 'upper' ? k.toUpperCase() : k; }
 let kbdSig = '';
 function updateKbdHints(){
+  const rest = state === 'play' && resting();
+  kbd.classList.toggle('rest', rest);                           // dimmed while resting after a word
   let next = '', hints = new Set();
-  if (state === 'play'){
+  if (state === 'play' && !rest){
     if (target) next = target.keys[target.i];
     else animals.forEach(a => { if (!a.done) hints.add(a.keys[a.i]); });
   }
