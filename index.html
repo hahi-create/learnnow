@@ -55,8 +55,6 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 /* stage */
 #stage{position:relative;flex:1 1 auto;min-height:0;border-radius:26px;overflow:hidden;background:#8FD8FF;border:4px solid #FFFFFF;box-shadow:0 6px 0 rgba(30,58,95,.1)}
 #cv{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:manipulation}
-.tip{position:absolute;left:16px;right:16px;bottom:96px;text-align:center;color:var(--ink);font:700 14px/1.4 var(--text);pointer-events:none;transition:opacity .9s;text-shadow:0 1px 0 rgba(255,255,255,.8)}
-.tip.gone{opacity:0}
 .popup{position:absolute;left:50%;top:13%;transform:translateX(-50%);text-align:center;pointer-events:none;white-space:nowrap}
 .popup.show{animation:popIn 1.6s ease both}
 .pp{font:800 24px/1.1 var(--display);color:var(--grape);text-shadow:0 2px 0 #fff}
@@ -282,7 +280,6 @@ details.more[open] summary{margin-bottom:14px}
 
   <main id="stage">
     <canvas id="cv" aria-label="Sân chơi: các con vật bay xuống, gõ tên để bắt"></canvas>
-    <div id="tip" class="tip gone">Gõ đúng tên để bắt!<br>ENTER để nghe đọc tên</div>
     <div id="popup" class="popup" hidden></div>
     <div id="overlay" class="overlay">
       <div class="card">
@@ -1038,7 +1035,6 @@ function press(k){
   if (state !== 'play') return;
   if (resting()) return;                                        // ignore keys while resting (no "wrong" sound)
   audio();
-  hideTip();
   if (!target){
     const c = animals.filter(a => !a.done && a.keys[a.i] === k).sort((p, q) => q.y - p.y)[0];
     if (!c){ shipShake = 1; sfx.miss(); return; }
@@ -1371,10 +1367,7 @@ function frame(now){
 requestAnimationFrame(frame);
 
 // ---------- overlay + controls ----------
-const overlay = $('#overlay'), tip = $('#tip');
-let tipT = 0;
-function hideTip(){ tip.classList.add('gone'); }
-function showTip(){ tip.classList.remove('gone'); clearTimeout(tipT); tipT = setTimeout(hideTip, 6000); }
+const overlay = $('#overlay');
 
 const UI_ICONS = {
   pause:'<svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="3" y="2" width="4" height="14" rx="1.5"/><rect x="11" y="2" width="4" height="14" rx="1.5"/></svg>',
@@ -1417,7 +1410,7 @@ function openOverlay(mode){
   state = mode === 'start' ? 'menu' : 'paused';
   $('#ovTitle').innerHTML = mode === 'start' ? 'Learn<span>Now</span>' : 'Nghỉ <span>một chút</span>';
   $('#goBtn').textContent = mode === 'start' ? 'Chơi nào!' : 'Chơi tiếp';
-  overlay.hidden = false; hideTip(); syncSeg(); syncButtons(); syncPlayer();
+  overlay.hidden = false; syncSeg(); syncButtons(); syncPlayer();
 }
 
 // ---------- players ----------
@@ -1581,7 +1574,7 @@ function go(){
   $('#home').hidden = true;
   if (fieldKey !== settings.level + '|' + settings.theme) resetField();
   target = null;
-  overlay.hidden = true; state = 'play'; syncButtons(); showTip();
+  overlay.hidden = true; state = 'play'; syncButtons();
   last = performance.now();
 }
 
@@ -1702,7 +1695,7 @@ function showHomeView(v){
 }
 function showHome(){
   state = 'menu'; overlay.hidden = true;
-  closeMenu(); hideTip();
+  closeMenu();
   $('#home').hidden = false;
   showHomeView('main'); syncSeg(); syncButtons(); syncPlayer();
 }
