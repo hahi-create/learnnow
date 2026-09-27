@@ -1762,14 +1762,18 @@ const worldCache = {};                                          // theme -> { at
 const scoresOf = q => ({ zoo: gotOf(q, byTheme('zoo')), car: gotOf(q, byTheme('car')), food: gotOf(q, byTheme('food')),
   job: gotOf(q, byTheme('job')), all: gotOf(q, ITEMS) });
 const lbSent = {};
+// a child goes on the public board only with a real name (not the default "Bé 1") and a family name
+const hasOwnName = name => !!name && !/^Bé \d+$/.test(String(name).trim());
+const onBoard = q => hasOwnName(q.name) && !!familyName;
 function publishScore(q){
   if (!fb || !q) return;
-  const sc = scoresOf(q), key = JSON.stringify([q.name, q.icon, familyName, sc]);
+  const sc = scoresOf(q), key = JSON.stringify([q.name, q.icon, familyName, sc, onBoard(q)]);
   if (lbSent[q.id] === key) return;                             // nothing new to tell
   lbSent[q.id] = key;
   const ref = fb.fs.doc(fb.db, 'leaderboard', q.id);
-  const write = sc.all > 0 ? fb.fs.setDoc(ref, Object.assign({ name: q.name, icon: q.icon, family: familyName, updated: Date.now() }, sc))
-                           : fb.fs.deleteDoc(ref);              // nothing collected yet: stay off the board
+  const write = sc.all > 0 && onBoard(q)
+    ? fb.fs.setDoc(ref, Object.assign({ name: q.name, icon: q.icon, family: familyName, updated: Date.now() }, sc))
+    : fb.fs.deleteDoc(ref);                                     // nothing collected yet, or names not set: stay off the board
   write.then(() => { delete worldCache[rankTheme]; }).catch(() => { delete lbSent[q.id]; });
 }
 function unpublishScore(id){ if (fb) fb.fs.deleteDoc(fb.fs.doc(fb.db, 'leaderboard', id)).catch(() => {}); delete lbSent[id]; }
@@ -1779,7 +1783,7 @@ async function loadWorld(theme){
   const { fs, db } = fb;
   const snap = await fs.getDocs(fs.query(fs.collection(db, 'leaderboard'), fs.orderBy(theme, 'desc'), fs.limit(50)));
   const rows = snap.docs.map(d => { const v = d.data(); return { id: d.id, name: String(v.name || ''), icon: String(v.icon || ''), family: String(v.family || ''), n: v[theme] | 0 }; })
-    .filter(r => r.n > 0);
+    .filter(r => r.n > 0 && r.family && hasOwnName(r.name));
   worldCache[theme] = { at: Date.now(), rows };
   return rows;
 }
@@ -1812,9 +1816,13 @@ function renderRank(){
     tabs.appendChild(b);
   });
   const list = byTheme(rankTheme), total = list.length;
-  $('#rankNote').textContent = scope === 'world'
+  const missing = players.filter(q => !onBoard(q)).map(q => q.name);
+  $('#rankNote').textContent = (scope === 'world'
     ? 'Top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
-    : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
+    : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.')
+    + (scope === 'world' && missing.length
+      ? ' Chưa lên bảng: ' + missing.join(', ') + '. Muốn lên bảng, hãy đặt tên riêng cho bé' + (familyName ? '' : ' và đặt tên gia đình') + '.'
+      : '');
   if (scope === 'home'){
     drawRankRows(players.map(q => ({ id: q.id, name: q.name, icon: q.icon, family: familyName, n: gotOf(q, list) })).sort((a, b) => b.n - a.n), total);
     return;
