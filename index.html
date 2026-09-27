@@ -212,6 +212,7 @@ details.more[open] summary{margin-bottom:14px}
 .tile.add .av{font:800 46px/1 var(--display);color:var(--sky)}
 .hp .edit{position:absolute;top:-6px;right:-6px}
 .rank li.home{background:#FFF8DD}
+.rank .fam.none{font-style:italic;opacity:.75}
 .rank .fam{font:700 12.5px/1.2 var(--text);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank-empty{padding:14px;text-align:center;color:var(--muted);font:700 15px/1.4 var(--text)}
 .rank-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
@@ -1712,7 +1713,13 @@ function renderHome(){
   const p = me();
   setIcon($('#heroAv'), p.icon);
   $('#heroHello').textContent = 'Chào ' + p.name + '!';
-  $('#heroFamily').textContent = '🏠 ' + familyName; $('#heroFamily').hidden = !familyName;
+  const hf = $('#heroFamily'); hf.innerHTML = ''; hf.hidden = false;
+  if (familyName) hf.textContent = '🏠 ' + familyName;
+  else {                                                        // nudge: a family name shows on the leaderboard
+    const b = mkEl('button', 'linkish', '👪 Đặt tên gia đình'); b.type = 'button';
+    b.addEventListener('click', () => { audio(); speak('Gia đình', 'vi'); showHomeView('family'); });
+    hf.appendChild(b);
+  }
   if (document.activeElement !== $('#familyNameInput')) $('#familyNameInput').value = familyName;
   $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + ITEMS.length + ' món';
   // themes, "Tổng Hợp" last across the full width
@@ -1789,7 +1796,7 @@ function drawRankRows(rows, total){
     const who = mkEl('div', 'who'), bar = mkEl('div', 'bar'), fill = mkEl('i');
     fill.style.width = (total ? Math.min(1, r.n / total) * 100 : 0) + '%'; bar.appendChild(fill);
     who.append(mkEl('div', 'nm', r.name));
-    if (r.family) who.append(mkEl('div', 'fam', r.family));
+    who.append(mkEl('div', r.family ? 'fam' : 'fam none', r.family || 'Chưa đặt tên gia đình'));
     who.append(bar);
     li.append(pos, av, who, mkEl('span', 'n', r.n + ' / ' + total));
     ol.appendChild(li);
