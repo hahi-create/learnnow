@@ -164,8 +164,11 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .hero-stat{font:700 15px/1.3 var(--text);color:var(--muted);margin-top:4px}
 .family{font:400 13px/1.5 var(--text);color:var(--muted);margin-top:4px}
 .family b{color:var(--ink);letter-spacing:.06em;font-variant-numeric:tabular-nums}
+.family .fcode{font:800 24px/1 var(--display);color:var(--grape);letter-spacing:.08em;padding-top:4px}
+.family .fine{margin-top:6px}
 .family .linkish{display:inline;margin-left:6px}
 .family-join{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.family-join input.fname{width:14em;text-transform:none;letter-spacing:0}
 .family-join input{width:9.5em;font:700 16px/1.2 var(--text);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);padding:8px 10px;border-radius:10px;border:2px solid #D3E4F1;background:#F7FBFF}
 .family-join input:focus{outline:none;border-color:var(--sky)}
 .family-join .btn-sec{padding:9px 14px}
@@ -202,6 +205,9 @@ details.more[open] summary{margin-bottom:14px}
 .tile.add{border:4px dashed #C9DDEC;background:transparent;color:var(--muted);justify-content:center;min-height:132px}
 .tile.add .av{font:800 46px/1 var(--display);color:var(--sky)}
 .hp .edit{position:absolute;top:-6px;right:-6px}
+.rank li.home{background:#FFF8DD}
+.rank .fam{font:700 12.5px/1.2 var(--text);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank-empty{padding:14px;text-align:center;color:var(--muted);font:700 15px/1.4 var(--text)}
 .rank-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .rank-tabs button{border:0;border-radius:999px;padding:9px 13px 8px;font:700 14px/1 var(--text);background:#EEF6FC;color:var(--ink);cursor:pointer}
 .rank-tabs button[aria-pressed="true"]{background:var(--sky);color:#fff}
@@ -297,7 +303,7 @@ details.more[open] summary{margin-bottom:14px}
     <div id="homeMain" class="view">
       <section class="hcard hero">
         <span id="heroAv" class="hero-av"></span>
-        <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroStat" class="hero-stat"></div><div id="syncNote" class="sync-note">💾 Chỉ lưu trên máy này, chưa đồng bộ.</div><div id="familyBox" class="family" hidden>Mã gia đình: <b id="familyCode"></b> <button id="familyJoinBtn" class="linkish" type="button">Nhập mã từ máy khác</button><div id="familyJoin" class="family-join" hidden><input id="familyInput" type="text" maxlength="9" placeholder="VD: ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Mã gia đình"><button id="familyGo" class="btn-sec" type="button">Kết nối</button><span id="familyMsg" class="sync-note"></span></div></div></div>
+        <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroFamily" class="hero-stat" hidden></div><div id="heroStat" class="hero-stat"></div><div id="syncNote" class="sync-note" hidden></div></div>
         <div class="hero-btns">
           <button id="toPlayers" class="hbtn">👥 Chọn người chơi</button>
           <button id="toRank" class="hbtn rank">🏆 Bảng xếp hạng</button>
@@ -310,6 +316,19 @@ details.more[open] summary{margin-bottom:14px}
       </section>
       <details class="hcard more"><summary>⚙️ Cài đặt khác</summary>
         <div class="opts">
+          <div class="opt wide"><label class="opt-label" for="familyNameInput">Tên gia đình (hiện trên bảng xếp hạng)</label>
+            <div class="family-join"><input id="familyNameInput" class="fname" type="text" maxlength="24" placeholder="VD: Nhà Bông" autocomplete="off" spellcheck="false">
+              <button id="familyNameSave" class="btn-sec" type="button">Lưu</button><span id="familyNameMsg" class="sync-note"></span></div></div>
+          <div id="familyBox" class="opt wide" hidden><span class="opt-label">Mã gia đình</span>
+            <div class="family"><b id="familyCode" class="fcode"></b>
+              <button id="familyJoinBtn" class="linkish" type="button">Nhập mã từ máy khác</button>
+              <div id="familyJoin" class="family-join" hidden>
+                <input id="familyInput" type="text" maxlength="9" placeholder="VD: ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Mã gia đình">
+                <button id="familyGo" class="btn-sec" type="button">Kết nối</button>
+                <span id="familyMsg" class="sync-note"></span>
+              </div>
+              <p class="fine">Mã này được tạo tự động khi mở game lần đầu. Để các máy khác trong nhà dùng chung các bé và bộ sưu tập: trên máy đó bấm "Nhập mã từ máy khác" rồi gõ mã này.</p>
+            </div></div>
           <div class="opt"><span class="opt-label">Kiểu chữ</span>
             <div class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div></div>
           <div class="opt"><span class="opt-label">Bàn phím gợi ý</span>
@@ -331,7 +350,7 @@ details.more[open] summary{margin-bottom:14px}
       <section class="hcard">
         <div id="rankTabs" class="rank-tabs"></div>
         <ol id="rankList" class="rank"></ol>
-        <p class="fine">Xếp hạng theo số món khác nhau mỗi bé đã sưu tầm.</p>
+        <p id="rankNote" class="fine">Xếp hạng theo số món khác nhau mỗi bé đã sưu tầm.</p>
       </section>
     </div>
 
@@ -710,6 +729,9 @@ let currentId = store.get('current', '');
 if (!players.some(p => p.id === currentId)) currentId = players[0].id;
 const me = () => players.find(p => p.id === currentId);
 const savePlayers = () => { store.set('players', players); store.set('current', currentId); };
+// Firebase connection (GitHub page / Desktop file); set once connected, used by sync and the leaderboard
+let fb = null, unsubFamily = null, unsubFamilyDoc = null, familyCode = store.get('familyCode', '') || '';
+let familyName = store.get('familyName', '') || '';
 let counts = me().counts || (me().counts = {});
 settings.level = me().level || 'easy';
 settings.caps = me().caps || 'lower';
@@ -1018,7 +1040,7 @@ function capture(a){
   sfx.win();
   const isNew = !counts[a.def.id];
   counts[a.def.id] = (counts[a.def.id] || 0) + 1;
-  savePlayers(); cloudCount(me(), a.def.id);
+  savePlayers(); cloudCount(me(), a.def.id); publishScore(me());
   caught++;
   $('#caught').textContent = caught;
   const hex = $('#hex'); hex.classList.remove('bump'); void hex.offsetWidth; hex.classList.add('bump');
@@ -1360,7 +1382,7 @@ function syncButtons(){
   const hm = $('#homeMusic'); hm.innerHTML = mb.innerHTML; hm.className = mb.className; hm.setAttribute('aria-label', mb.getAttribute('aria-label'));
 }
 function syncSeg(){
-  document.querySelectorAll('.seg').forEach(seg => {
+  document.querySelectorAll('.seg[data-key]').forEach(seg => {
     seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(settings[seg.dataset.key] === b.dataset.v)));
   });
   $('#levelNote').textContent = LEVELS[settings.level].note;
@@ -1489,7 +1511,7 @@ function saveEditor(){
   if (editingId){
     const p = players.find(q => q.id === editingId);
     p.name = name || p.name; p.icon = pickIcon;
-    savePlayers(); cloudSave(p); syncPlayer();
+    savePlayers(); cloudSave(p); publishScore(p); syncPlayer();
   } else {
     const p = { id:newId(), name: name || 'Bé ' + (players.length + 1), icon: pickIcon, counts:{}, level:'easy', caps:'lower', theme:'zoo', created: Date.now() };
     players.push(p); cloudSave(p);
@@ -1510,7 +1532,7 @@ $('#pDelete').addEventListener('click', () => {
     return;
   }
   clearTimeout(delArm); delArm = 0;
-  players = players.filter(q => q.id !== p.id); cloudDelete(p.id);
+  players = players.filter(q => q.id !== p.id); cloudDelete(p.id); unpublishScore(p.id);
   switchPlayer(players[0].id, true);
   closeEditor();
 });
@@ -1550,7 +1572,7 @@ function go(){
   last = performance.now();
 }
 
-document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+document.querySelectorAll('.seg[data-key]').forEach(seg => seg.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   audio();
   const key = seg.dataset.key;
@@ -1592,7 +1614,10 @@ cv.addEventListener('pointerdown', e => {
 window.addEventListener('keydown', e => {
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   if (state !== 'play'){
-    if (e.target && e.target.id === 'familyInput'){ if (e.key === 'Enter'){ e.preventDefault(); joinFamily(); } return; }
+    if (e.target && e.target.tagName === 'INPUT' && e.target.id !== 'pName'){
+      if (e.key === 'Enter'){ e.preventDefault(); if (e.target.id === 'familyInput') joinFamily(); if (e.target.id === 'familyNameInput') saveFamilyName(); }
+      return;
+    }
     if (!$('#editor').hidden){
       if (e.key === 'Enter'){ e.preventDefault(); saveEditor(); }
       else if (e.key === 'Escape') closeEditor();
@@ -1664,6 +1689,8 @@ function renderHome(){
   const p = me();
   setIcon($('#heroAv'), p.icon);
   $('#heroHello').textContent = 'Chào ' + p.name + '!';
+  $('#heroFamily').textContent = '🏠 ' + familyName; $('#heroFamily').hidden = !familyName;
+  if (document.activeElement !== $('#familyNameInput')) $('#familyNameInput').value = familyName;
   $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + ITEMS.length + ' món';
   // themes, "Tổng Hợp" last across the full width
   const ht = $('#homeThemes'); ht.innerHTML = '';
@@ -1695,28 +1722,78 @@ function renderHome(){
   add.append(mkEl('span', 'av', '+'), mkEl('span', 'nm', 'Thêm bé'));
   add.addEventListener('click', () => { audio(); speak('Thêm bạn chơi mới', 'vi'); openEditor(null, 'home'); });
   hp.appendChild(add);
-  // leaderboard: most different items collected first; equal counts share a place
+  renderRank();
+}
+
+// ---------- leaderboard: our family, or everyone who plays (Firebase) ----------
+// Each child's public entry is leaderboard/<child id>: name, avatar and how many different items they
+// collected per theme. It holds no family code, so it can't be used to reach anyone's collection.
+const worldCache = {};                                          // theme -> { at, rows } (refetched after 20 s)
+const scoresOf = q => ({ zoo: gotOf(q, byTheme('zoo')), car: gotOf(q, byTheme('car')), food: gotOf(q, byTheme('food')),
+  job: gotOf(q, byTheme('job')), all: gotOf(q, ITEMS) });
+const lbSent = {};
+function publishScore(q){
+  if (!fb || !q) return;
+  const sc = scoresOf(q), key = JSON.stringify([q.name, q.icon, familyName, sc]);
+  if (lbSent[q.id] === key) return;                             // nothing new to tell
+  lbSent[q.id] = key;
+  const ref = fb.fs.doc(fb.db, 'leaderboard', q.id);
+  const write = sc.all > 0 ? fb.fs.setDoc(ref, Object.assign({ name: q.name, icon: q.icon, family: familyName, updated: Date.now() }, sc))
+                           : fb.fs.deleteDoc(ref);              // nothing collected yet: stay off the board
+  write.then(() => { delete worldCache[rankTheme]; }).catch(() => { delete lbSent[q.id]; });
+}
+function unpublishScore(id){ if (fb) fb.fs.deleteDoc(fb.fs.doc(fb.db, 'leaderboard', id)).catch(() => {}); delete lbSent[id]; }
+async function loadWorld(theme){
+  const c = worldCache[theme];
+  if (c && Date.now() - c.at < 20000) return c.rows;
+  const { fs, db } = fb;
+  const snap = await fs.getDocs(fs.query(fs.collection(db, 'leaderboard'), fs.orderBy(theme, 'desc'), fs.limit(50)));
+  const rows = snap.docs.map(d => { const v = d.data(); return { id: d.id, name: String(v.name || ''), icon: String(v.icon || ''), family: String(v.family || ''), n: v[theme] | 0 }; })
+    .filter(r => r.n > 0);
+  worldCache[theme] = { at: Date.now(), rows };
+  return rows;
+}
+function drawRankRows(rows, total){
+  const ol = $('#rankList'); ol.innerHTML = '';
+  if (!rows.length){ ol.appendChild(mkEl('li', 'rank-empty', 'Chưa có ai trên bảng. Bắt con vật đầu tiên để lên bảng nào!')); return; }
+  const mine = new Set(players.map(q => q.id));
+  let place = 0, prev = -1;
+  rows.forEach((r, i) => {
+    if (r.n !== prev){ place = i + 1; prev = r.n; }
+    const li = mkEl('li', r.id === currentId ? 'me' : (mine.has(r.id) ? 'home' : null));
+    const pos = mkEl('span', 'pos', r.n > 0 && place <= 3 ? ['🥇', '🥈', '🥉'][place - 1] : String(place));
+    const av = mkEl('span', 'av'); setIcon(av, r.icon);
+    const who = mkEl('div', 'who'), bar = mkEl('div', 'bar'), fill = mkEl('i');
+    fill.style.width = (total ? Math.min(1, r.n / total) * 100 : 0) + '%'; bar.appendChild(fill);
+    who.append(mkEl('div', 'nm', r.name));
+    if (r.family) who.append(mkEl('div', 'fam', r.family));
+    who.append(bar);
+    li.append(pos, av, who, mkEl('span', 'n', r.n + ' / ' + total));
+    ol.appendChild(li);
+  });
+}
+function renderRank(){
+  const scope = fb ? 'world' : 'home';                           // one board for everyone; our family only when offline
   const tabs = $('#rankTabs'); tabs.innerHTML = '';
   ['all', 'zoo', 'car', 'food', 'job'].forEach(k => {
     const b = mkEl('button', null, k === 'all' ? 'Tất cả' : THEMES[k].vi);
     b.setAttribute('aria-pressed', String(k === rankTheme));
-    b.addEventListener('click', () => { rankTheme = k; renderHome(); });
+    b.addEventListener('click', () => { rankTheme = k; renderRank(); });
     tabs.appendChild(b);
   });
-  const list = byTheme(rankTheme), rows = players.map(q => ({ q, n: gotOf(q, list) })).sort((a, b) => b.n - a.n);
-  const ol = $('#rankList'); ol.innerHTML = '';
-  let place = 0, prev = -1;
-  rows.forEach((r, i) => {
-    if (r.n !== prev){ place = i + 1; prev = r.n; }
-    const li = mkEl('li', r.q.id === currentId ? 'me' : null);
-    const pos = mkEl('span', 'pos', r.n > 0 && place <= 3 ? ['🥇', '🥈', '🥉'][place - 1] : String(place));
-    const av = mkEl('span', 'av'); setIcon(av, r.q.icon);
-    const who = mkEl('div', 'who'), bar = mkEl('div', 'bar'), fill = mkEl('i');
-    fill.style.width = (list.length ? r.n / list.length * 100 : 0) + '%'; bar.appendChild(fill);
-    who.append(mkEl('div', 'nm', r.q.name), bar);
-    li.append(pos, av, who, mkEl('span', 'n', r.n + ' / ' + list.length));
-    ol.appendChild(li);
-  });
+  const list = byTheme(rankTheme), total = list.length;
+  $('#rankNote').textContent = scope === 'world'
+    ? 'Top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
+    : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
+  if (scope === 'home'){
+    drawRankRows(players.map(q => ({ id: q.id, name: q.name, icon: q.icon, family: familyName, n: gotOf(q, list) })).sort((a, b) => b.n - a.n), total);
+    return;
+  }
+  if ($('#homeRankView').hidden) return;                        // only fetch while the board is on screen
+  const want = rankTheme;
+  if (!worldCache[want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
+  loadWorld(want).then(rows => { if (want === rankTheme) drawRankRows(rows, total); })
+    .catch(() => { if (want !== rankTheme) return; $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Chưa tải được bảng xếp hạng chung. Kiểm tra mạng rồi thử lại.')); });
 }
 $('#toPlayers').addEventListener('click', () => { audio(); speak('Chọn người chơi', 'vi'); showHomeView('players'); });
 $('#toRank').addEventListener('click', () => { audio(); speak('Bảng xếp hạng', 'vi'); showHomeView('rank'); });
@@ -1735,7 +1812,9 @@ const writing = {};
 const cloudBody = q => ({ name: q.name, icon: q.icon, counts: q.counts || {}, level: q.level || 'easy',
   caps: q.caps || 'lower', theme: q.theme || 'zoo', created: q.created || 0 });
 function setSync(mode){
-  $('#syncNote').textContent = {
+  const note = $('#syncNote');
+  note.hidden = mode === 'on' || mode === 'wait';                // all fine: say nothing
+  note.textContent = {
     on:   '☁️ Đang đồng bộ giữa các máy.',
     wait: '☁️ Đang kết nối đồng bộ…',
     local:'💾 Chỉ lưu trên máy này, chưa đồng bộ.',
@@ -1823,7 +1902,6 @@ const FIREBASE_CONFIG = {
 };
 const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';               // no 0/O, 1/I/L mix-ups
-let fb = null, unsubFamily = null, familyCode = store.get('familyCode', '') || '';
 const newFamilyCode = () => Array.from({ length: 8 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)])
   .join('').replace(/^(.{4})/, '$1-');
 // the same small surface the Claude store offers, so the sync code above works unchanged
@@ -1854,10 +1932,31 @@ function subscribeFamily(){
   $('#familyCode').textContent = familyCode;
   $('#familyBox').hidden = false;
   setSync('wait');
+  if (unsubFamilyDoc) unsubFamilyDoc();
+  unsubFamilyDoc = fb.fs.onSnapshot(fb.fs.doc(fb.db, 'families', familyCode),
+    snap => { if (snap.exists()) setFamilyName(snap.data().name); }, () => {});
   unsubFamily = fb.fs.onSnapshot(fb.fs.collection(fb.db, 'families', familyCode, 'players'),
-    snap => { onPlayers(snap); if (cloudReady) setSync('on'); },
+    snap => { onPlayers(snap); if (cloudReady){ setSync('on'); players.forEach(publishScore); } },
     () => setSync('off'));
 }
+function setFamilyName(name){
+  name = String(name || '').trim().slice(0, 24);
+  if (name === familyName) return;
+  familyName = name; store.set('familyName', name);
+  renderHome();
+  players.forEach(publishScore);                                // the leaderboard shows the new name
+}
+function saveFamilyName(){
+  const name = $('#familyNameInput').value.trim().slice(0, 24);
+  setFamilyName(name);
+  $('#familyNameMsg').textContent = name ? 'Đã lưu.' : 'Đã xoá tên gia đình.';
+  setTimeout(() => { $('#familyNameMsg').textContent = ''; }, 2500);
+  if (fb) fb.fs.setDoc(fb.fs.doc(fb.db, 'families', familyCode), { name }).catch(() => {
+    $('#familyNameMsg').textContent = 'Chưa lưu lên mạng được, tên vẫn giữ trên máy này.';
+  });
+  audio(); speak(name ? 'Đã lưu tên gia đình' : 'Đã xoá tên gia đình', 'vi');
+}
+$('#familyNameSave').addEventListener('click', saveFamilyName);
 function joinFamily(){
   const raw = $('#familyInput').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   const msg = $('#familyMsg');
