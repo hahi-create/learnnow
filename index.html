@@ -73,7 +73,6 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 #shelfStars{font:800 15px/1 var(--display);color:#B07A00;margin-right:10px}
 .pstar{display:inline-block;margin:8px 0 0 6px;background:var(--sun);color:var(--ink);font:800 17px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--sun-deep)}
 .madeby{text-align:right;font:700 14px/1.4 var(--text);color:var(--muted);padding-top:6px}
-.pmean{margin-top:4px;font:800 22px/1.3 var(--text),"Zen Maru Gothic",sans-serif;color:var(--ink)}
 .kj{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif!important;font-weight:700;color:var(--ink);line-height:1}
 .slot .em.kj{font-size:30px;filter:none;opacity:.14}
 .slot.got .em.kj{opacity:1}
@@ -531,512 +530,512 @@ const ALL_ITEMS = ['zoo', 'car', 'food', 'job'].flatMap(t => RAW_THEMES[t]
 const JA_NAMES = {"cat": "ねこ", "dog": "いぬ", "pig": "ぶた", "cow": "うし", "fox": "きつね", "owl": "ふくろう", "bee": "はち", "ant": "あり", "hen": "にわとり", "bat": "こうもり", "fly": "はえ", "duck": "あひる", "fish": "さかな", "frog": "かえる", "lion": "らいおん", "bear": "くま", "goat": "やぎ", "crab": "かに", "bird": "とり", "deer": "しか", "wolf": "おおかみ", "swan": "はくちょう", "seal": "あざらし", "boar": "いのしし", "dove": "はと", "worm": "みみず", "horse": "うま", "tiger": "とら", "zebra": "しまうま", "snake": "へび", "mouse": "ねずみ", "panda": "ぱんだ", "koala": "こあら", "camel": "らくだ", "whale": "くじら", "shark": "さめ", "sheep": "ひつじ", "chick": "ひよこ", "snail": "かたつむり", "hippo": "かば", "rhino": "さい", "eagle": "わし", "squid": "いか", "sloth": "なまけもの", "otter": "かわうそ", "puppy": "こいぬ", "rabbit": "うさぎ", "monkey": "さる", "turtle": "かめ", "parrot": "おうむ", "penguin": "ぺんぎん", "octopus": "たこ", "giraffe": "きりん", "elephant": "ぞう", "dolphin": "いるか", "butterfly": "ちょうちょ", "ladybug": "てんとうむし", "dinosaur": "きょうりゅう", "kangaroo": "かんがるー", "crocodile": "わに", "hedgehog": "はりねずみ", "gorilla": "ごりら", "raccoon": "あらいぐま", "leopard": "ひょう", "badger": "あなぐま", "polar bear": "しろくま", "chipmunk": "りす", "hamster": "はむすたー", "peacock": "くじゃく", "lizard": "とかげ", "dragon": "りゅう", "shrimp": "えび", "blowfish": "ふぐ", "beetle": "かぶとむし", "cricket": "こおろぎ", "spider": "くも", "scorpion": "さそり", "caterpillar": "いもむし", "black cat": "くろねこ", "crow": "からす", "donkey": "ろば", "goose": "がちょう", "jellyfish": "くらげ", "oyster": "かき", "car:car": "くるま", "car:bus": "ばす", "car:taxi": "たくしー", "car:truck": "とらっく", "car:train": "でんしゃ", "car:subway": "ちかてつ", "car:bullet train": "しんかんせん", "car:ship": "ふね", "car:boat": "ぼーと", "car:sailboat": "よっと", "car:canoe": "かぬー", "car:bike": "じてんしゃ", "car:motorcycle": "ばいく", "car:rocket": "ろけっと", "car:airplane": "ひこうき", "car:helicopter": "へりこぷたー", "car:ambulance": "きゅうきゅうしゃ", "car:fire truck": "しょうぼうしゃ", "car:police car": "ぱとかー", "car:sled": "そり", "food:apple": "りんご", "food:pear": "なし", "food:orange": "みかん", "food:lemon": "れもん", "food:banana": "ばなな", "food:grapes": "ぶどう", "food:melon": "めろん", "food:watermelon": "すいか", "food:cherry": "さくらんぼ", "food:peach": "もも", "food:pineapple": "ぱいなっぷる", "food:strawberry": "いちご", "food:tomato": "とまと", "food:eggplant": "なす", "food:potato": "じゃがいも", "food:yam": "さつまいも", "food:carrot": "にんじん", "food:corn": "とうもろこし", "food:chili": "とうがらし", "food:pepper": "ぴーまん", "food:cucumber": "きゅうり", "food:garlic": "にんにく", "food:onion": "たまねぎ", "food:mushroom": "きのこ", "food:chestnut": "くり", "food:ginger": "しょうが", "food:beans": "まめ", "job:doctor": "いしゃ", "job:farmer": "のうか", "job:chef": "こっく", "job:king": "おうさま", "job:teacher": "せんせい", "job:student": "がくせい", "job:singer": "かしゅ", "job:artist": "がか", "job:pilot": "ぱいろっと", "job:astronaut": "うちゅうひこうし", "job:firefighter": "しょうぼうし", "job:police": "けいさつ", "job:detective": "たんてい", "job:builder": "だいく", "job:scientist": "かがくしゃ", "job:clown": "ぴえろ", "job:prince": "おうじ", "job:princess": "おひめさま", "job:wizard": "まほうつかい"};
 ALL_ITEMS.forEach(d => { if (JA_NAMES[d.id]) d.ja = JA_NAMES[d.id]; });
 // 漢字: 500 everyday kanji (the leading number is the school year they are taught in; kept only for the order).
-// The kanji is the picture, its reading in hiragana is typed, then the Vietnamese meaning is said.
+// The kanji is the picture and its reading in hiragana is typed.
 // They are one set with no themes: the levels pick them by the length of the reading.
 const KANJI_DATA = `
-1 一 いち số một
-1 右 みぎ bên phải
-1 雨 あめ mưa
-1 円 えん đồng yên, hình tròn
-1 王 おう vua
-1 音 おと âm thanh
-1 下 した bên dưới
-1 火 ひ lửa
-1 花 はな bông hoa
-1 貝 かい con sò
-1 学 がく học
-1 気 き khí, tinh thần
-1 九 きゅう số chín
-1 休 やすみ nghỉ ngơi
-1 玉 たま viên ngọc
-1 金 きん vàng
-1 空 そら bầu trời
-1 月 つき mặt trăng
-1 犬 いぬ con chó
-1 見 みる nhìn
-1 五 ご số năm
-1 口 くち cái miệng
-1 校 こう trường học
-1 左 ひだり bên trái
-1 三 さん số ba
-1 山 やま núi
-1 子 こ đứa trẻ
-1 四 よん số bốn
-1 糸 いと sợi chỉ
-1 字 じ chữ viết
-1 耳 みみ cái tai
-1 七 なな số bảy
-1 車 くるま xe ô tô
-1 手 て bàn tay
-1 十 じゅう số mười
-1 出 でる đi ra
-1 女 おんな con gái
-1 小 ちいさい nhỏ bé
-1 上 うえ bên trên
-1 森 もり khu rừng
-1 人 ひと người
-1 水 みず nước
-1 正 ただしい đúng
-1 生 いきる sống
-1 青 あお màu xanh da trời
-1 夕 ゆう buổi chiều tối
-1 石 いし hòn đá
-1 赤 あか màu đỏ
-1 千 せん một nghìn
-1 川 かわ con sông
-1 先 さき phía trước
-1 早 はやい sớm
-1 草 くさ cỏ
-1 足 あし bàn chân
-1 村 むら ngôi làng
-1 大 おおきい to lớn
-1 男 おとこ con trai
-1 竹 たけ cây tre
-1 中 なか bên trong
-1 虫 むし côn trùng
-1 町 まち thị trấn
-1 天 てん bầu trời
-1 田 た ruộng lúa
-1 土 つち đất
-1 二 に số hai
-1 日 ひ mặt trời, ngày
-1 入 はいる đi vào
-1 年 とし năm
-1 白 しろ màu trắng
-1 八 はち số tám
-1 百 ひゃく một trăm
-1 文 ぶん câu văn
-1 木 き cái cây
-1 本 ほん quyển sách
-1 名 な tên
-1 目 め con mắt
-1 立 たつ đứng
-1 力 ちから sức mạnh
-1 林 はやし rừng cây
-1 六 ろく số sáu
-2 引 ひく kéo
-2 羽 はね lông vũ
-2 雲 くも đám mây
-2 園 えん khu vườn
-2 遠 とおい xa
-2 何 なに cái gì
-2 科 か môn học
-2 夏 なつ mùa hè
-2 家 いえ ngôi nhà
-2 歌 うた bài hát
-2 画 が bức vẽ
-2 回 かい lần, vòng
-2 会 あう gặp gỡ
-2 海 うみ biển
-2 絵 え bức tranh
-2 外 そと bên ngoài
-2 角 かど góc
-2 楽 たのしい vui vẻ
-2 活 かつ hoạt động
-2 間 あいだ khoảng giữa
-2 丸 まる hình tròn
-2 岩 いわ tảng đá
-2 顔 かお khuôn mặt
-2 汽 き hơi nước
-2 記 き ghi chép
-2 帰 かえる trở về
-2 弓 ゆみ cây cung
-2 牛 うし con bò
-2 魚 さかな con cá
-2 京 きょう kinh đô
-2 強 つよい mạnh
-2 教 おしえる dạy
-2 近 ちかい gần
-2 兄 あに anh trai
-2 形 かたち hình dạng
-2 計 けい tính toán
-2 元 もと gốc
-2 言 いう nói
-2 原 はら cánh đồng
-2 戸 と cánh cửa
-2 古 ふるい cũ
-2 午 ご buổi trưa
-2 後 うしろ phía sau
-2 語 ご ngôn ngữ
-2 工 こう thợ, công việc
-2 公 こう công cộng
-2 広 ひろい rộng
-2 交 こう giao nhau
-2 光 ひかり ánh sáng
-2 考 かんがえる suy nghĩ
-2 行 いく đi
-2 高 たかい cao
-2 黄 き màu vàng
-2 合 あう hợp nhau
-2 谷 たに thung lũng
-2 国 くに đất nước
-2 黒 くろ màu đen
-2 今 いま bây giờ
-2 才 さい tuổi, tài năng
-2 細 ほそい mảnh, thon
-2 作 つくる làm ra
-2 算 さん tính toán
-2 止 とまる dừng lại
-2 市 し thành phố
-2 矢 や mũi tên
-2 姉 あね chị gái
-2 思 おもう nghĩ
-2 紙 かみ giấy
-2 寺 てら ngôi chùa
-2 自 じ tự mình
-2 時 とき thời gian
-2 室 しつ căn phòng
-2 社 しゃ công ty
-2 弱 よわい yếu
-2 首 くび cái cổ
-2 秋 あき mùa thu
-2 週 しゅう tuần
-2 春 はる mùa xuân
-2 書 かく viết
-2 少 すこし một chút
-2 場 ば nơi chốn
-2 色 いろ màu sắc
-2 食 たべる ăn
-2 心 こころ trái tim
-2 新 あたらしい mới
-2 親 おや bố mẹ
-2 図 ず hình vẽ
-2 数 かず con số
-2 西 にし phía tây
-2 声 こえ giọng nói
-2 星 ほし ngôi sao
-2 晴 はれ trời nắng
-2 切 きる cắt
-2 雪 ゆき tuyết
-2 船 ふね con thuyền
-2 線 せん đường kẻ
-2 前 まえ phía trước
-2 組 くみ nhóm, lớp
-2 走 はしる chạy
-2 多 おおい nhiều
-2 太 ふとい to, mập
-2 体 からだ cơ thể
-2 台 だい cái bệ
-2 地 ち mặt đất
-2 池 いけ cái ao
-2 知 しる biết
-2 茶 ちゃ trà
-2 昼 ひる buổi trưa
-2 長 ながい dài
-2 鳥 とり con chim
-2 朝 あさ buổi sáng
-2 直 なおす sửa chữa
-2 通 とおる đi qua
-2 弟 おとうと em trai
-2 店 みせ cửa hàng
-2 点 てん dấu chấm, điểm
-2 電 でん điện
-2 刀 かたな thanh kiếm
-2 冬 ふゆ mùa đông
-2 当 あたる trúng
-2 東 ひがし phía đông
-2 答 こたえ câu trả lời
-2 頭 あたま cái đầu
-2 同 おなじ giống nhau
-2 道 みち con đường
-2 読 よむ đọc
-2 内 うち bên trong
-2 南 みなみ phía nam
-2 肉 にく thịt
-2 馬 うま con ngựa
-2 売 うる bán
-2 買 かう mua
-2 麦 むぎ lúa mì
-2 半 はん một nửa
-2 番 ばん lượt, số thứ tự
-2 父 ちち bố
-2 風 かぜ gió
-2 分 ふん phút
-2 聞 きく nghe
-2 米 こめ gạo
-2 歩 あるく đi bộ
-2 母 はは mẹ
-2 方 ほう phía, hướng
-2 北 きた phía bắc
-2 毎 まい mỗi
-2 妹 いもうと em gái
-2 万 まん mười nghìn
-2 明 あかるい sáng sủa
-2 鳴 なく kêu, hót
-2 毛 け lông, tóc
-2 門 もん cổng
-2 夜 よる ban đêm
-2 野 の cánh đồng
-2 友 とも bạn bè
-2 用 よう công việc
-2 曜 よう ngày trong tuần
-2 来 くる đến
-2 里 さと làng quê
-2 理 り lý lẽ
-2 話 はなし câu chuyện
-3 悪 わるい xấu
-3 安 やすい rẻ
-3 暗 くらい tối
-3 医 い chữa bệnh
-3 委 い giao phó
-3 意 い ý nghĩ
-3 育 そだつ lớn lên
-3 員 いん thành viên
-3 院 いん viện
-3 飲 のむ uống
-3 運 はこぶ chở, mang
-3 泳 およぐ bơi
-3 駅 えき nhà ga
-3 央 おう chính giữa
-3 横 よこ bên cạnh
-3 屋 や cửa tiệm
-3 温 あたたかい ấm áp
-3 化 ばける biến hóa
-3 荷 に hành lý
-3 界 かい thế giới
-3 開 あける mở ra
-3 階 かい tầng lầu
-3 寒 さむい lạnh
-3 感 かん cảm giác
-3 漢 かん chữ Hán
-3 館 かん tòa nhà
-3 岸 きし bờ sông
-3 起 おきる thức dậy
-3 期 き thời kỳ
-3 客 きゃく khách
-3 究 きゅう nghiên cứu
-3 急 いそぐ vội vàng
-3 級 きゅう cấp, lớp
-3 宮 みや cung điện
-3 球 たま quả bóng
-3 去 さる rời đi
-3 橋 はし cây cầu
-3 業 ぎょう nghề nghiệp
-3 曲 まがる rẽ, cong
-3 局 きょく cục, đài
-3 銀 ぎん bạc
-3 区 く quận
-3 苦 くるしい vất vả
-3 具 ぐ dụng cụ
-3 君 きみ bạn
-3 係 かかり người phụ trách
-3 軽 かるい nhẹ
-3 血 ち máu
-3 決 きめる quyết định
-3 研 けん mài giũa
-3 県 けん tỉnh
-3 庫 こ nhà kho
-3 湖 みずうみ hồ nước
-3 向 むく hướng về
-3 幸 しあわせ hạnh phúc
-3 港 みなと bến cảng
-3 号 ごう số hiệu
-3 根 ね rễ cây
-3 祭 まつり lễ hội
-3 皿 さら cái đĩa
-3 仕 し làm việc
-3 死 し chết
-3 使 つかう sử dụng
-3 始 はじめる bắt đầu
-3 指 ゆび ngón tay
-3 歯 は cái răng
-3 詩 し bài thơ
-3 次 つぎ tiếp theo
-3 事 こと sự việc
-3 持 もつ cầm, mang
-3 式 しき nghi lễ
-3 実 み quả
-3 写 うつす chụp, chép
-3 者 もの người
-3 主 ぬし chủ nhân
-3 守 まもる bảo vệ
-3 取 とる lấy
-3 酒 さけ rượu
-3 受 うける nhận
-3 州 しゅう châu, bang
-3 拾 ひろう nhặt lên
-3 終 おわる kết thúc
-3 習 ならう học tập
-3 集 あつまる tụ tập
-3 住 すむ sinh sống
-3 重 おもい nặng
-3 宿 やど nhà trọ
-3 所 ところ nơi chốn
-3 暑 あつい nóng
-3 助 たすける giúp đỡ
-3 昭 しょう sáng sủa
-3 消 けす tắt, xóa
-3 商 しょう buôn bán
-3 章 しょう chương sách
-3 勝 かつ chiến thắng
-3 乗 のる lên xe
-3 植 うえる trồng cây
-3 申 もうす nói
-3 身 み thân thể
-3 神 かみ thần
-3 真 しん chân thật
-3 深 ふかい sâu
-3 進 すすむ tiến lên
-3 世 よ thế gian
-3 整 ととのえる sắp xếp
-3 昔 むかし ngày xưa
-3 全 ぜん toàn bộ
-3 相 あい cùng nhau
-3 送 おくる gửi
-3 想 そう tưởng tượng
-3 息 いき hơi thở
-3 速 はやい nhanh
-3 族 ぞく gia tộc
-3 他 ほか khác
-3 打 うつ đánh
-3 対 たい đối diện
-3 待 まつ chờ đợi
-3 代 だい thay thế
-3 第 だい thứ tự
-3 題 だい đề bài
-3 炭 すみ than
-3 短 みじかい ngắn
-3 談 だん trò chuyện
-3 着 きる mặc
-3 注 そそぐ rót, đổ
-3 柱 はしら cây cột
-3 丁 ちょう khu phố
-3 帳 ちょう cuốn sổ
-3 調 しらべる tìm hiểu
-3 追 おう đuổi theo
-3 定 てい quy định
-3 庭 にわ khu vườn
-3 笛 ふえ cây sáo
-3 鉄 てつ sắt
-3 転 ころぶ té ngã
-3 都 と thủ đô
-3 度 ど độ, lần
-3 投 なげる ném
-3 豆 まめ hạt đậu
-3 島 しま hòn đảo
-3 湯 ゆ nước nóng
-3 登 のぼる leo lên
-3 等 とう bằng nhau
-3 動 うごく chuyển động
-3 童 どう trẻ em
-3 農 のう nông nghiệp
-3 波 なみ con sóng
-3 配 くばる phân phát
-3 倍 ばい gấp đôi
-3 箱 はこ cái hộp
-3 畑 はたけ ruộng rẫy
-3 発 はつ xuất phát
-3 反 はん ngược lại
-3 坂 さか con dốc
-3 板 いた tấm ván
-3 皮 かわ da, vỏ
-3 悲 かなしい buồn
-3 美 うつくしい đẹp
-3 鼻 はな cái mũi
-3 筆 ふで bút lông
-3 氷 こおり nước đá
-3 表 おもて mặt trước
-3 秒 びょう giây
-3 病 びょう bệnh
-3 品 しな hàng hóa
-3 負 まける thua
-3 部 ぶ bộ phận
-3 服 ふく quần áo
-3 福 ふく may mắn
-3 物 もの đồ vật
-3 平 たいら bằng phẳng
-3 返 かえす trả lại
-3 勉 べん chăm chỉ
-3 放 はなす thả ra
-3 味 あじ mùi vị
-3 命 いのち sự sống
-3 面 めん bề mặt
-3 問 とい câu hỏi
-3 役 やく vai trò
-3 薬 くすり thuốc
-3 由 ゆう lý do
-3 油 あぶら dầu
-3 有 ある có
-3 遊 あそぶ chơi
-3 予 よ trước
-3 羊 ひつじ con cừu
-3 洋 よう đại dương
-3 葉 は lá cây
-3 陽 よう ánh nắng
-3 様 さま ngài
-3 落 おちる rơi xuống
-3 流 ながれる chảy
-3 旅 たび chuyến đi
-3 両 りょう cả hai
-3 緑 みどり màu xanh lá
-3 礼 れい lời cảm ơn
-3 列 れつ hàng lối
-3 練 ねる luyện tập
-3 路 ろ con đường
-3 和 わ hòa bình
-4 愛 あい tình yêu
-4 塩 しお muối
-4 芽 め mầm cây
-4 街 まち phố phường
-4 覚 おぼえる ghi nhớ
-4 願 ねがう mong ước
-4 喜 よろこぶ vui mừng
-4 旗 はた lá cờ
-4 器 うつわ đồ đựng
-4 泣 なく khóc
-4 漁 りょう đánh cá
-4 鏡 かがみ cái gương
-4 競 きそう thi đua
-4 好 すき thích
-4 菜 な rau
-4 最 もっとも nhất
-4 昨 さく hôm qua
-4 残 のこる còn lại
-4 児 じ đứa trẻ
-4 失 うしなう đánh mất
-4 借 かりる mượn
-4 種 たね hạt giống
-4 祝 いわう chúc mừng
-4 初 はじめ đầu tiên
-4 松 まつ cây thông
-4 笑 わらう cười
-4 焼 やく nướng
-4 信 しん tin tưởng
-4 静 しずか yên tĩnh
-4 席 せき chỗ ngồi
-4 折 おる gấp, bẻ
-4 説 せつ giải thích
-4 戦 たたかう chiến đấu
-4 選 えらぶ lựa chọn
-4 続 つづく tiếp tục
-4 孫 まご cháu
-4 達 たつ đạt được
-4 低 ひくい thấp
-4 底 そこ đáy
-4 伝 つたえる truyền đạt
-4 灯 とう ngọn đèn
-4 働 はたらく làm việc
-4 特 とく đặc biệt
-4 熱 ねつ nhiệt, sốt
-4 梅 うめ cây mơ
-4 飯 めし cơm
-4 飛 とぶ bay
-4 夫 おっと người chồng
-4 別 べつ riêng biệt
-4 変 かわる thay đổi
-4 便 びん chuyến
-4 望 のぞむ mong muốn
-4 未 み chưa
-4 無 む không có
-4 約 やく khoảng
-4 勇 ゆう dũng cảm
-4 浴 あびる tắm
-4 冷 つめたい lạnh buốt
-4 例 れい ví dụ
-4 老 おいる già đi`;
+1 一 いち
+1 右 みぎ
+1 雨 あめ
+1 円 えん
+1 王 おう
+1 音 おと
+1 下 した
+1 火 ひ
+1 花 はな
+1 貝 かい
+1 学 がく
+1 気 き
+1 九 きゅう
+1 休 やすみ
+1 玉 たま
+1 金 きん
+1 空 そら
+1 月 つき
+1 犬 いぬ
+1 見 みる
+1 五 ご
+1 口 くち
+1 校 こう
+1 左 ひだり
+1 三 さん
+1 山 やま
+1 子 こ
+1 四 よん
+1 糸 いと
+1 字 じ
+1 耳 みみ
+1 七 なな
+1 車 くるま
+1 手 て
+1 十 じゅう
+1 出 でる
+1 女 おんな
+1 小 ちいさい
+1 上 うえ
+1 森 もり
+1 人 ひと
+1 水 みず
+1 正 ただしい
+1 生 いきる
+1 青 あお
+1 夕 ゆう
+1 石 いし
+1 赤 あか
+1 千 せん
+1 川 かわ
+1 先 さき
+1 早 はやい
+1 草 くさ
+1 足 あし
+1 村 むら
+1 大 おおきい
+1 男 おとこ
+1 竹 たけ
+1 中 なか
+1 虫 むし
+1 町 まち
+1 天 てん
+1 田 た
+1 土 つち
+1 二 に
+1 日 ひ
+1 入 はいる
+1 年 とし
+1 白 しろ
+1 八 はち
+1 百 ひゃく
+1 文 ぶん
+1 木 き
+1 本 ほん
+1 名 な
+1 目 め
+1 立 たつ
+1 力 ちから
+1 林 はやし
+1 六 ろく
+2 引 ひく
+2 羽 はね
+2 雲 くも
+2 園 えん
+2 遠 とおい
+2 何 なに
+2 科 か
+2 夏 なつ
+2 家 いえ
+2 歌 うた
+2 画 が
+2 回 かい
+2 会 あう
+2 海 うみ
+2 絵 え
+2 外 そと
+2 角 かど
+2 楽 たのしい
+2 活 かつ
+2 間 あいだ
+2 丸 まる
+2 岩 いわ
+2 顔 かお
+2 汽 き
+2 記 き
+2 帰 かえる
+2 弓 ゆみ
+2 牛 うし
+2 魚 さかな
+2 京 きょう
+2 強 つよい
+2 教 おしえる
+2 近 ちかい
+2 兄 あに
+2 形 かたち
+2 計 けい
+2 元 もと
+2 言 いう
+2 原 はら
+2 戸 と
+2 古 ふるい
+2 午 ご
+2 後 うしろ
+2 語 ご
+2 工 こう
+2 公 こう
+2 広 ひろい
+2 交 こう
+2 光 ひかり
+2 考 かんがえる
+2 行 いく
+2 高 たかい
+2 黄 き
+2 合 あう
+2 谷 たに
+2 国 くに
+2 黒 くろ
+2 今 いま
+2 才 さい
+2 細 ほそい
+2 作 つくる
+2 算 さん
+2 止 とまる
+2 市 し
+2 矢 や
+2 姉 あね
+2 思 おもう
+2 紙 かみ
+2 寺 てら
+2 自 じ
+2 時 とき
+2 室 しつ
+2 社 しゃ
+2 弱 よわい
+2 首 くび
+2 秋 あき
+2 週 しゅう
+2 春 はる
+2 書 かく
+2 少 すこし
+2 場 ば
+2 色 いろ
+2 食 たべる
+2 心 こころ
+2 新 あたらしい
+2 親 おや
+2 図 ず
+2 数 かず
+2 西 にし
+2 声 こえ
+2 星 ほし
+2 晴 はれ
+2 切 きる
+2 雪 ゆき
+2 船 ふね
+2 線 せん
+2 前 まえ
+2 組 くみ
+2 走 はしる
+2 多 おおい
+2 太 ふとい
+2 体 からだ
+2 台 だい
+2 地 ち
+2 池 いけ
+2 知 しる
+2 茶 ちゃ
+2 昼 ひる
+2 長 ながい
+2 鳥 とり
+2 朝 あさ
+2 直 なおす
+2 通 とおる
+2 弟 おとうと
+2 店 みせ
+2 点 てん
+2 電 でん
+2 刀 かたな
+2 冬 ふゆ
+2 当 あたる
+2 東 ひがし
+2 答 こたえ
+2 頭 あたま
+2 同 おなじ
+2 道 みち
+2 読 よむ
+2 内 うち
+2 南 みなみ
+2 肉 にく
+2 馬 うま
+2 売 うる
+2 買 かう
+2 麦 むぎ
+2 半 はん
+2 番 ばん
+2 父 ちち
+2 風 かぜ
+2 分 ふん
+2 聞 きく
+2 米 こめ
+2 歩 あるく
+2 母 はは
+2 方 ほう
+2 北 きた
+2 毎 まい
+2 妹 いもうと
+2 万 まん
+2 明 あかるい
+2 鳴 なく
+2 毛 け
+2 門 もん
+2 夜 よる
+2 野 の
+2 友 とも
+2 用 よう
+2 曜 よう
+2 来 くる
+2 里 さと
+2 理 り
+2 話 はなし
+3 悪 わるい
+3 安 やすい
+3 暗 くらい
+3 医 い
+3 委 い
+3 意 い
+3 育 そだつ
+3 員 いん
+3 院 いん
+3 飲 のむ
+3 運 はこぶ
+3 泳 およぐ
+3 駅 えき
+3 央 おう
+3 横 よこ
+3 屋 や
+3 温 あたたかい
+3 化 ばける
+3 荷 に
+3 界 かい
+3 開 あける
+3 階 かい
+3 寒 さむい
+3 感 かん
+3 漢 かん
+3 館 かん
+3 岸 きし
+3 起 おきる
+3 期 き
+3 客 きゃく
+3 究 きゅう
+3 急 いそぐ
+3 級 きゅう
+3 宮 みや
+3 球 たま
+3 去 さる
+3 橋 はし
+3 業 ぎょう
+3 曲 まがる
+3 局 きょく
+3 銀 ぎん
+3 区 く
+3 苦 くるしい
+3 具 ぐ
+3 君 きみ
+3 係 かかり
+3 軽 かるい
+3 血 ち
+3 決 きめる
+3 研 けん
+3 県 けん
+3 庫 こ
+3 湖 みずうみ
+3 向 むく
+3 幸 しあわせ
+3 港 みなと
+3 号 ごう
+3 根 ね
+3 祭 まつり
+3 皿 さら
+3 仕 し
+3 死 し
+3 使 つかう
+3 始 はじめる
+3 指 ゆび
+3 歯 は
+3 詩 し
+3 次 つぎ
+3 事 こと
+3 持 もつ
+3 式 しき
+3 実 み
+3 写 うつす
+3 者 もの
+3 主 ぬし
+3 守 まもる
+3 取 とる
+3 酒 さけ
+3 受 うける
+3 州 しゅう
+3 拾 ひろう
+3 終 おわる
+3 習 ならう
+3 集 あつまる
+3 住 すむ
+3 重 おもい
+3 宿 やど
+3 所 ところ
+3 暑 あつい
+3 助 たすける
+3 昭 しょう
+3 消 けす
+3 商 しょう
+3 章 しょう
+3 勝 かつ
+3 乗 のる
+3 植 うえる
+3 申 もうす
+3 身 み
+3 神 かみ
+3 真 しん
+3 深 ふかい
+3 進 すすむ
+3 世 よ
+3 整 ととのえる
+3 昔 むかし
+3 全 ぜん
+3 相 あい
+3 送 おくる
+3 想 そう
+3 息 いき
+3 速 はやい
+3 族 ぞく
+3 他 ほか
+3 打 うつ
+3 対 たい
+3 待 まつ
+3 代 だい
+3 第 だい
+3 題 だい
+3 炭 すみ
+3 短 みじかい
+3 談 だん
+3 着 きる
+3 注 そそぐ
+3 柱 はしら
+3 丁 ちょう
+3 帳 ちょう
+3 調 しらべる
+3 追 おう
+3 定 てい
+3 庭 にわ
+3 笛 ふえ
+3 鉄 てつ
+3 転 ころぶ
+3 都 と
+3 度 ど
+3 投 なげる
+3 豆 まめ
+3 島 しま
+3 湯 ゆ
+3 登 のぼる
+3 等 とう
+3 動 うごく
+3 童 どう
+3 農 のう
+3 波 なみ
+3 配 くばる
+3 倍 ばい
+3 箱 はこ
+3 畑 はたけ
+3 発 はつ
+3 反 はん
+3 坂 さか
+3 板 いた
+3 皮 かわ
+3 悲 かなしい
+3 美 うつくしい
+3 鼻 はな
+3 筆 ふで
+3 氷 こおり
+3 表 おもて
+3 秒 びょう
+3 病 びょう
+3 品 しな
+3 負 まける
+3 部 ぶ
+3 服 ふく
+3 福 ふく
+3 物 もの
+3 平 たいら
+3 返 かえす
+3 勉 べん
+3 放 はなす
+3 味 あじ
+3 命 いのち
+3 面 めん
+3 問 とい
+3 役 やく
+3 薬 くすり
+3 由 ゆう
+3 油 あぶら
+3 有 ある
+3 遊 あそぶ
+3 予 よ
+3 羊 ひつじ
+3 洋 よう
+3 葉 は
+3 陽 よう
+3 様 さま
+3 落 おちる
+3 流 ながれる
+3 旅 たび
+3 両 りょう
+3 緑 みどり
+3 礼 れい
+3 列 れつ
+3 練 ねる
+3 路 ろ
+3 和 わ
+4 愛 あい
+4 塩 しお
+4 芽 め
+4 街 まち
+4 覚 おぼえる
+4 願 ねがう
+4 喜 よろこぶ
+4 旗 はた
+4 器 うつわ
+4 泣 なく
+4 漁 りょう
+4 鏡 かがみ
+4 競 きそう
+4 好 すき
+4 菜 な
+4 最 もっとも
+4 昨 さく
+4 残 のこる
+4 児 じ
+4 失 うしなう
+4 借 かりる
+4 種 たね
+4 祝 いわう
+4 初 はじめ
+4 松 まつ
+4 笑 わらう
+4 焼 やく
+4 信 しん
+4 静 しずか
+4 席 せき
+4 折 おる
+4 説 せつ
+4 戦 たたかう
+4 選 えらぶ
+4 続 つづく
+4 孫 まご
+4 達 たつ
+4 低 ひくい
+4 底 そこ
+4 伝 つたえる
+4 灯 とう
+4 働 はたらく
+4 特 とく
+4 熱 ねつ
+4 梅 うめ
+4 飯 めし
+4 飛 とぶ
+4 夫 おっと
+4 別 べつ
+4 変 かわる
+4 便 びん
+4 望 のぞむ
+4 未 み
+4 無 む
+4 約 やく
+4 勇 ゆう
+4 浴 あびる
+4 冷 つめたい
+4 例 れい
+4 老 おいる`;
 KANJI_DATA.trim().split('\n').forEach(line => {
-  const [, e, ja, ...vi] = line.split(' ');
-  ALL_ITEMS.push({ e, en:'', ja, vi: vi.join(' '), kanji:true, theme:'kanji', id:'kanji:' + e, ci: colorIx++ % BUBBLES.length });
+  const [, e, ja] = line.split(' ');
+  ALL_ITEMS.push({ e, en:'', ja, kanji:true, theme:'kanji', id:'kanji:' + e, ci: colorIx++ % BUBBLES.length });
 });
 
 // The game's own icon store: every picture is bundled here (Twemoji, CC-BY 4.0, github.com/jdecked/twemoji),
@@ -1726,10 +1725,9 @@ function speakSeq(parts, queue){
     if (!voices.length) loadVoices();
     const gen = ++speechGen;
     const list = [];
-    parts.forEach(({ text, lang, rate, keep }) => {           // keep: say it in Vietnamese anyway (a kanji's meaning)
-      if (lang === 'vi' && !keep){ text = isJa() ? jaFor(text) : enFor(text); lang = isJa() ? 'ja' : 'en'; if (!text) return; }
+    parts.forEach(({ text, lang, rate }) => {
+      if (lang === 'vi'){ text = isJa() ? jaFor(text) : enFor(text); lang = isJa() ? 'ja' : 'en'; if (!text) return; }
       const v = pickVoice(lang);
-      if (!v && lang === 'vi' && !keep) return;          // no Vietnamese voice on this computer: skip the cheer
       list.push({ text, lang, rate, v });
     });
     if (!list.length) return;
@@ -1904,8 +1902,7 @@ function pressRomaji(ch){
 // after a finished word the keyboard rests for 3 s, so the cheer and the name can be heard
 const REST_MS = 3000;
 let restUntil = 0;
-let restSpeech = 0;                                             // 漢字: also wait for the reading and meaning to be said (7 s at most)
-const resting = () => performance.now() < restUntil || (performance.now() < restSpeech && speechSynthesis.speaking);
+const resting = () => performance.now() < restUntil;
 function press(k){
   flashKey(k);
   if (state !== 'play') return;
@@ -1924,7 +1921,7 @@ function press(k){
     const fin = target.i >= target.keys.length;
     if (fin) target.done = true;
     fire(target, fin);
-    if (fin){ restUntil = performance.now() + REST_MS; restSpeech = target.def.kanji ? performance.now() + 7000 : 0; target = null; }
+    if (fin){ target = null; restUntil = performance.now() + REST_MS; }
   } else {
     target.shake = 1; sfx.miss();
   }
@@ -1947,7 +1944,7 @@ function capture(a){
   const hex = $('#hex'); hex.classList.remove('bump'); void hex.offsetWidth; hex.classList.add('bump');
   // after the spelled letters: the word the child just typed, then the English cheer
   const cheer = showPopup(a.def, isNew, newStars);
-  const lines = [{ text: sayWord(a.def), lang:LANG() }, ...(a.def.kanji ? [{ text: a.def.vi, lang:'vi', keep:true }] : []), { text: cheer, lang:LANG() }];
+  const lines = [{ text: sayWord(a.def), lang:LANG() }, { text: cheer, lang:LANG() }];
   if (newStars > 0){ lines.push({ text: 'Bé được thêm một ngôi sao vàng!', lang:'vi' }); sfx.star(); }
   speakSeq(lines, true);
   flyToShelf(a.def, x, y);
@@ -1962,7 +1959,6 @@ function showPopup(d, isNew, newStars){
   const cheers = isJa() ? PRAISE_JA : PRAISE, cheer = cheers[Math.floor(Math.random() * cheers.length)];
   mk('pp', cheer);
   mk('pw', capsOf(main));
-  if (d.kanji) mk('pmean', d.e + ' = ' + d.vi);
   if (isNew) mk('pnew', isJa() ? 'はじめて！' : THEMES[d.theme].fresh);
   if (newStars > 0) mk('pstar', ui('starGain', newStars));
   popup.hidden = false;
@@ -2005,7 +2001,7 @@ function renderShelf(){
     setItemIcon(b.querySelector('.em'), d);
     b.addEventListener('click', () => {
       if (!counts[ck(d)]) return;
-      audio(); speakSeq([{ text: sayWord(d), lang:LANG() }, ...(d.kanji ? [{ text: d.vi, lang:'vi', keep:true }] : [])]);
+      audio(); speak(sayWord(d), LANG());
       b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
     });
     slotEls[d.id] = b; row.appendChild(b);
@@ -3044,7 +3040,7 @@ $('#familyJoinBtn').addEventListener('click', () => { $('#familyJoin').hidden = 
 $('#familyGo').addEventListener('click', joinFamily);
 connectCloud();
 // a newer copy on the server: offer to reload it (the build stamps APP_VERSION; checked only on a web address)
-const APP_VERSION = '20260927215238';
+const APP_VERSION = '20260927225416';
 let newVersion = '', updSnooze = 0;
 async function checkUpdate(){
   if (!/^https?:$/.test(location.protocol) || !/^\d+$/.test(APP_VERSION) || newVersion) return offerUpdate();
