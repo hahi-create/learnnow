@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
 <title>LearnNow</title>
+<!-- Icons: Twemoji by Twitter/X and contributors (github.com/jdecked/twemoji), CC-BY 4.0 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
@@ -218,8 +219,6 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
         </div>
         <button id="goBtn" class="go">Chơi nào!</button>
         <p class="fine" id="levelNote"></p>
-        <button id="resetBtn" class="linkish">Làm lại bộ sưu tập</button>
-        <p class="fine" id="credit">Hình ảnh: Twemoji (CC-BY 4.0).</p>
         </div>
       </div>
     </div>
@@ -1275,13 +1274,11 @@ function openOverlay(mode){
 }
 
 // ---------- players ----------
-const resetLabel = () => 'Làm lại bộ sưu tập của ' + me().name;
 function syncPlayer(){
   const p = me();
   setIcon($('#chipAv'), p.icon);
   $('#chipName').textContent = p.name;
   $('#shelfOwner').textContent = p.name;
-  if (!resetArm) $('#resetBtn').textContent = resetLabel();
   renderPlayers();
 }
 function renderPlayers(){
@@ -1483,21 +1480,6 @@ window.addEventListener('storage', e => {
   if (!settings.sound) { try { speechSynthesis.cancel(); } catch(err){} }
   if (ac) applyMusic();
   syncButtons();
-});
-let resetArm = 0;
-$('#resetBtn').addEventListener('click', () => {
-  const b = $('#resetBtn');
-  if (!resetArm){
-    b.textContent = 'Bấm lần nữa để xoá hết bộ sưu tập của ' + me().name; b.classList.add('armed');
-    resetArm = setTimeout(() => { resetArm = 0; b.textContent = resetLabel(); b.classList.remove('armed'); }, 3500);
-    return;
-  }
-  clearTimeout(resetArm); resetArm = 0;
-  counts = me().counts = {}; savePlayers(); cloudSave(me());
-  THEME_ITEMS.forEach(d => updateSlot(d, false));
-  renderPlayers();
-  b.textContent = 'Đã xoá. Bắt lại từ đầu nào!'; b.classList.remove('armed');
-  setTimeout(() => { if (!resetArm) b.textContent = resetLabel(); }, 2500);
 });
 
 cv.addEventListener('pointerdown', e => {
