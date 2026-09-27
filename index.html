@@ -84,6 +84,8 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 .go{margin-top:4px;border:0;background:var(--sun);color:var(--ink);font:800 28px/1 var(--display);padding:15px 16px 10px;border-radius:18px;cursor:pointer;box-shadow:0 6px 0 var(--sun-deep)}
 .go:active{transform:translateY(4px);box-shadow:0 2px 0 var(--sun-deep)}
 .fine{margin:0;font-size:13px;color:var(--muted);line-height:1.45}
+.star-rules ul{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font:500 15px/1.45 var(--text),"Zen Maru Gothic",sans-serif;color:var(--ink)}
+.star-rules b{color:#B07A00}
 .linkish{align-self:flex-start;background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;font:400 13px var(--text);padding:0;cursor:pointer}
 .linkish.armed{color:var(--coral)}
 button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
@@ -374,6 +376,14 @@ details.more[open] summary{margin-bottom:14px}
         <div id="rankTabs" class="rank-tabs"></div>
         <ol id="rankList" class="rank"></ol>
         <p id="rankNote" class="fine">Xếp hạng theo số món khác nhau mỗi bé đã sưu tầm.</p>
+      </section>
+      <section class="hcard star-rules"><h2>⭐ Cách tích sao</h2>
+        <ul>
+          <li>Gõ đúng cùng một thẻ đủ <b>5 lần</b> được <b>1 sao vàng</b> (10 lần 2 sao, 15 lần 3 sao…).</li>
+          <li>Mức <b>Dễ</b> và <b>Vừa</b>: mỗi thẻ tích tối đa <b>15 lần</b> (3 sao).</li>
+          <li>Mức <b>Khó</b>: tích <b>không giới hạn</b>.</li>
+          <li>abc, ABC, ひらがな, カタカナ tính riêng. <b>Tổng sao</b> là sao của cả 4 bộ cộng lại.</li>
+        </ul>
       </section>
     </div>
 
@@ -2049,7 +2059,7 @@ function renderRank(){
   tabs.hidden = byStars;                                        // the star board has no theme tabs
   const list = byTheme(rankTheme), total = byStars ? MODES.length * 5 : totalOf(list, rankMode);
   $('#rankNote').textContent = byStars
-    ? 'Tổng số sao vàng của mỗi bé. Gõ đúng 1 thẻ đủ 5 lần được 1 sao; abc, ABC, ひらがな, カタカナ tính riêng.'
+    ? 'Tổng số sao vàng của mỗi bé, cộng cả 4 bộ abc, ABC, ひらがな, カタカナ.'
     : scope === 'world'
     ? 'Bảng ' + MODE_LABEL[rankMode] + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm.'
     : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
