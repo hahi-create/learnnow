@@ -162,6 +162,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .hero-txt{flex:1;min-width:170px}
 .hero-hello{font:800 30px/1.05 var(--display);color:var(--ink);padding-top:4px}
 .hero-stat{font:700 15px/1.3 var(--text);color:var(--muted);margin-top:4px}
+.sync-note{font:400 13px/1.4 var(--text);color:var(--muted);margin-top:6px;max-width:46ch}
 .hero-btns{display:flex;gap:10px;flex-wrap:wrap}
 .hbtn{border:0;border-radius:16px;padding:13px 18px 11px;font:800 18px/1 var(--display);cursor:pointer;background:#E4F4FF;color:var(--ink);box-shadow:0 4px 0 #B9DDF3}
 .hbtn.rank{background:#FFF3C4;box-shadow:0 4px 0 var(--sun)}
@@ -236,7 +237,6 @@ details.more[open] summary{margin-bottom:14px}
       <div id="pmList" class="view">
         <span class="opt-label">Ai đang chơi?</span>
         <div id="players" class="players"></div>
-        <p class="fine" id="syncNote">Chỉ lưu trên máy này.</p>
       </div>
       <div id="editor" class="view editor" hidden>
         <span class="pm-title" id="edTitle">Thêm bạn chơi mới</span>
@@ -290,7 +290,7 @@ details.more[open] summary{margin-bottom:14px}
     <div id="homeMain" class="view">
       <section class="hcard hero">
         <span id="heroAv" class="hero-av"></span>
-        <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroStat" class="hero-stat"></div></div>
+        <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroStat" class="hero-stat"></div><div id="syncNote" class="sync-note">💾 Chỉ lưu trên máy này, chưa đồng bộ.</div></div>
         <div class="hero-btns">
           <button id="toPlayers" class="hbtn">👥 Chọn người chơi</button>
           <button id="toRank" class="hbtn rank">🏆 Bảng xếp hạng</button>
@@ -1725,8 +1725,8 @@ const cloudBody = q => ({ name: q.name, icon: q.icon, counts: q.counts || {}, le
   caps: q.caps || 'lower', theme: q.theme || 'zoo', created: q.created || 0 });
 function setSync(mode){
   $('#syncNote').textContent = {
-    on:   '☁️ Đang đồng bộ: mở link game trên máy khác (đăng nhập cùng tài khoản) sẽ thấy cùng các bé và bộ sưu tập.',
-    local:'Chỉ lưu trên máy này. Mở game bằng link online để đồng bộ giữa các máy.',
+    on:   '☁️ Đang đồng bộ giữa các máy.',
+    local:'💾 Chỉ lưu trên máy này, chưa đồng bộ.',
     read: 'Tài khoản này chỉ được xem, nên bộ sưu tập chỉ lưu trên máy này.',
     off:  'Tạm mất kết nối đồng bộ. Bộ sưu tập vẫn được lưu trên máy này.',
     full: 'Kho dữ liệu chung đã đầy, không thêm được bé mới.',
