@@ -134,7 +134,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .icons{display:grid;grid-template-columns:repeat(6,minmax(0,76px));gap:8px;justify-content:start}
 .icons button{aspect-ratio:1;max-width:100%;border:2px solid transparent;border-radius:10px;background:#F4FAFF;font-size:clamp(24px,4.2vw,46px);line-height:1;cursor:pointer;padding:0;display:grid;place-items:center}
 .icons button[aria-pressed="true"]{border-color:var(--sky);background:#E1F3FF;transform:scale(1.08)}
-.ed-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ed-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .voice-row{display:flex;gap:6px}
 .voice-row select{flex:1;min-width:0;font:700 14px/1.2 var(--text);color:var(--ink);padding:9px 10px;border-radius:12px;border:2px solid #D3E4F1;background:#F7FBFF;cursor:pointer}
 .voice-row select:focus{outline:none;border-color:var(--sky)}
@@ -142,7 +142,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .btn-pri{border:0;background:var(--grass);color:#fff;font:800 19px/1 var(--display);padding:11px 22px 8px;border-radius:14px;cursor:pointer;box-shadow:0 4px 0 var(--grass-deep)}
 .btn-pri:active{transform:translateY(3px);box-shadow:0 1px 0 var(--grass-deep)}
 .btn-sec{border:0;background:#EEF6FC;color:var(--ink);font:700 15px/1 var(--text);padding:11px 16px;border-radius:14px;cursor:pointer}
-.linkish.danger{margin-left:auto}
+.linkish.danger{margin-right:auto}
 .shelf h2 span{color:var(--ink)}
 
 /* home screen */
@@ -270,10 +270,10 @@ details.more[open] summary{margin-bottom:14px}
         <span class="pm-title">Chọn hình đại diện</span>
         <div id="pIcons" class="icons"></div>
         <div class="ed-actions">
-          <button id="pSave" class="btn-pri">Lưu</button>
-          <button id="pCancel" class="btn-sec">Huỷ</button>
           <button id="pDelete" class="linkish danger">Xoá người chơi này</button>
           <span id="edMsg" class="sync-note"></span>
+          <button id="pCancel" class="btn-sec">Huỷ</button>
+          <button id="pSave" class="btn-pri">Lưu</button>
         </div>
       </div>
     </div>
@@ -377,7 +377,7 @@ details.more[open] summary{margin-bottom:14px}
   </div>
   <div id="nameModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalHi">
     <div class="modal-card">
-      <div id="modalHi" class="modal-hi">👋 Chào bé!</div>
+      <div id="modalHi" class="modal-hi">👋 Xin chào!</div>
       <p>Hãy đặt tên cho bé trước khi chơi nhé.</p>
       <div id="modalSlot"></div>
     </div>
