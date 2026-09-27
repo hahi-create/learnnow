@@ -359,7 +359,7 @@ details.more[open] summary{margin-bottom:14px}
           <button id="toRank" class="hbtn gold">🏆 Bảng xếp hạng</button>
         </div>
       </section>
-      <section class="hcard"><h2>Chọn chủ đề</h2><div id="homeThemes" class="hthemes"></div></section>
+      <section id="homeThemesCard" class="hcard"><h2>Chọn chủ đề</h2><div id="homeThemes" class="hthemes"></div></section>
       <section class="hcard"><h2>Ngôn ngữ luyện tập</h2>
         <div class="seg big" data-key="lang"><button data-v="en">English</button><button data-v="ja">日本語</button></div>
         <div class="lang-sub">
@@ -403,7 +403,7 @@ details.more[open] summary{margin-bottom:14px}
           <li>Gõ đúng cùng một thẻ đủ <b>5 lần</b> được <b>1 sao vàng</b> (10 lần 2 sao, 15 lần 3 sao…).</li>
           <li>Mức <b>Dễ</b> và <b>Vừa</b>: mỗi thẻ tích tối đa <b>15 lần</b> (3 sao).</li>
           <li>Mức <b>Khó</b>: tích <b>không giới hạn</b>.</li>
-          <li>abc, ABC, ひらがな, カタカナ tính riêng. <b>Tổng sao</b> là sao của cả 4 bộ cộng lại.</li>
+          <li>abc, ABC, ひらがな, カタカナ, 漢字 tính riêng. <b>Tổng sao</b> là sao của cả 5 bộ cộng lại.</li>
         </ul>
       </section>
     </div>
@@ -476,14 +476,8 @@ const THEMES = {
   job:  { vi:'Nghề Nghiệp', icon:'👩‍🚒', say:'Chủ đề nghề nghiệp', fresh:'New job!' },
   all:  { vi:'Tổng Hợp',    icon:'🌈', say:'Chủ đề tổng hợp',    fresh:'New!' },
 };
-const KANJI_THEMES = {
-  zoo:  { vi:'Lớp 1',    icon:'一', say:'Chữ Hán lớp một' },
-  car:  { vi:'Lớp 2',    icon:'二', say:'Chữ Hán lớp hai' },
-  food: { vi:'Lớp 3',    icon:'三', say:'Chữ Hán lớp ba' },
-  job:  { vi:'Lớp 4',    icon:'四', say:'Chữ Hán lớp bốn' },
-  all:  { vi:'Tổng Hợp', icon:'漢', say:'Chữ Hán tổng hợp' },
-};
-const themeOf = (k, mode) => ((mode || curMode()) === 'kanji' ? KANJI_THEMES : THEMES)[k];
+const KANJI_THEME = { vi:'Chữ Hán', icon:'漢', say:'Chữ Hán' };   // 漢字 is one set, without themes
+const themeOf = (k, mode) => (mode || curMode()) === 'kanji' ? KANJI_THEME : THEMES[k];
 const THEME_ORDER = ['zoo', 'car', 'food', 'job', 'all'];   // "all" mixes every theme and sits last
 const RAW_THEMES = {
   zoo: [
@@ -540,9 +534,9 @@ const ALL_ITEMS = ['zoo', 'car', 'food', 'job'].flatMap(t => RAW_THEMES[t]
 // Japanese names (hiragana) for the Japanese mode; items without one are English-only
 const JA_NAMES = {"cat": "ねこ", "dog": "いぬ", "pig": "ぶた", "cow": "うし", "fox": "きつね", "owl": "ふくろう", "bee": "はち", "ant": "あり", "hen": "にわとり", "bat": "こうもり", "fly": "はえ", "duck": "あひる", "fish": "さかな", "frog": "かえる", "lion": "らいおん", "bear": "くま", "goat": "やぎ", "crab": "かに", "bird": "とり", "deer": "しか", "wolf": "おおかみ", "swan": "はくちょう", "seal": "あざらし", "boar": "いのしし", "dove": "はと", "worm": "みみず", "horse": "うま", "tiger": "とら", "zebra": "しまうま", "snake": "へび", "mouse": "ねずみ", "panda": "ぱんだ", "koala": "こあら", "camel": "らくだ", "whale": "くじら", "shark": "さめ", "sheep": "ひつじ", "chick": "ひよこ", "snail": "かたつむり", "hippo": "かば", "rhino": "さい", "eagle": "わし", "squid": "いか", "sloth": "なまけもの", "otter": "かわうそ", "puppy": "こいぬ", "rabbit": "うさぎ", "monkey": "さる", "turtle": "かめ", "parrot": "おうむ", "penguin": "ぺんぎん", "octopus": "たこ", "giraffe": "きりん", "elephant": "ぞう", "dolphin": "いるか", "butterfly": "ちょうちょ", "ladybug": "てんとうむし", "dinosaur": "きょうりゅう", "kangaroo": "かんがるー", "crocodile": "わに", "hedgehog": "はりねずみ", "gorilla": "ごりら", "raccoon": "あらいぐま", "leopard": "ひょう", "badger": "あなぐま", "polar bear": "しろくま", "chipmunk": "りす", "hamster": "はむすたー", "peacock": "くじゃく", "lizard": "とかげ", "dragon": "りゅう", "shrimp": "えび", "blowfish": "ふぐ", "beetle": "かぶとむし", "cricket": "こおろぎ", "spider": "くも", "scorpion": "さそり", "caterpillar": "いもむし", "black cat": "くろねこ", "crow": "からす", "donkey": "ろば", "goose": "がちょう", "jellyfish": "くらげ", "oyster": "かき", "car:car": "くるま", "car:bus": "ばす", "car:taxi": "たくしー", "car:truck": "とらっく", "car:train": "でんしゃ", "car:subway": "ちかてつ", "car:bullet train": "しんかんせん", "car:ship": "ふね", "car:boat": "ぼーと", "car:sailboat": "よっと", "car:canoe": "かぬー", "car:bike": "じてんしゃ", "car:motorcycle": "ばいく", "car:rocket": "ろけっと", "car:airplane": "ひこうき", "car:helicopter": "へりこぷたー", "car:ambulance": "きゅうきゅうしゃ", "car:fire truck": "しょうぼうしゃ", "car:police car": "ぱとかー", "car:sled": "そり", "food:apple": "りんご", "food:pear": "なし", "food:orange": "みかん", "food:lemon": "れもん", "food:banana": "ばなな", "food:grapes": "ぶどう", "food:melon": "めろん", "food:watermelon": "すいか", "food:cherry": "さくらんぼ", "food:peach": "もも", "food:pineapple": "ぱいなっぷる", "food:strawberry": "いちご", "food:tomato": "とまと", "food:eggplant": "なす", "food:potato": "じゃがいも", "food:yam": "さつまいも", "food:carrot": "にんじん", "food:corn": "とうもろこし", "food:chili": "とうがらし", "food:pepper": "ぴーまん", "food:cucumber": "きゅうり", "food:garlic": "にんにく", "food:onion": "たまねぎ", "food:mushroom": "きのこ", "food:chestnut": "くり", "food:ginger": "しょうが", "food:beans": "まめ", "job:doctor": "いしゃ", "job:farmer": "のうか", "job:chef": "こっく", "job:king": "おうさま", "job:teacher": "せんせい", "job:student": "がくせい", "job:singer": "かしゅ", "job:artist": "がか", "job:pilot": "ぱいろっと", "job:astronaut": "うちゅうひこうし", "job:firefighter": "しょうぼうし", "job:police": "けいさつ", "job:detective": "たんてい", "job:builder": "だいく", "job:scientist": "かがくしゃ", "job:clown": "ぴえろ", "job:prince": "おうじ", "job:princess": "おひめさま", "job:wizard": "まほうつかい"};
 ALL_ITEMS.forEach(d => { if (JA_NAMES[d.id]) d.ja = JA_NAMES[d.id]; });
-// 漢字: 500 everyday kanji, by the Japanese school year they are taught in (lớp 1-4).
+// 漢字: 500 everyday kanji (the leading number is the school year they are taught in; kept only for the order).
 // The kanji is the picture, its reading in hiragana is typed, then the Vietnamese meaning is said.
-// Each school year sits in one of the four theme slots (zoo = lớp 1, car = lớp 2, food = lớp 3, job = lớp 4).
+// They are one set with no themes: the levels pick them by the length of the reading.
 const KANJI_DATA = `
 1 一 いち số một
 1 右 みぎ bên phải
@@ -1044,10 +1038,9 @@ const KANJI_DATA = `
 4 冷 つめたい lạnh buốt
 4 例 れい ví dụ
 4 老 おいる già đi`;
-const KANJI_SLOT = { 1:'zoo', 2:'car', 3:'food', 4:'job' };
 KANJI_DATA.trim().split('\n').forEach(line => {
-  const [g, e, ja, ...vi] = line.split(' ');
-  ALL_ITEMS.push({ e, en:'', ja, vi: vi.join(' '), kanji:true, theme: KANJI_SLOT[g], id:'kanji:' + e, ci: colorIx++ % BUBBLES.length });
+  const [, e, ja, ...vi] = line.split(' ');
+  ALL_ITEMS.push({ e, en:'', ja, vi: vi.join(' '), kanji:true, theme:'kanji', id:'kanji:' + e, ci: colorIx++ % BUBBLES.length });
 });
 
 // The game's own icon store: every picture is bundled here (Twemoji, CC-BY 4.0, github.com/jdecked/twemoji),
@@ -1319,6 +1312,7 @@ const ITEMS = ALL_ITEMS.filter(d => {
 });
 const byTheme = t => t === 'all' ? ITEMS : ITEMS.filter(d => d.theme === t);
 let THEME_ITEMS = byTheme('zoo');                               // what the current theme plays with
+const playItems = () => curMode() === 'kanji' ? ITEMS : THEME_ITEMS;   // 漢字 always plays the whole set
 // an item's picture: its icon, or for a kanji the character itself
 function setItemIcon(el, d){ if (d.kanji){ el.textContent = d.e; el.classList.add('kj'); } else setIcon(el, d.e); }
 // show an icon from the icon store in an element (plain emoji only if the store has no picture for it)
@@ -1419,7 +1413,7 @@ const curLevel = () => !isJa() ? LEVELS[settings.level]
   : Object.assign({}, LEVELS[settings.level], LEVELS_JA[settings.level], curMode() === 'kanji' && settings.level === 'easy' ? { min:1, note:'Dễ: cách đọc 1–2 chữ, mỗi lần 2 chữ Hán, di chuyển chậm. Mỗi thẻ tích tối đa 15.' } : {});
 const pool = () => {
   const L = curLevel(), n = d => keysLen(wordOf(d));
-  const items = inLang(THEME_ITEMS);
+  const items = inLang(playItems());
   const p = items.filter(d => n(d) >= L.min && n(d) <= L.len);
   if (p.length >= 4) return p;
   // this theme has too few names of this length: use the closest lengths instead
@@ -1594,8 +1588,6 @@ const VI_TO_JA = {
   'Chủ đề nghề nghiệp':'おしごと', 'Chủ đề tổng hợp':'ぜんぶ',
   'Mức độ dễ':'かんたん', 'Mức độ vừa':'ふつう', 'Mức độ khó':'むずかしい',
   'Chữ Hiragana':'ひらがな', 'Chữ Katakana':'カタカナ', 'Chữ Hán':'かんじ', 'Tiếng Nhật':'にほんご',
-  'Chữ Hán lớp một':'いちねんせいの かんじ', 'Chữ Hán lớp hai':'にねんせいの かんじ', 'Chữ Hán lớp ba':'さんねんせいの かんじ',
-  'Chữ Hán lớp bốn':'よねんせいの かんじ', 'Chữ Hán tổng hợp':'ぜんぶの かんじ',
   'Chọn người chơi':'だれが あそぶ？', 'Gia đình':'かぞく', 'Bảng xếp hạng':'ランキング',
   'Đã lưu tên gia đình':'ほぞん しました', 'Đã xoá tên gia đình':'けしました', 'Đã kết nối':'つながりました',
 };
@@ -1864,7 +1856,7 @@ function flyToShelf(d, x, y){
 let slotEls = {};
 function renderShelf(){
   const row = $('#shelfRow'); row.innerHTML = ''; slotEls = {};
-  inLang(THEME_ITEMS).forEach(d => {
+  inLang(playItems()).forEach(d => {
     const b = document.createElement('button');
     b.className = 'slot';
     b.style.setProperty('--tint', TINTS[d.ci]);
@@ -1888,7 +1880,7 @@ function updateSlot(d, animate){
   const sk = b.querySelector('.sk'), k = cardStars(n); sk.hidden = !k; sk.textContent = '★' + k;
   b.setAttribute('aria-label', n ? `${wordOf(d)}, đã bắt ${n} lần` : 'Chưa bắt được');
   if (animate){ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
-  const shown = inLang(THEME_ITEMS), got = shown.filter(a => counts[ck(a)]).length;
+  const shown = inLang(playItems()), got = shown.filter(a => counts[ck(a)]).length;
   $('#shelfCount').innerHTML = `<b>${got}</b> / ${shown.length}`;
   $('#shelfStars').textContent = '⭐ ' + modeStars(me());
 }
@@ -2218,7 +2210,7 @@ function renderPlayers(){
     const av = document.createElement('span'); av.className = 'av'; setIcon(av, p.icon);
     const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = p.name;
     const pc = document.createElement('span'); pc.className = 'pc';
-    pc.textContent = gotOf(p, THEME_ITEMS) + '/' + inLang(THEME_ITEMS).length;
+    pc.textContent = gotOf(p, playItems()) + '/' + inLang(playItems()).length;
     b.append(av, nm, pc);
     b.addEventListener('click', () => { switchPlayer(p.id); closeMenu(); });
     const ed = document.createElement('button');
@@ -2553,6 +2545,7 @@ function renderHome(){
   hs.append(mkEl('span', 'hs-big', '⭐ ' + totalStars(p) + ' sao'));   // all four collections together
   // themes, "Tổng Hợp" last across the full width
   const ht = $('#homeThemes'); ht.innerHTML = '';
+  $('#homeThemesCard').hidden = curMode() === 'kanji';
   THEME_ORDER.forEach(k => {
     const t = themeOf(k), list = byTheme(k), got = gotOf(p, list);
     const b = mkEl('button', 'tcard' + (k === 'all' ? ' all' : ''));
@@ -2688,10 +2681,10 @@ function renderRank(){
     modes.appendChild(b);
   });
   const byStars = rankMode === 'stars';
-  tabs.hidden = byStars;                                        // the star board has no theme tabs
-  const list = byTheme(rankTheme), total = byStars ? MODES.length * 5 : totalOf(list, rankMode);
+  tabs.hidden = byStars || rankMode === 'kanji';               // the star board and 漢字 have no theme tabs
+  const list = byTheme(rankMode === 'kanji' ? 'all' : rankTheme), total = byStars ? MODES.length * 5 : totalOf(list, rankMode);
   $('#rankNote').textContent = byStars
-    ? 'Tổng số sao vàng của mỗi bé, cộng cả 4 bộ abc, ABC, ひらがな, カタカナ.'
+    ? 'Tổng số sao vàng của mỗi bé, cộng cả 5 bộ abc, ABC, ひらがな, カタカナ, 漢字.'
     : scope === 'world'
     ? 'Bảng ' + MODE_LABEL[rankMode] + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm.'
     : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
@@ -2715,7 +2708,7 @@ function renderRank(){
     return;
   }
   if ($('#homeRankView').hidden) return;                        // only fetch while the board is on screen
-  const want = rankTheme;
+  const want = rankMode === 'kanji' ? 'all' : rankTheme;
   const wantMode = rankMode;
   if (!worldCache[byStars ? 'stars' : wantMode + ':' + want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
   // each row also shows the child's total stars, taken from the star board
@@ -2808,7 +2801,7 @@ function onPlayers(snap){
   const moved = theme !== settings.theme || level !== settings.level;
   settings.level = level; settings.caps = q.caps || 'lower';
   if (theme !== settings.theme){ settings.theme = theme; THEME_ITEMS = byTheme(theme); renderShelf(); }
-  else THEME_ITEMS.forEach(d => updateSlot(d, false));
+  else playItems().forEach(d => updateSlot(d, false));
   if (moved) resetField();
   syncSeg(); syncPlayer(); syncTheme();
 }
@@ -2909,7 +2902,7 @@ $('#familyJoinBtn').addEventListener('click', () => { $('#familyJoin').hidden = 
 $('#familyGo').addEventListener('click', joinFamily);
 connectCloud();
 // a newer copy on the server: offer to reload it (the build stamps APP_VERSION; checked only on a web address)
-const APP_VERSION = '20260927213557';
+const APP_VERSION = '20260927213806';
 let newVersion = '', updSnooze = 0;
 async function checkUpdate(){
   if (!/^https?:$/.test(location.protocol) || !/^\d+$/.test(APP_VERSION) || newVersion) return offerUpdate();
