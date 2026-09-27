@@ -181,7 +181,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .hbtn.small{font-size:16px;padding:10px 14px 8px}
 .home-actions{display:flex;align-items:center;gap:8px}
 .fam-opts{grid-template-columns:1fr}
-.hbtn.rank{background:#FFF3C4;box-shadow:0 4px 0 var(--sun)}
+.hbtn.gold{background:#FFF3C4;box-shadow:0 4px 0 var(--sun)}
 .hbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #B9DDF3}
 .hthemes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 @media (max-width:720px){ .hthemes{grid-template-columns:repeat(2,minmax(0,1fr))} }
@@ -214,7 +214,7 @@ details.more[open] summary{margin-bottom:14px}
 .rank li.home{background:#FFF8DD}
 .rank .fam.none{font-style:italic;opacity:.75}
 .rank .fam{font:700 12.5px/1.2 var(--text);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rank-empty{padding:14px;text-align:center;color:var(--muted);font:700 15px/1.4 var(--text)}
+.rank li.rank-empty{display:block;padding:22px 16px;text-align:center;color:var(--muted);font:700 16px/1.5 var(--text)}
 .rank-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 .rank-tabs button{border:0;border-radius:999px;padding:9px 13px 8px;font:700 14px/1 var(--text);background:#EEF6FC;color:var(--ink);cursor:pointer}
 .rank-tabs button[aria-pressed="true"]{background:var(--sky);color:#fff}
@@ -315,7 +315,7 @@ details.more[open] summary{margin-bottom:14px}
         <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroFamily" class="hero-stat" hidden></div><div id="heroStat" class="hero-stat"></div><div id="syncNote" class="sync-note" hidden></div></div>
         <div class="hero-btns">
           <button id="toPlayers" class="hbtn">👥 Chọn người chơi</button>
-          <button id="toRank" class="hbtn rank">🏆 Bảng xếp hạng</button>
+          <button id="toRank" class="hbtn gold">🏆 Bảng xếp hạng</button>
         </div>
       </section>
       <section class="hcard"><h2>Chọn chủ đề</h2><div id="homeThemes" class="hthemes"></div></section>
@@ -1789,7 +1789,7 @@ async function loadWorld(theme){
 }
 function drawRankRows(rows, total){
   const ol = $('#rankList'); ol.innerHTML = '';
-  if (!rows.length){ ol.appendChild(mkEl('li', 'rank-empty', 'Chưa có ai trên bảng. Bắt con vật đầu tiên để lên bảng nào!')); return; }
+  if (!rows.length){ ol.appendChild(mkEl('li', 'rank-empty', 'Chưa có ai trên bảng. Bắt món đầu tiên để lên bảng nào!')); return; }
   const mine = new Set(players.map(q => q.id));
   let place = 0, prev = -1;
   rows.forEach((r, i) => {
