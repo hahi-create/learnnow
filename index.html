@@ -1069,9 +1069,9 @@ function capture(a){
   caught++;
   $('#caught').textContent = caught;
   const hex = $('#hex'); hex.classList.remove('bump'); void hex.offsetWidth; hex.classList.add('bump');
-  // after the spelled letters: the English cheer, then the animal's name
+  // after the spelled letters: the word the child just typed, then the English cheer
   const cheer = showPopup(a.def, isNew);
-  speakSeq([{ text: cheer, lang:'en' }, { text: sayWord(a.def), lang:'en' }], true);
+  speakSeq([{ text: sayWord(a.def), lang:'en' }, { text: cheer, lang:'en' }], true);
   flyToShelf(a.def, x, y);
 }
 
@@ -1161,7 +1161,7 @@ function updateKbdHints(){
   const rest = state === 'play' && resting();
   kbd.classList.toggle('rest', rest);                           // dimmed while resting after a word
   let next = '', hints = new Set();
-  if (state === 'play' && !rest){
+  if (state === 'play' && !rest && settings.level === 'easy'){     // Vừa / Khó: no lit-up keys, the child finds them
     if (target) next = target.keys[target.i];
     else animals.forEach(a => { if (!a.done) hints.add(a.keys[a.i]); });
   }
