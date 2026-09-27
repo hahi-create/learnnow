@@ -134,8 +134,8 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .edit{flex:0 0 36px;width:36px;height:36px;border:0;border-radius:12px;background:var(--sun);display:grid;place-items:center;font-size:15px;line-height:1;padding:0;cursor:pointer;box-shadow:0 2px 0 var(--sun-deep)}
 .editor input{width:100%;font:700 18px/1.2 var(--text);color:var(--ink);padding:10px 12px;border-radius:12px;border:2px solid #D3E4F1;background:#F7FBFF}
 .editor input:focus{outline:none;border-color:var(--sky)}
-.icons{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
-.icons button{aspect-ratio:1;max-width:100%;border:2px solid transparent;border-radius:10px;background:#F4FAFF;font-size:25px;line-height:1;cursor:pointer;padding:0}
+.icons{display:grid;grid-template-columns:repeat(6,minmax(0,76px));gap:8px;justify-content:start}
+.icons button{aspect-ratio:1;max-width:100%;border:2px solid transparent;border-radius:10px;background:#F4FAFF;font-size:clamp(24px,4.2vw,46px);line-height:1;cursor:pointer;padding:0;display:grid;place-items:center}
 .icons button[aria-pressed="true"]{border-color:var(--sky);background:#E1F3FF;transform:scale(1.08)}
 .ed-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .voice-row{display:flex;gap:6px}
@@ -225,6 +225,7 @@ details.more[open] summary{margin-bottom:14px}
 .rank .nm{font:800 19px/1.1 var(--display);padding-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rank .n{font:800 22px/1 var(--display);color:var(--coral);font-variant-numeric:tabular-nums;padding-top:3px}
 .home-btn{align-self:center}
+#homeEditSlot{align-self:center;width:min(640px,100%)}
 .hero-av img,.tcard .ic img{width:1em;height:1em;display:block}
 
 @keyframes bump{40%{transform:scale(1.25)}}
