@@ -767,6 +767,12 @@ const LEVELS = {
   mid:  { max:3, speed:38, every:2.0, min:4, len:8, note:'Vừa: tên 4–8 chữ cái, mỗi lần 3 con.' },
   hard: { max:4, speed:52, every:1.6, min:8, len:99, note:'Khó: tên từ 8 chữ cái trở lên, mỗi lần 4 con, di chuyển nhanh hơn.' },
 };
+// Japanese names are counted in kana (ぎ is one), and are much shorter than the English ones
+const LEVELS_JA = {
+  easy: { min:2, len:2,  note:'Dễ: tên 2 chữ, mỗi lần 2 con, di chuyển chậm.' },
+  mid:  { min:2, len:4,  note:'Vừa: tên 2–4 chữ, mỗi lần 3 con.' },
+  hard: { min:5, len:99, note:'Khó: tên trên 4 chữ, mỗi lần 4 con, di chuyển nhanh hơn.' },
+};
 const PRAISE = ['Great job!','Awesome!','Well done!','Super!','Amazing!','You got it!'];
 const PRAISE_JA = ['すごい！','よくできました！','やったね！','じょうず！','えらいね！'];
 
@@ -839,8 +845,9 @@ function buildChars(word){
   }
   return out;
 }
+const curLevel = () => isJa() ? Object.assign({}, LEVELS[settings.level], LEVELS_JA[settings.level]) : LEVELS[settings.level];
 const pool = () => {
-  const L = LEVELS[settings.level], n = d => keysLen(wordOf(d));
+  const L = curLevel(), n = d => keysLen(wordOf(d));
   const items = inLang(THEME_ITEMS);
   const p = items.filter(d => n(d) >= L.min && n(d) <= L.len);
   if (p.length >= 4) return p;
@@ -1541,7 +1548,7 @@ function syncSeg(){
   document.querySelectorAll('.seg[data-key]').forEach(seg => {
     seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(settings[seg.dataset.key] === b.dataset.v)));
   });
-  $('#levelNote').textContent = LEVELS[settings.level].note;
+  $('#levelNote').textContent = curLevel().note;
   kbd.hidden = false;                                         // the helper keyboard is always shown
   labelKeys();
   $('#capsBtn').textContent = isJa() ? (settings.kana === 'kata' ? 'ア' : 'あ') : (settings.caps === 'upper' ? 'ABC' : 'abc');
