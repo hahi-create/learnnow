@@ -356,7 +356,7 @@ details.more[open] summary{margin-bottom:14px}
             <div class="family"><b id="familyCode" class="fcode"></b>
               <button id="familyJoinBtn" class="linkish" type="button">Nhập mã từ máy khác</button>
               <div id="familyJoin" class="family-join" hidden>
-                <input id="familyInput" type="text" maxlength="9" placeholder="VD: ABCD-EFGH" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Mã gia đình">
+                <input id="familyInput" type="text" maxlength="8" placeholder="VD: ABCD1234" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Mã gia đình">
                 <button id="familyGo" class="btn-sec" type="button">Kết nối</button>
                 <span id="familyMsg" class="sync-note"></span>
               </div>
@@ -1920,9 +1920,27 @@ const FIREBASE_CONFIG = {
   appId: '1:571422942969:web:30fcb6df56454d2301e428',
 };
 const FIREBASE_SDK = 'https://www.gstatic.com/firebasejs/10.12.2/';
-const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';               // no 0/O, 1/I/L mix-ups
-const newFamilyCode = () => Array.from({ length: 8 }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)])
-  .join('').replace(/^(.{4})/, '$1-');
+// family code: 4 letters then 4 digits, no dash, e.g. HJCQ4829 (quick to type on any keyboard)
+const CODE_LETTERS = 'ABCDEFGHJKMNPQRSTUVWXYZ';                // no I / L / O, which look like 1 and 0
+const isFamilyCode = c => /^[A-Z]{4}[0-9]{4}$/.test(c);
+const newFamilyCode = () => Array.from({ length: 4 }, () => CODE_LETTERS[Math.floor(Math.random() * CODE_LETTERS.length)]).join('')
+  + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+// codes from before (like 88DG-HTDM) turn into the same new code on every device, so a family stays together
+function codeFromLegacy(old){
+  let h = 2166136261;
+  for (const ch of old.toUpperCase().replace(/[^A-Z0-9]/g, '')) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; }
+  let letters = '';
+  for (let i = 0; i < 4; i++){ letters += CODE_LETTERS[h % CODE_LETTERS.length]; h = (Math.floor(h / CODE_LETTERS.length) ^ Math.imul(h, 7)) >>> 0; }
+  return letters + String(h % 10000).padStart(4, '0');
+}
+// copy an old family's children and name to its new code (idempotent: same ids, same data)
+async function copyFamily(from, to){
+  const { fs, db } = fb;
+  const snap = await fs.getDocs(fs.collection(db, 'families', from, 'players'));
+  await Promise.all(snap.docs.map(d => fs.setDoc(fs.doc(db, 'families', to, 'players', d.id), d.data())));
+  const fam = await fs.getDoc(fs.doc(db, 'families', from));
+  if (fam.exists() && fam.data().name) await fs.setDoc(fs.doc(db, 'families', to), { name: fam.data().name });
+}
 // the same small surface the Claude store offers, so the sync code above works unchanged
 function firebaseStore(code){
   const { fs, db } = fb, base = ['families', code, 'players'];
@@ -1942,6 +1960,11 @@ async function connectFirebase(){
   const [app, fs] = await Promise.all([import(FIREBASE_SDK + 'firebase-app.js'), import(FIREBASE_SDK + 'firebase-firestore.js')]);
   fb = { fs, db: fs.getFirestore(app.initializeApp(FIREBASE_CONFIG)) };
   if (!familyCode){ familyCode = newFamilyCode(); store.set('familyCode', familyCode); }
+  else if (!isFamilyCode(familyCode)){                          // an old-style code: move to the new format
+    const old = familyCode, code = codeFromLegacy(old);
+    try { await copyFamily(old, code); } catch(e){}
+    familyCode = code; store.set('familyCode', code);
+  }
   subscribeFamily();
 }
 function subscribeFamily(){
@@ -1976,11 +1999,16 @@ function saveFamilyName(){
   audio(); speak(name ? 'Đã lưu tên gia đình' : 'Đã xoá tên gia đình', 'vi');
 }
 $('#familyNameSave').addEventListener('click', saveFamilyName);
-function joinFamily(){
+async function joinFamily(){
   const raw = $('#familyInput').value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   const msg = $('#familyMsg');
-  if (raw.length !== 8){ msg.textContent = 'Mã gồm 8 chữ và số, ví dụ ABCD-EFGH.'; return; }
-  const code = raw.slice(0, 4) + '-' + raw.slice(4);
+  if (raw.length !== 8){ msg.textContent = 'Mã gồm 4 chữ cái rồi 4 chữ số, ví dụ ABCD1234.'; return; }
+  let code = raw;
+  if (!isFamilyCode(raw)){                                      // a code from before: find its new form
+    const old = raw.slice(0, 4) + '-' + raw.slice(4);
+    code = codeFromLegacy(old);
+    try { await copyFamily(old, code); } catch(e){}
+  }
   if (code === familyCode){ msg.textContent = 'Máy này đang dùng mã đó rồi.'; return; }
   familyCode = code; store.set('familyCode', code);
   store.set('cloudMerged', false);                              // bring this device's children into that family
