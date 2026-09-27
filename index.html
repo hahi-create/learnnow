@@ -8,7 +8,7 @@
 <!-- Icons: Twemoji by Twitter/X and contributors (github.com/jdecked/twemoji), CC-BY 4.0 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Baloo+2:wght@600;800&family=Zen+Maru+Gothic:wght@700&display=swap">
 <style>
 :root{
   color-scheme: light;
@@ -85,6 +85,9 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 /* on-screen keyboard */
 .kbd{display:flex;flex-direction:column;gap:8px;transition:opacity .25s}
 .kbd.rest{opacity:.35;pointer-events:none}
+.kana{display:grid;grid-auto-flow:column;grid-template-rows:repeat(5,auto);grid-auto-columns:minmax(42px,62px);gap:6px;width:max-content;max-width:100%;margin:0 auto;overflow-x:auto;padding-bottom:4px}
+.kana .key{max-width:none;height:48px;font:700 25px/1 "Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif}
+.kana .grp{margin-left:10px}
 .krow{display:flex;gap:8px;justify-content:center}
 .krow:nth-child(2){padding-inline:4%}
 .krow:nth-child(3){padding-inline:13%}
@@ -192,6 +195,7 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .tcard.all[aria-pressed="true"]{border-color:var(--sky)}
 .bar{height:8px;border-radius:8px;background:#DCEBF6;overflow:hidden;margin-top:6px}
 .bar i{display:block;height:100%;background:var(--grass);border-radius:8px}
+.seg[data-key="lang"] button{font-family:var(--text),"Zen Maru Gothic",sans-serif}
 .seg.big button{font-size:19px;padding:14px 6px}
 details.more summary{cursor:pointer;font:800 19px/1 var(--display);color:var(--ink);padding-top:3px}
 details.more[open] summary{margin-bottom:14px}
@@ -277,7 +281,7 @@ details.more[open] summary{margin-bottom:14px}
         </div>
       </div>
     </div>
-    <button id="capsBtn" class="icon-btn caps-btn" aria-label="Đổi chữ thường / chữ in hoa">abc</button>
+    <button id="capsBtn" class="icon-btn caps-btn" aria-label="Đổi kiểu chữ (abc/ABC, あ/ア)">abc</button>
     <button id="musicBtn" class="icon-btn" aria-label="Nhạc nền"></button>
     <button id="soundBtn" class="icon-btn" aria-label="Âm thanh"></button>
     <div id="hex" class="hex" title="Số con đã bắt trong lượt này"><span id="caught">0</span></div>
@@ -309,7 +313,7 @@ details.more[open] summary{margin-bottom:14px}
 <div id="home" class="home" hidden>
   <div class="home-in">
     <div class="home-top">
-      <div><div class="logo">Learn<span>Now</span></div><div class="tag">Luyện chữ tiếng Anh cho bé</div></div>
+      <div><div class="logo">Learn<span>Now</span></div><div class="tag">Luyện chữ cho bé</div></div>
       <div class="home-actions"><button id="toFamily" class="hbtn small"><span id="famIcon" class="bi"></span>Gia đình</button><button id="homeMusic" class="icon-btn" aria-label="Nhạc nền"></button></div>
     </div>
 
@@ -323,6 +327,9 @@ details.more[open] summary{margin-bottom:14px}
         </div>
       </section>
       <section class="hcard"><h2>Chọn chủ đề</h2><div id="homeThemes" class="hthemes"></div></section>
+      <section class="hcard"><h2>Ngôn ngữ luyện tập</h2>
+        <div class="seg big" data-key="lang"><button data-v="en">English</button><button data-v="ja">日本語</button></div>
+      </section>
       <section class="hcard"><h2>Mức độ</h2>
         <div class="seg big" data-key="level"><button data-v="easy">Dễ</button><button data-v="mid">Vừa</button><button data-v="hard">Khó</button></div>
         <p class="fine" id="levelNote"></p>
@@ -333,7 +340,7 @@ details.more[open] summary{margin-bottom:14px}
             <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button">▶ Nghe thử</button></div></div>
         </div>
       </details>
-      <button id="homePlay" class="go hplay">Chơi nào!</button>
+      <button id="homePlay" class="go hplay">Bắt đầu</button>
     </div>
 
     <div id="homePlayersView" class="view" hidden>
@@ -388,7 +395,7 @@ details.more[open] summary{margin-bottom:14px}
 (() => {
 const $ = s => document.querySelector(s);
 const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
-const TEXT_FONT = 'Andika, "Trebuchet MS", sans-serif';
+const TEXT_FONT = 'Andika, "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Hiragino Sans", "Yu Gothic", "Trebuchet MS", sans-serif';
 const C = { sun:'#FFC93C', coral:'#FF5E7E', grass:'#34B75A', grape:'#8A63FF', sky:'#2FA8F0', ink:'#1E3A5F' };
 const CONFETTI = ['#FFC93C', '#FF5E7E', '#34B75A', '#8A63FF', '#2FA8F0', '#FF9A3C'];
 const BUBBLES = ['#FF9EB5', '#FFD45C', '#8EE59B', '#8FD0FF', '#C4ABFF', '#FFB38A'];
@@ -455,6 +462,9 @@ let colorIx = 0;
 const ALL_ITEMS = ['zoo', 'car', 'food', 'job'].flatMap(t => RAW_THEMES[t]
   .map(([e, en]) => ({ e, en, theme: t, id: t === 'zoo' ? en : t + ':' + en, ci: colorIx++ % BUBBLES.length }))
   .sort(byLen));                                                // each theme's shelf goes from short names to long names
+// Japanese names (hiragana) for the Japanese mode; items without one are English-only
+const JA_NAMES = {"cat": "ねこ", "dog": "いぬ", "pig": "ぶた", "cow": "うし", "fox": "きつね", "owl": "ふくろう", "bee": "はち", "ant": "あり", "hen": "にわとり", "bat": "こうもり", "fly": "はえ", "duck": "あひる", "fish": "さかな", "frog": "かえる", "lion": "らいおん", "bear": "くま", "goat": "やぎ", "crab": "かに", "bird": "とり", "deer": "しか", "wolf": "おおかみ", "swan": "はくちょう", "seal": "あざらし", "boar": "いのしし", "dove": "はと", "worm": "みみず", "horse": "うま", "tiger": "とら", "zebra": "しまうま", "snake": "へび", "mouse": "ねずみ", "panda": "ぱんだ", "koala": "こあら", "camel": "らくだ", "whale": "くじら", "shark": "さめ", "sheep": "ひつじ", "chick": "ひよこ", "snail": "かたつむり", "hippo": "かば", "rhino": "さい", "eagle": "わし", "squid": "いか", "sloth": "なまけもの", "otter": "かわうそ", "puppy": "こいぬ", "rabbit": "うさぎ", "monkey": "さる", "turtle": "かめ", "parrot": "おうむ", "penguin": "ぺんぎん", "octopus": "たこ", "giraffe": "きりん", "elephant": "ぞう", "dolphin": "いるか", "butterfly": "ちょうちょ", "ladybug": "てんとうむし", "dinosaur": "きょうりゅう", "kangaroo": "かんがるー", "crocodile": "わに", "hedgehog": "はりねずみ", "gorilla": "ごりら", "raccoon": "あらいぐま", "leopard": "ひょう", "badger": "あなぐま", "polar bear": "しろくま", "chipmunk": "りす", "hamster": "はむすたー", "peacock": "くじゃく", "lizard": "とかげ", "dragon": "りゅう", "shrimp": "えび", "blowfish": "ふぐ", "beetle": "かぶとむし", "cricket": "こおろぎ", "spider": "くも", "scorpion": "さそり", "caterpillar": "いもむし", "black cat": "くろねこ", "crow": "からす", "donkey": "ろば", "goose": "がちょう", "jellyfish": "くらげ", "oyster": "かき", "car:car": "くるま", "car:bus": "ばす", "car:taxi": "たくしー", "car:truck": "とらっく", "car:train": "でんしゃ", "car:subway": "ちかてつ", "car:bullet train": "しんかんせん", "car:ship": "ふね", "car:boat": "ぼーと", "car:sailboat": "よっと", "car:canoe": "かぬー", "car:bike": "じてんしゃ", "car:motorcycle": "ばいく", "car:rocket": "ろけっと", "car:airplane": "ひこうき", "car:helicopter": "へりこぷたー", "car:ambulance": "きゅうきゅうしゃ", "car:fire truck": "しょうぼうしゃ", "car:police car": "ぱとかー", "car:sled": "そり", "food:apple": "りんご", "food:pear": "なし", "food:orange": "みかん", "food:lemon": "れもん", "food:banana": "ばなな", "food:grapes": "ぶどう", "food:melon": "めろん", "food:watermelon": "すいか", "food:cherry": "さくらんぼ", "food:peach": "もも", "food:pineapple": "ぱいなっぷる", "food:strawberry": "いちご", "food:tomato": "とまと", "food:eggplant": "なす", "food:potato": "じゃがいも", "food:yam": "さつまいも", "food:carrot": "にんじん", "food:corn": "とうもろこし", "food:chili": "とうがらし", "food:pepper": "ぴーまん", "food:cucumber": "きゅうり", "food:garlic": "にんにく", "food:onion": "たまねぎ", "food:mushroom": "きのこ", "food:chestnut": "くり", "food:ginger": "しょうが", "food:beans": "まめ", "job:doctor": "いしゃ", "job:farmer": "のうか", "job:chef": "こっく", "job:king": "おうさま", "job:teacher": "せんせい", "job:student": "がくせい", "job:singer": "かしゅ", "job:artist": "がか", "job:pilot": "ぱいろっと", "job:astronaut": "うちゅうひこうし", "job:firefighter": "しょうぼうし", "job:police": "けいさつ", "job:detective": "たんてい", "job:builder": "だいく", "job:scientist": "かがくしゃ", "job:clown": "ぴえろ", "job:prince": "おうじ", "job:princess": "おひめさま", "job:wizard": "まほうつかい"};
+ALL_ITEMS.forEach(d => { if (JA_NAMES[d.id]) d.ja = JA_NAMES[d.id]; });
 
 // The game's own icon store: every picture is bundled here (Twemoji, CC-BY 4.0, github.com/jdecked/twemoji),
 // so the animals, vehicles, food, jobs and avatars look the same on every computer and tablet.
@@ -738,13 +748,14 @@ const LEVELS = {
   hard: { max:4, speed:52, every:1.6, min:8, len:99, note:'Khó: tên từ 8 chữ cái trở lên, mỗi lần 4 con, di chuyển nhanh hơn.' },
 };
 const PRAISE = ['Great job!','Awesome!','Well done!','Super!','Amazing!','You got it!'];
+const PRAISE_JA = ['すごい！','よくできました！','やったね！','じょうず！','えらいね！'];
 
 // ---------- storage ----------
 const store = {
   get(k, d){ try { const v = localStorage.getItem('vtbp:' + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
   set(k, v){ try { localStorage.setItem('vtbp:' + k, JSON.stringify(v)); } catch(e){} }
 };
-const settings = Object.assign({ level:'easy', caps:'lower', kbd:'on', sound:true, music:true, enVoice:'' }, store.get('settings', {}));
+const settings = Object.assign({ level:'easy', caps:'lower', kbd:'on', sound:true, music:true, enVoice:'', lang:'en', kana:'hira' }, store.get('settings', {}));
 // players: each child has a name, an avatar, their own collection and level
 const AVATARS = ['👦','👧','🧒','👶','🦸','🧚','🧜‍♀️','👸','🤴','🧙','👩‍🚀','🤖','🦖','🦄','🐯','🐼','🐰','🐸','🚀','⚽','🌈','⭐','🌻','🎈','🐶','🐱','🦊','🐧','🍦','🎨'].filter(a => ICONS[a] || emojiProbe(a));
 const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -769,21 +780,30 @@ const saveSettings = () => store.set('settings', settings);
 
 // ---------- words ----------
 const baseOf = ch => (ch === 'đ' || ch === 'Đ') ? 'd' : ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-const wordOf = d => d.en;
+const isJa = () => settings.lang === 'ja';
+const LANG = () => isJa() ? 'ja' : 'en';
+const wordOf = d => isJa() ? (d.ja || '') : d.en;
+const toKata = s => s.replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
+// each language keeps its own collection: English under the item id, Japanese under "ja:" + id
+const keyFor = (d, lang = settings.lang) => (lang === 'ja' ? 'ja:' : '') + d.id;
+const ck = d => keyFor(d);
+const hasName = (d, lang = settings.lang) => lang === 'ja' ? !!d.ja : true;
+const inLang = list => list.filter(d => hasName(d));
 const keysLen = w => w.replace(/ /g, '').length;
-const capsOf = s => settings.caps === 'upper' ? s.toLocaleUpperCase('vi') : s;
+const capsOf = s => isJa() ? (settings.kana === 'kata' ? toKata(s) : s) : (settings.caps === 'upper' ? s.toLocaleUpperCase('vi') : s);
 function buildChars(word){
   const out = []; let ki = 0;
-  for (const ch of word) out.push(ch === ' ' ? { d:' ', k:null, ki:-1 } : { d:ch, k:baseOf(ch), ki:ki++ });
+  for (const ch of word) out.push(ch === ' ' ? { d:' ', k:null, ki:-1 } : { d:ch, k: isJa() ? ch : baseOf(ch), ki:ki++ });
   return out;
 }
 const pool = () => {
   const L = LEVELS[settings.level], n = d => keysLen(wordOf(d));
-  const p = THEME_ITEMS.filter(d => n(d) >= L.min && n(d) <= L.len);
+  const items = inLang(THEME_ITEMS);
+  const p = items.filter(d => n(d) >= L.min && n(d) <= L.len);
   if (p.length >= 4) return p;
   // this theme has too few names of this length: use the closest lengths instead
   const mid = (L.min + Math.min(L.len, 10)) / 2;
-  return THEME_ITEMS.slice().sort((a, b) => Math.abs(n(a) - mid) - Math.abs(n(b) - mid)).slice(0, 6);
+  return items.slice().sort((a, b) => Math.abs(n(a) - mid) - Math.abs(n(b) - mid)).slice(0, 6);
 };
 
 // ---------- audio: sound effects ----------
@@ -884,8 +904,9 @@ if ('speechSynthesis' in window) { loadVoices(); try { speechSynthesis.onvoicesc
 const FEMALE = {
   en: /samantha|karen|moira|tessa|victoria|zira|aria|jenny|ava|allison|susan|serena|fiona|nicky|\bfemale\b|google us english/i,
   vi: /linh|hoaimy|hoài my|\ban\b|\bfemale\b|google/i,
+  ja: /kyoko|o-ren|haruka|nanami|ayumi|sayaka|\bfemale\b|google/i,
 };
-const MALE = /alex|daniel|fred|david|mark|guy|\btom\b|aaron|arthur|rishi|gordon|oliver|nam ?minh|\bmale\b/i;
+const MALE = /alex|daniel|fred|david|mark|guy|\btom\b|aaron|arthur|rishi|gordon|oliver|nam ?minh|otoya|hattori|ichiro|keita|\bmale\b/i;
 const NOVELTY = /bad news|bahh|bells|boing|bubbles|cellos|wobble|good news|jester|organ|superstar|trinoids|whisper|zarvox|albert|junior|ralph|kathy|grandma|grandpa|eddy|flo|reed|rocko|sandy|shelley|ささやき|オルガン|スーパースター|トリノイド|ベル|道化|震え/i;
 // score voices: natural-sounding (Premium / Neural / Google) first, then female, then US English
 function voiceScore(v, lang){
@@ -919,12 +940,12 @@ function speakSeq(parts, queue){
       const v = pickVoice(lang);
       if (!v && lang === 'vi') return;          // no Vietnamese voice on this computer: skip the cheer
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = lang === 'vi' ? 'vi-VN' : 'en-US';
+      u.lang = { vi:'vi-VN', ja:'ja-JP' }[lang] || 'en-US';
       if (v) u.voice = v;
       // English: normal pitch and pace so it sounds like a native speaker;
       // Vietnamese menu words: a little higher and brighter
-      u.rate = rate || (lang === 'vi' ? .95 : 1);
-      u.pitch = lang === 'vi' ? 1.2 : 1;
+      u.rate = rate || (lang === 'vi' ? .95 : lang === 'ja' ? .9 : 1);
+      u.pitch = lang === 'vi' ? 1.2 : lang === 'ja' ? 1.1 : 1;
       speechSynthesis.speak(u);
     });
   } catch(e){}
@@ -933,10 +954,10 @@ const speak = (text, lang) => speakSeq([{ text, lang }]);
 // say the letter just typed by its name. A lone capital "C" is read as "capital C", and spellings like
 // "ay" came out as "eye"; a capital with a full stop ("C.") is read as just the letter name by every
 // English voice we checked (Samantha, Karen, Moira, Tessa, Daniel, Rishi).
-const speakLetter = k => speakSeq([{ text: k.toUpperCase() + '.', lang:'en' }]);
+const speakLetter = k => isJa() ? (k === 'ー' ? null : speakSeq([{ text: k, lang:'ja' }])) : speakSeq([{ text: k.toUpperCase() + '.', lang:'en' }]);
 // names a voice could misread as a word: say them the way they are meant
 const SAY_AS = { 'ufo':'U. F. O.', 't rex':'T. rex' };
-const sayWord = d => SAY_AS[d.en] || d.en;
+const sayWord = d => isJa() ? d.ja : (SAY_AS[d.en] || d.en);
 
 // ---------- canvas ----------
 const stage = $('#stage'), cv = $('#cv'), ctx = cv.getContext('2d');
@@ -959,7 +980,7 @@ const shipPos = () => ({ x: W / 2, y: H - 50 });
 // width of an animal's name tag, cached per font size / letter case
 function labelW(a){
   const key = FS() + settings.caps;
-  if (a.lwKey !== key){ ctx.font = `700 ${FS()}px ${TEXT_FONT}`; a.lw = ctx.measureText(capsOf(a.word)).width + 24; a.lwKey = key; }
+  if (a.lwKey !== key + settings.kana){ ctx.font = `700 ${FS()}px ${TEXT_FONT}`; a.lw = ctx.measureText(capsOf(a.word)).width + 24; a.lwKey = key; }
   return a.lw;
 }
 // the area an animal's bubble centre may move in, so bubble + name tag stay inside the frame
@@ -987,7 +1008,7 @@ let caught = 0, fieldKey = '';
 
 function resetField(){
   animals = []; bullets = []; target = null; spawnT = .2;
-  fieldKey = settings.level + '|' + settings.theme;
+  fieldKey = settings.level + '|' + settings.theme + '|' + settings.lang;
 }
 resetField();
 
@@ -995,11 +1016,11 @@ function spawn(){
   const onIds = new Set(animals.map(a => a.def.id));
   const firsts = new Set(animals.filter(a => !a.done).map(a => a.keys[a.i]));
   let cands = pool().filter(d => !onIds.has(d.id) && d.id !== lastId);
-  const distinct = cands.filter(d => !firsts.has(baseOf(wordOf(d)[0])));
+  const distinct = cands.filter(d => { const w = wordOf(d); return !firsts.has(isJa() ? w[0] : baseOf(w[0])); });
   if (distinct.length) cands = distinct;
   if (!cands.length) return false;
   const bag = [];
-  cands.forEach(d => { const w = counts[d.id] ? 1 : 3; for (let i = 0; i < w; i++) bag.push(d); });
+  cands.forEach(d => { const w = counts[ck(d)] ? 1 : 3; for (let i = 0; i < w; i++) bag.push(d); });
   const def = bag[Math.floor(Math.random() * bag.length)];
   const word = wordOf(def), chars = buildChars(word);
   const ang = Math.random() * Math.PI * 2, sp = LEVELS[settings.level].speed;
@@ -1038,6 +1059,25 @@ function fire(a, final){
   sfx.shoot();
 }
 
+// romaji for each kana, for typing Japanese on a normal keyboard
+const ROMAJI = {
+  'あ':'a','い':'i','う':'u','え':'e','お':'o','か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko','さ':'sa','し':'shi si','す':'su','せ':'se','そ':'so',
+  'た':'ta','ち':'chi ti','つ':'tsu tu','て':'te','と':'to','な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no','は':'ha','ひ':'hi','ふ':'fu hu','へ':'he','ほ':'ho',
+  'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo','や':'ya','ゆ':'yu','よ':'yo','ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro','わ':'wa','を':'wo','ん':'n nn',
+  'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go','ざ':'za','じ':'ji zi','ず':'zu','ぜ':'ze','ぞ':'zo','だ':'da','ぢ':'di','づ':'du','で':'de','ど':'do',
+  'ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo','ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po','ゃ':'xya lya','ゅ':'xyu lyu','ょ':'xyo lyo','っ':'xtu ltu',
+};
+Object.keys(ROMAJI).forEach(k => { ROMAJI[k] = ROMAJI[k].split(' '); });
+let romaji = '';
+function pressRomaji(ch){
+  if (state !== 'play' || resting()){ romaji = ''; return; }
+  romaji += ch;
+  const expected = target ? [target.keys[target.i]] : animals.filter(a => !a.done).map(a => a.keys[a.i]);
+  const hit = expected.find(kana => (ROMAJI[kana] || []).includes(romaji));
+  if (hit){ romaji = ''; press(hit); return; }
+  if (expected.some(kana => (ROMAJI[kana] || []).some(r => r.startsWith(romaji)))) return;   // keep typing
+  romaji = ''; press('\u0000');                                 // no match: the usual "wrong" sound
+}
 // after a finished word the keyboard rests for 3 s, so the cheer and the name can be heard
 const REST_MS = 3000;
 let restUntil = 0;
@@ -1069,15 +1109,15 @@ function capture(a){
   animals = animals.filter(o => o !== a);
   burst(x, y, 34, CONFETTI, 320);
   sfx.win();
-  const isNew = !counts[a.def.id];
-  counts[a.def.id] = (counts[a.def.id] || 0) + 1;
-  savePlayers(); cloudCount(me(), a.def.id); publishScore(me());
+  const isNew = !counts[ck(a.def)];
+  counts[ck(a.def)] = (counts[ck(a.def)] || 0) + 1;
+  savePlayers(); cloudCount(me(), ck(a.def)); publishScore(me());
   caught++;
   $('#caught').textContent = caught;
   const hex = $('#hex'); hex.classList.remove('bump'); void hex.offsetWidth; hex.classList.add('bump');
   // after the spelled letters: the word the child just typed, then the English cheer
   const cheer = showPopup(a.def, isNew);
-  speakSeq([{ text: sayWord(a.def), lang:'en' }, { text: cheer, lang:'en' }], true);
+  speakSeq([{ text: sayWord(a.def), lang:LANG() }, { text: cheer, lang:LANG() }], true);
   flyToShelf(a.def, x, y);
 }
 
@@ -1087,7 +1127,7 @@ function showPopup(d, isNew){
   const main = d.en;
   popup.innerHTML = '';
   const mk = (cls, txt) => { const el = document.createElement('div'); el.className = cls; el.textContent = txt; popup.appendChild(el); return el; };
-  const cheer = PRAISE[Math.floor(Math.random() * PRAISE.length)];
+  const cheers = isJa() ? PRAISE_JA : PRAISE, cheer = cheers[Math.floor(Math.random() * cheers.length)];
   mk('pp', cheer);
   mk('pw', capsOf(main));
   if (isNew) mk('pnew', THEMES[d.theme].fresh);
@@ -1123,15 +1163,15 @@ function flyToShelf(d, x, y){
 let slotEls = {};
 function renderShelf(){
   const row = $('#shelfRow'); row.innerHTML = ''; slotEls = {};
-  THEME_ITEMS.forEach(d => {
+  inLang(THEME_ITEMS).forEach(d => {
     const b = document.createElement('button');
     b.className = 'slot';
     b.style.setProperty('--tint', TINTS[d.ci]);
     b.innerHTML = '<span class="em"></span><span class="nm"></span><span class="ct" hidden></span>';
     setIcon(b.querySelector('.em'), d.e);
     b.addEventListener('click', () => {
-      if (!counts[d.id]) return;
-      audio(); speak(sayWord(d), 'en');
+      if (!counts[ck(d)]) return;
+      audio(); speak(sayWord(d), LANG());
       b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
     });
     slotEls[d.id] = b; row.appendChild(b);
@@ -1139,18 +1179,35 @@ function renderShelf(){
   });
 }
 function updateSlot(d, animate){
-  const b = slotEls[d.id], n = counts[d.id] || 0;
+  const b = slotEls[d.id]; if (!b) return;
+  const n = counts[ck(d)] || 0;
   b.classList.toggle('got', n > 0);
   b.querySelector('.nm').textContent = n ? capsOf(wordOf(d)) : '?';
   const ct = b.querySelector('.ct'); ct.hidden = n < 2; ct.textContent = '×' + n;
   b.setAttribute('aria-label', n ? `${wordOf(d)}, đã bắt ${n} lần` : 'Chưa bắt được');
   if (animate){ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
-  const got = THEME_ITEMS.filter(a => counts[a.id]).length;
-  $('#shelfCount').innerHTML = `<b>${got}</b> / ${THEME_ITEMS.length}`;
+  const shown = inLang(THEME_ITEMS), got = shown.filter(a => counts[ck(a)]).length;
+  $('#shelfCount').innerHTML = `<b>${got}</b> / ${shown.length}`;
 }
 
 // ---------- on-screen keyboard ----------
 const kbd = $('#kbd'), keyEls = {};
+const kbdEn = document.createElement('div'); kbdEn.className = 'kbd-en';
+const kbdJa = document.createElement('div'); kbdJa.className = 'kana';
+kbd.append(kbdEn, kbdJa);
+// あいうえお down the first column, かきくけこ in the next, and so on from left to right
+const KANA_COLS = ['あいうえお','かきくけこ','さしすせそ','たちつてと','なにぬねの','はひふへほ','まみむめも','や ゆ よ','らりるれろ','わ を ん',
+  'がぎぐげご','ざじずぜぞ','だぢづでど','ばびぶべぼ','ぱぴぷぺぽ','ゃ ゅ ょ','っー   '];
+KANA_COLS.forEach((col, ci) => {
+  for (const k of col){
+    if (k === ' '){ kbdJa.appendChild(mkBlank(ci)); continue; }
+    const b = document.createElement('button');
+    b.className = 'key' + (ci === 10 ? ' grp' : ''); b.dataset.k = k; b.setAttribute('aria-label', k);
+    b.addEventListener('pointerdown', e => { e.preventDefault(); press(k); });
+    keyEls[k] = b; kbdJa.appendChild(b);
+  }
+});
+function mkBlank(ci){ const sp = document.createElement('span'); sp.className = 'blank' + (ci === 10 ? ' grp' : ''); return sp; }
 ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'].forEach(r => {
   const row = document.createElement('div'); row.className = 'krow';
   for (const k of r){
@@ -1159,9 +1216,15 @@ const kbd = $('#kbd'), keyEls = {};
     b.addEventListener('pointerdown', e => { e.preventDefault(); press(k); });
     keyEls[k] = b; row.appendChild(b);
   }
-  kbd.appendChild(row);
+  kbdEn.appendChild(row);
 });
-function labelKeys(){ for (const k in keyEls) keyEls[k].textContent = settings.caps === 'upper' ? k.toUpperCase() : k; }
+function labelKeys(){
+  for (const k in keyEls){
+    const kana = !/^[a-z]$/.test(k);
+    keyEls[k].textContent = kana ? (settings.kana === 'kata' ? toKata(k) : k) : (settings.caps === 'upper' ? k.toUpperCase() : k);
+  }
+  kbdEn.hidden = isJa(); kbdJa.hidden = !isJa();
+}
 // the helper keyboard never lights up the keys to press (the child finds them); it only dims while resting
 function updateKbdHints(){
   kbd.classList.toggle('rest', state === 'play' && resting());
@@ -1406,12 +1469,14 @@ function syncSeg(){
   $('#levelNote').textContent = LEVELS[settings.level].note;
   kbd.hidden = false;                                         // the helper keyboard is always shown
   labelKeys();
-  $('#capsBtn').textContent = settings.caps === 'upper' ? 'ABC' : 'abc';
+  $('#capsBtn').textContent = isJa() ? (settings.kana === 'kata' ? 'ア' : 'あ') : (settings.caps === 'upper' ? 'ABC' : 'abc');
 }
 // what the menu buttons say out loud (Vietnamese, so the kids know what they picked)
 const SAY = {
   level: { easy:'Mức độ dễ', mid:'Mức độ vừa', hard:'Mức độ khó' },
   caps:  { lower:'Chữ thường', upper:'Chữ in hoa' },
+  kana:  { hira:'Chữ Hiragana', kata:'Chữ Katakana' },
+  lang:  { en:'Tiếng Anh', ja:'Tiếng Nhật' },
 };
 let ovMode = 'start';
 const leadText = () => ovMode === 'start'
@@ -1421,7 +1486,7 @@ function openOverlay(mode){
   ovMode = mode;
   state = mode === 'start' ? 'menu' : 'paused';
   $('#ovTitle').innerHTML = mode === 'start' ? 'Learn<span>Now</span>' : 'Nghỉ <span>một chút</span>';
-  $('#goBtn').textContent = mode === 'start' ? 'Chơi nào!' : 'Chơi tiếp';
+  $('#goBtn').textContent = mode === 'start' ? 'Bắt đầu' : 'Chơi tiếp';
   overlay.hidden = false; syncSeg(); syncButtons(); syncPlayer();
 }
 
@@ -1444,7 +1509,7 @@ function renderPlayers(){
     const av = document.createElement('span'); av.className = 'av'; setIcon(av, p.icon);
     const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = p.name;
     const pc = document.createElement('span'); pc.className = 'pc';
-    pc.textContent = THEME_ITEMS.filter(a => p.counts[a.id]).length + '/' + THEME_ITEMS.length;
+    pc.textContent = gotOf(p, THEME_ITEMS) + '/' + inLang(THEME_ITEMS).length;
     b.append(av, nm, pc);
     b.addEventListener('click', () => { switchPlayer(p.id); closeMenu(); });
     const ed = document.createElement('button');
@@ -1592,7 +1657,7 @@ function switchTheme(k){
   audio(); sfx.pop(); speak(THEMES[k].say, 'vi');
 }
 themeBtn.addEventListener('click', () => { audio(); speak('Màn hình chính', 'vi'); showHome(); });
-// ask for the child's name first (on first open, and whenever "Chơi nào!" is pressed without one)
+// ask for the child's name first (on first open, and whenever "Bắt đầu" is pressed without one)
 function needName(){
   if (hasOwnName(me().name)) return false;
   openEditor(me().id, 'modal');
@@ -1605,7 +1670,7 @@ function go(){
   const fromHome = !$('#home').hidden;
   if (fromHome || !overlay.hidden) speak(fromHome ? 'Bắt đầu nào!' : 'Chơi tiếp nào!', 'vi');
   $('#home').hidden = true;
-  if (fieldKey !== settings.level + '|' + settings.theme) resetField();
+  if (fieldKey !== settings.level + '|' + settings.theme + '|' + settings.lang) resetField();
   target = null;
   overlay.hidden = true; state = 'play'; syncButtons();
   last = performance.now();
@@ -1618,6 +1683,7 @@ document.querySelectorAll('.seg[data-key]').forEach(seg => seg.addEventListener(
   settings[key] = b.dataset.v; saveSettings();
   if (key === 'level' || key === 'caps'){ me()[key] = b.dataset.v; savePlayers(); cloudSave(me()); }
   if (key === 'level') resetField();
+  if (key === 'lang'){ resetField(); renderShelf(); $('#shelfRow').scrollLeft = 0; renderHome(); }
   if (key === 'caps') THEME_ITEMS.forEach(d => updateSlot(d, false));
   syncSeg();
   speak(SAY[key][b.dataset.v], 'vi');
@@ -1630,6 +1696,12 @@ $('#soundBtn').addEventListener('click', () => {
 });
 // abc / ABC next to the music button: switch letter case while playing
 $('#capsBtn').addEventListener('click', () => {
+  if (isJa()){                                                  // hiragana <-> katakana
+    settings.kana = settings.kana === 'kata' ? 'hira' : 'kata'; saveSettings();
+    THEME_ITEMS.forEach(d => updateSlot(d, false));
+    syncSeg(); audio(); speak(SAY.kana[settings.kana], 'vi');
+    return;
+  }
   settings.caps = settings.caps === 'upper' ? 'lower' : 'upper'; saveSettings();
   me().caps = settings.caps; savePlayers(); cloudSave(me());
   THEME_ITEMS.forEach(d => updateSlot(d, false));
@@ -1654,7 +1726,7 @@ cv.addEventListener('pointerdown', e => {
   if (state !== 'play') return;
   const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
   const hit = animals.find(a => !a.done && Math.hypot(animX(a) - px, animY(a) + R() * .4 - py) < R() * 1.6);
-  if (hit){ target = hit; audio(); speak(sayWord(hit.def), 'en'); }
+  if (hit){ target = hit; audio(); speak(sayWord(hit.def), LANG()); }
 });
 
 window.addEventListener('keydown', e => {
@@ -1678,14 +1750,15 @@ window.addEventListener('keydown', e => {
   if (e.key === 'Enter'){
     e.preventDefault();
     const a = target || animals.filter(o => !o.done).sort((p, q) => q.y - p.y)[0];
-    if (a){ audio(); speak(sayWord(a.def), 'en'); }
+    if (a){ audio(); speak(sayWord(a.def), LANG()); }
     return;
   }
+  if (isJa() && (e.key === '-' || e.key === 'ー')){ e.preventDefault(); if (!e.repeat) press('ー'); return; }
   let k = (e.key && e.key.length === 1) ? e.key.toLowerCase() : '';
   if (!/^[a-z]$/.test(k) && /^Key[A-Z]$/.test(e.code || '')) k = e.code.slice(3).toLowerCase();
   if (!/^[a-z]$/.test(k)) return;
   e.preventDefault();
-  if (!e.repeat) press(k);
+  if (!e.repeat) (isJa() ? pressRomaji(k) : press(k));
 });
 // only the window being used plays music, so two open game windows never play at once
 window.addEventListener('blur', () => { stopMusic(); if (state === 'play') openOverlay('pause'); });
@@ -1732,7 +1805,8 @@ function showHome(){
   $('#home').hidden = false;
   showHomeView('main'); syncSeg(); syncButtons(); syncPlayer();
 }
-const gotOf = (q, list) => list.filter(d => (q.counts || {})[d.id]).length;
+const gotOf = (q, list, lang = settings.lang) => list.filter(d => hasName(d, lang) && (q.counts || {})[keyFor(d, lang)]).length;
+const totalOf = (list, lang = settings.lang) => list.filter(d => hasName(d, lang)).length;
 function renderHome(){
   const p = me();
   setIcon($('#heroAv'), p.icon);
@@ -1740,7 +1814,7 @@ function renderHome(){
   const hf = $('#heroFamily');                                  // the family name, once set (set it via 👪 Gia đình)
   hf.textContent = familyName ? '🏠 ' + familyName : ''; hf.hidden = !familyName;
   if (document.activeElement !== $('#familyNameInput')) $('#familyNameInput').value = familyName;
-  $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + ITEMS.length + ' món';
+  $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + totalOf(ITEMS) + ' món';
   // themes, "Tổng Hợp" last across the full width
   const ht = $('#homeThemes'); ht.innerHTML = '';
   THEME_ORDER.forEach(k => {
@@ -1749,8 +1823,9 @@ function renderHome(){
     b.setAttribute('aria-pressed', String(k === settings.theme));
     const ic = mkEl('span', 'ic'); setIcon(ic, t.icon);
     const tx = mkEl('div', 'tx'), bar = mkEl('div', 'bar'), fill = mkEl('i');
-    fill.style.width = (list.length ? got / list.length * 100 : 0) + '%'; bar.appendChild(fill);
-    tx.append(mkEl('div', 'tnm', t.vi), mkEl('div', 'tpc', got + ' / ' + list.length), bar);
+    const tot = totalOf(list);
+    fill.style.width = (tot ? got / tot * 100 : 0) + '%'; bar.appendChild(fill);
+    tx.append(mkEl('div', 'tnm', t.vi), mkEl('div', 'tpc', got + ' / ' + tot), bar);
     b.append(ic, tx);
     b.addEventListener('click', () => { switchTheme(k); renderHome(); });
     ht.appendChild(b);
@@ -1778,32 +1853,43 @@ function renderHome(){
 // Each child's public entry is leaderboard/<child id>: name, avatar and how many different items they
 // collected per theme. It holds no family code, so it can't be used to reach anyone's collection.
 const worldCache = {};                                          // theme -> { at, rows } (refetched after 20 s)
-const scoresOf = q => ({ zoo: gotOf(q, byTheme('zoo')), car: gotOf(q, byTheme('car')), food: gotOf(q, byTheme('food')),
-  job: gotOf(q, byTheme('job')), all: gotOf(q, ITEMS) });
+const scoresOf = (q, lang) => ({ zoo: gotOf(q, byTheme('zoo'), lang), car: gotOf(q, byTheme('car'), lang), food: gotOf(q, byTheme('food'), lang),
+  job: gotOf(q, byTheme('job'), lang), all: gotOf(q, ITEMS, lang) });
+const boardId = (id, lang) => lang === 'ja' ? id + '-ja' : id;     // one board per language
 const lbSent = {};
 // a child goes on the public board only with a real name (not the default "Bé 1") and a family name
 const hasOwnName = name => !!name && !/^Bé \d+$/.test(String(name).trim());
 const onBoard = q => hasOwnName(q.name) && !!familyName;
 function publishScore(q){
   if (!fb || !q) return;
-  const sc = scoresOf(q), key = JSON.stringify([q.name, q.icon, familyName, sc, onBoard(q)]);
-  if (lbSent[q.id] === key) return;                             // nothing new to tell
-  lbSent[q.id] = key;
-  const ref = fb.fs.doc(fb.db, 'leaderboard', q.id);
-  const write = sc.all > 0 && onBoard(q)
-    ? fb.fs.setDoc(ref, Object.assign({ name: q.name, icon: q.icon, family: familyName, updated: Date.now() }, sc))
-    : fb.fs.deleteDoc(ref);                                     // nothing collected yet, or names not set: stay off the board
-  write.then(() => { delete worldCache[rankTheme]; }).catch(() => { delete lbSent[q.id]; });
+  ['en', 'ja'].forEach(lang => {
+    const id = boardId(q.id, lang), sc = scoresOf(q, lang), key = JSON.stringify([q.name, q.icon, familyName, sc, onBoard(q)]);
+    if (lbSent[id] === key) return;                             // nothing new to tell
+    lbSent[id] = key;
+    const ref = fb.fs.doc(fb.db, 'leaderboard', id);
+    const write = sc.all > 0 && onBoard(q)
+      ? fb.fs.setDoc(ref, Object.assign({ name: q.name, icon: q.icon, family: familyName, updated: Date.now() }, sc))
+      : fb.fs.deleteDoc(ref);                                   // nothing collected yet, or names not set: stay off the board
+    write.then(() => { Object.keys(worldCache).forEach(k => delete worldCache[k]); }).catch(() => { delete lbSent[id]; });
+  });
 }
-function unpublishScore(id){ if (fb) fb.fs.deleteDoc(fb.fs.doc(fb.db, 'leaderboard', id)).catch(() => {}); delete lbSent[id]; }
+function unpublishScore(id){
+  ['en', 'ja'].forEach(lang => {
+    if (fb) fb.fs.deleteDoc(fb.fs.doc(fb.db, 'leaderboard', boardId(id, lang))).catch(() => {});
+    delete lbSent[boardId(id, lang)];
+  });
+}
 async function loadWorld(theme){
-  const c = worldCache[theme];
+  const lang = settings.lang, cacheKey = lang + ':' + theme;
+  const c = worldCache[cacheKey];
   if (c && Date.now() - c.at < 20000) return c.rows;
   const { fs, db } = fb;
-  const snap = await fs.getDocs(fs.query(fs.collection(db, 'leaderboard'), fs.orderBy(theme, 'desc'), fs.limit(50)));
+  const snap = await fs.getDocs(fs.query(fs.collection(db, 'leaderboard'), fs.orderBy(theme, 'desc'), fs.limit(120)));
   const rows = snap.docs.map(d => { const v = d.data(); return { id: d.id, name: String(v.name || ''), icon: String(v.icon || ''), family: String(v.family || ''), n: v[theme] | 0 }; })
-    .filter(r => r.n > 0 && r.family && hasOwnName(r.name));
-  worldCache[theme] = { at: Date.now(), rows };
+    .filter(r => r.n > 0 && r.family && hasOwnName(r.name) && r.id.endsWith('-ja') === (lang === 'ja'))
+    .map(r => Object.assign(r, { id: r.id.replace(/-ja$/, '') }))
+    .slice(0, 50);
+  worldCache[cacheKey] = { at: Date.now(), rows };
   return rows;
 }
 function drawRankRows(rows, total){
@@ -1834,9 +1920,9 @@ function renderRank(){
     b.addEventListener('click', () => { rankTheme = k; renderRank(); });
     tabs.appendChild(b);
   });
-  const list = byTheme(rankTheme), total = list.length;
+  const list = byTheme(rankTheme), total = totalOf(list);
   $('#rankNote').textContent = scope === 'world'
-    ? 'Top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
+    ? 'Bảng ' + (isJa() ? 'tiếng Nhật' : 'tiếng Anh') + ': top 50 bé chơi LearnNow, theo số món khác nhau đã sưu tầm. Bé nhà mình được tô màu.'
     : 'Các bé trong nhà, theo số món khác nhau đã sưu tầm.';
   // a clear call-out on top when some of our children can't be on the board yet
   const missing = players.filter(q => !onBoard(q));
@@ -1858,7 +1944,7 @@ function renderRank(){
   }
   if ($('#homeRankView').hidden) return;                        // only fetch while the board is on screen
   const want = rankTheme;
-  if (!worldCache[want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
+  if (!worldCache[settings.lang + ':' + want]) { $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Đang tải bảng xếp hạng…')); }
   loadWorld(want).then(rows => { if (want === rankTheme) drawRankRows(rows, total); })
     .catch(() => { if (want !== rankTheme) return; $('#rankList').innerHTML = ''; $('#rankList').appendChild(mkEl('li', 'rank-empty', 'Chưa tải được bảng xếp hạng chung. Kiểm tra mạng rồi thử lại.')); });
 }
@@ -2044,7 +2130,10 @@ function joinFamily(){
 $('#familyJoinBtn').addEventListener('click', () => { $('#familyJoin').hidden = !$('#familyJoin').hidden; if (!$('#familyJoin').hidden) $('#familyInput').focus(); });
 $('#familyGo').addEventListener('click', joinFamily);
 connectCloud();
-if (document.fonts && document.fonts.load) document.fonts.load(`700 20px ${TEXT_FONT}`).catch(() => {});
+if (document.fonts && document.fonts.load){
+  document.fonts.load(`700 20px ${TEXT_FONT}`).catch(() => {});
+  document.fonts.load('700 20px "Zen Maru Gothic"', 'あア').catch(() => {});   // kana on the play field
+}
 })();
 </script>
 </body>
