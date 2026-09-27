@@ -73,6 +73,10 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 #shelfStars{font:800 15px/1 var(--display);color:#B07A00;margin-right:10px}
 .pstar{display:inline-block;margin:8px 0 0 6px;background:var(--sun);color:var(--ink);font:800 17px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--sun-deep)}
 .madeby{text-align:right;font:700 14px/1.4 var(--text);color:var(--muted);padding-top:6px}
+.pmean{margin-top:4px;font:800 22px/1.3 var(--text),"Zen Maru Gothic",sans-serif;color:var(--ink)}
+.kj{font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif!important;font-weight:700;color:var(--ink);line-height:1}
+.slot .em.kj{font-size:30px;filter:none;opacity:.14}
+.slot.got .em.kj{opacity:1}
 .pnew{display:inline-block;margin-top:8px;background:var(--grass);color:#fff;font:800 16px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--grass-deep)}
 
 /* overlay */
@@ -360,7 +364,7 @@ details.more[open] summary{margin-bottom:14px}
         <div class="seg big" data-key="lang"><button data-v="en">English</button><button data-v="ja">日本語</button></div>
         <div class="lang-sub">
           <div id="subEn" class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div>
-          <div id="subJa" class="seg" data-key="kana"><button data-v="hira">ひらがな</button><button data-v="kata">カタカナ</button></div>
+          <div id="subJa" class="seg" data-key="kana"><button data-v="hira">ひらがな</button><button data-v="kata">カタカナ</button><button data-v="kanji">漢字</button></div>
         </div>
       </section>
       <section class="hcard"><h2>Mức độ</h2>
@@ -472,6 +476,14 @@ const THEMES = {
   job:  { vi:'Nghề Nghiệp', icon:'👩‍🚒', say:'Chủ đề nghề nghiệp', fresh:'New job!' },
   all:  { vi:'Tổng Hợp',    icon:'🌈', say:'Chủ đề tổng hợp',    fresh:'New!' },
 };
+const KANJI_THEMES = {
+  zoo:  { vi:'Lớp 1',    icon:'一', say:'Chữ Hán lớp một' },
+  car:  { vi:'Lớp 2',    icon:'二', say:'Chữ Hán lớp hai' },
+  food: { vi:'Lớp 3',    icon:'三', say:'Chữ Hán lớp ba' },
+  job:  { vi:'Lớp 4',    icon:'四', say:'Chữ Hán lớp bốn' },
+  all:  { vi:'Tổng Hợp', icon:'漢', say:'Chữ Hán tổng hợp' },
+};
+const themeOf = (k, mode) => ((mode || curMode()) === 'kanji' ? KANJI_THEMES : THEMES)[k];
 const THEME_ORDER = ['zoo', 'car', 'food', 'job', 'all'];   // "all" mixes every theme and sits last
 const RAW_THEMES = {
   zoo: [
@@ -528,6 +540,515 @@ const ALL_ITEMS = ['zoo', 'car', 'food', 'job'].flatMap(t => RAW_THEMES[t]
 // Japanese names (hiragana) for the Japanese mode; items without one are English-only
 const JA_NAMES = {"cat": "ねこ", "dog": "いぬ", "pig": "ぶた", "cow": "うし", "fox": "きつね", "owl": "ふくろう", "bee": "はち", "ant": "あり", "hen": "にわとり", "bat": "こうもり", "fly": "はえ", "duck": "あひる", "fish": "さかな", "frog": "かえる", "lion": "らいおん", "bear": "くま", "goat": "やぎ", "crab": "かに", "bird": "とり", "deer": "しか", "wolf": "おおかみ", "swan": "はくちょう", "seal": "あざらし", "boar": "いのしし", "dove": "はと", "worm": "みみず", "horse": "うま", "tiger": "とら", "zebra": "しまうま", "snake": "へび", "mouse": "ねずみ", "panda": "ぱんだ", "koala": "こあら", "camel": "らくだ", "whale": "くじら", "shark": "さめ", "sheep": "ひつじ", "chick": "ひよこ", "snail": "かたつむり", "hippo": "かば", "rhino": "さい", "eagle": "わし", "squid": "いか", "sloth": "なまけもの", "otter": "かわうそ", "puppy": "こいぬ", "rabbit": "うさぎ", "monkey": "さる", "turtle": "かめ", "parrot": "おうむ", "penguin": "ぺんぎん", "octopus": "たこ", "giraffe": "きりん", "elephant": "ぞう", "dolphin": "いるか", "butterfly": "ちょうちょ", "ladybug": "てんとうむし", "dinosaur": "きょうりゅう", "kangaroo": "かんがるー", "crocodile": "わに", "hedgehog": "はりねずみ", "gorilla": "ごりら", "raccoon": "あらいぐま", "leopard": "ひょう", "badger": "あなぐま", "polar bear": "しろくま", "chipmunk": "りす", "hamster": "はむすたー", "peacock": "くじゃく", "lizard": "とかげ", "dragon": "りゅう", "shrimp": "えび", "blowfish": "ふぐ", "beetle": "かぶとむし", "cricket": "こおろぎ", "spider": "くも", "scorpion": "さそり", "caterpillar": "いもむし", "black cat": "くろねこ", "crow": "からす", "donkey": "ろば", "goose": "がちょう", "jellyfish": "くらげ", "oyster": "かき", "car:car": "くるま", "car:bus": "ばす", "car:taxi": "たくしー", "car:truck": "とらっく", "car:train": "でんしゃ", "car:subway": "ちかてつ", "car:bullet train": "しんかんせん", "car:ship": "ふね", "car:boat": "ぼーと", "car:sailboat": "よっと", "car:canoe": "かぬー", "car:bike": "じてんしゃ", "car:motorcycle": "ばいく", "car:rocket": "ろけっと", "car:airplane": "ひこうき", "car:helicopter": "へりこぷたー", "car:ambulance": "きゅうきゅうしゃ", "car:fire truck": "しょうぼうしゃ", "car:police car": "ぱとかー", "car:sled": "そり", "food:apple": "りんご", "food:pear": "なし", "food:orange": "みかん", "food:lemon": "れもん", "food:banana": "ばなな", "food:grapes": "ぶどう", "food:melon": "めろん", "food:watermelon": "すいか", "food:cherry": "さくらんぼ", "food:peach": "もも", "food:pineapple": "ぱいなっぷる", "food:strawberry": "いちご", "food:tomato": "とまと", "food:eggplant": "なす", "food:potato": "じゃがいも", "food:yam": "さつまいも", "food:carrot": "にんじん", "food:corn": "とうもろこし", "food:chili": "とうがらし", "food:pepper": "ぴーまん", "food:cucumber": "きゅうり", "food:garlic": "にんにく", "food:onion": "たまねぎ", "food:mushroom": "きのこ", "food:chestnut": "くり", "food:ginger": "しょうが", "food:beans": "まめ", "job:doctor": "いしゃ", "job:farmer": "のうか", "job:chef": "こっく", "job:king": "おうさま", "job:teacher": "せんせい", "job:student": "がくせい", "job:singer": "かしゅ", "job:artist": "がか", "job:pilot": "ぱいろっと", "job:astronaut": "うちゅうひこうし", "job:firefighter": "しょうぼうし", "job:police": "けいさつ", "job:detective": "たんてい", "job:builder": "だいく", "job:scientist": "かがくしゃ", "job:clown": "ぴえろ", "job:prince": "おうじ", "job:princess": "おひめさま", "job:wizard": "まほうつかい"};
 ALL_ITEMS.forEach(d => { if (JA_NAMES[d.id]) d.ja = JA_NAMES[d.id]; });
+// 漢字: 500 everyday kanji, by the Japanese school year they are taught in (lớp 1-4).
+// The kanji is the picture, its reading in hiragana is typed, then the Vietnamese meaning is said.
+// Each school year sits in one of the four theme slots (zoo = lớp 1, car = lớp 2, food = lớp 3, job = lớp 4).
+const KANJI_DATA = `
+1 一 いち số một
+1 右 みぎ bên phải
+1 雨 あめ mưa
+1 円 えん đồng yên, hình tròn
+1 王 おう vua
+1 音 おと âm thanh
+1 下 した bên dưới
+1 火 ひ lửa
+1 花 はな bông hoa
+1 貝 かい con sò
+1 学 がく học
+1 気 き khí, tinh thần
+1 九 きゅう số chín
+1 休 やすみ nghỉ ngơi
+1 玉 たま viên ngọc
+1 金 きん vàng
+1 空 そら bầu trời
+1 月 つき mặt trăng
+1 犬 いぬ con chó
+1 見 みる nhìn
+1 五 ご số năm
+1 口 くち cái miệng
+1 校 こう trường học
+1 左 ひだり bên trái
+1 三 さん số ba
+1 山 やま núi
+1 子 こ đứa trẻ
+1 四 よん số bốn
+1 糸 いと sợi chỉ
+1 字 じ chữ viết
+1 耳 みみ cái tai
+1 七 なな số bảy
+1 車 くるま xe ô tô
+1 手 て bàn tay
+1 十 じゅう số mười
+1 出 でる đi ra
+1 女 おんな con gái
+1 小 ちいさい nhỏ bé
+1 上 うえ bên trên
+1 森 もり khu rừng
+1 人 ひと người
+1 水 みず nước
+1 正 ただしい đúng
+1 生 いきる sống
+1 青 あお màu xanh da trời
+1 夕 ゆう buổi chiều tối
+1 石 いし hòn đá
+1 赤 あか màu đỏ
+1 千 せん một nghìn
+1 川 かわ con sông
+1 先 さき phía trước
+1 早 はやい sớm
+1 草 くさ cỏ
+1 足 あし bàn chân
+1 村 むら ngôi làng
+1 大 おおきい to lớn
+1 男 おとこ con trai
+1 竹 たけ cây tre
+1 中 なか bên trong
+1 虫 むし côn trùng
+1 町 まち thị trấn
+1 天 てん bầu trời
+1 田 た ruộng lúa
+1 土 つち đất
+1 二 に số hai
+1 日 ひ mặt trời, ngày
+1 入 はいる đi vào
+1 年 とし năm
+1 白 しろ màu trắng
+1 八 はち số tám
+1 百 ひゃく một trăm
+1 文 ぶん câu văn
+1 木 き cái cây
+1 本 ほん quyển sách
+1 名 な tên
+1 目 め con mắt
+1 立 たつ đứng
+1 力 ちから sức mạnh
+1 林 はやし rừng cây
+1 六 ろく số sáu
+2 引 ひく kéo
+2 羽 はね lông vũ
+2 雲 くも đám mây
+2 園 えん khu vườn
+2 遠 とおい xa
+2 何 なに cái gì
+2 科 か môn học
+2 夏 なつ mùa hè
+2 家 いえ ngôi nhà
+2 歌 うた bài hát
+2 画 が bức vẽ
+2 回 かい lần, vòng
+2 会 あう gặp gỡ
+2 海 うみ biển
+2 絵 え bức tranh
+2 外 そと bên ngoài
+2 角 かど góc
+2 楽 たのしい vui vẻ
+2 活 かつ hoạt động
+2 間 あいだ khoảng giữa
+2 丸 まる hình tròn
+2 岩 いわ tảng đá
+2 顔 かお khuôn mặt
+2 汽 き hơi nước
+2 記 き ghi chép
+2 帰 かえる trở về
+2 弓 ゆみ cây cung
+2 牛 うし con bò
+2 魚 さかな con cá
+2 京 きょう kinh đô
+2 強 つよい mạnh
+2 教 おしえる dạy
+2 近 ちかい gần
+2 兄 あに anh trai
+2 形 かたち hình dạng
+2 計 けい tính toán
+2 元 もと gốc
+2 言 いう nói
+2 原 はら cánh đồng
+2 戸 と cánh cửa
+2 古 ふるい cũ
+2 午 ご buổi trưa
+2 後 うしろ phía sau
+2 語 ご ngôn ngữ
+2 工 こう thợ, công việc
+2 公 こう công cộng
+2 広 ひろい rộng
+2 交 こう giao nhau
+2 光 ひかり ánh sáng
+2 考 かんがえる suy nghĩ
+2 行 いく đi
+2 高 たかい cao
+2 黄 き màu vàng
+2 合 あう hợp nhau
+2 谷 たに thung lũng
+2 国 くに đất nước
+2 黒 くろ màu đen
+2 今 いま bây giờ
+2 才 さい tuổi, tài năng
+2 細 ほそい mảnh, thon
+2 作 つくる làm ra
+2 算 さん tính toán
+2 止 とまる dừng lại
+2 市 し thành phố
+2 矢 や mũi tên
+2 姉 あね chị gái
+2 思 おもう nghĩ
+2 紙 かみ giấy
+2 寺 てら ngôi chùa
+2 自 じ tự mình
+2 時 とき thời gian
+2 室 しつ căn phòng
+2 社 しゃ công ty
+2 弱 よわい yếu
+2 首 くび cái cổ
+2 秋 あき mùa thu
+2 週 しゅう tuần
+2 春 はる mùa xuân
+2 書 かく viết
+2 少 すこし một chút
+2 場 ば nơi chốn
+2 色 いろ màu sắc
+2 食 たべる ăn
+2 心 こころ trái tim
+2 新 あたらしい mới
+2 親 おや bố mẹ
+2 図 ず hình vẽ
+2 数 かず con số
+2 西 にし phía tây
+2 声 こえ giọng nói
+2 星 ほし ngôi sao
+2 晴 はれ trời nắng
+2 切 きる cắt
+2 雪 ゆき tuyết
+2 船 ふね con thuyền
+2 線 せん đường kẻ
+2 前 まえ phía trước
+2 組 くみ nhóm, lớp
+2 走 はしる chạy
+2 多 おおい nhiều
+2 太 ふとい to, mập
+2 体 からだ cơ thể
+2 台 だい cái bệ
+2 地 ち mặt đất
+2 池 いけ cái ao
+2 知 しる biết
+2 茶 ちゃ trà
+2 昼 ひる buổi trưa
+2 長 ながい dài
+2 鳥 とり con chim
+2 朝 あさ buổi sáng
+2 直 なおす sửa chữa
+2 通 とおる đi qua
+2 弟 おとうと em trai
+2 店 みせ cửa hàng
+2 点 てん dấu chấm, điểm
+2 電 でん điện
+2 刀 かたな thanh kiếm
+2 冬 ふゆ mùa đông
+2 当 あたる trúng
+2 東 ひがし phía đông
+2 答 こたえ câu trả lời
+2 頭 あたま cái đầu
+2 同 おなじ giống nhau
+2 道 みち con đường
+2 読 よむ đọc
+2 内 うち bên trong
+2 南 みなみ phía nam
+2 肉 にく thịt
+2 馬 うま con ngựa
+2 売 うる bán
+2 買 かう mua
+2 麦 むぎ lúa mì
+2 半 はん một nửa
+2 番 ばん lượt, số thứ tự
+2 父 ちち bố
+2 風 かぜ gió
+2 分 ふん phút
+2 聞 きく nghe
+2 米 こめ gạo
+2 歩 あるく đi bộ
+2 母 はは mẹ
+2 方 ほう phía, hướng
+2 北 きた phía bắc
+2 毎 まい mỗi
+2 妹 いもうと em gái
+2 万 まん mười nghìn
+2 明 あかるい sáng sủa
+2 鳴 なく kêu, hót
+2 毛 け lông, tóc
+2 門 もん cổng
+2 夜 よる ban đêm
+2 野 の cánh đồng
+2 友 とも bạn bè
+2 用 よう công việc
+2 曜 よう ngày trong tuần
+2 来 くる đến
+2 里 さと làng quê
+2 理 り lý lẽ
+2 話 はなし câu chuyện
+3 悪 わるい xấu
+3 安 やすい rẻ
+3 暗 くらい tối
+3 医 い chữa bệnh
+3 委 い giao phó
+3 意 い ý nghĩ
+3 育 そだつ lớn lên
+3 員 いん thành viên
+3 院 いん viện
+3 飲 のむ uống
+3 運 はこぶ chở, mang
+3 泳 およぐ bơi
+3 駅 えき nhà ga
+3 央 おう chính giữa
+3 横 よこ bên cạnh
+3 屋 や cửa tiệm
+3 温 あたたかい ấm áp
+3 化 ばける biến hóa
+3 荷 に hành lý
+3 界 かい thế giới
+3 開 あける mở ra
+3 階 かい tầng lầu
+3 寒 さむい lạnh
+3 感 かん cảm giác
+3 漢 かん chữ Hán
+3 館 かん tòa nhà
+3 岸 きし bờ sông
+3 起 おきる thức dậy
+3 期 き thời kỳ
+3 客 きゃく khách
+3 究 きゅう nghiên cứu
+3 急 いそぐ vội vàng
+3 級 きゅう cấp, lớp
+3 宮 みや cung điện
+3 球 たま quả bóng
+3 去 さる rời đi
+3 橋 はし cây cầu
+3 業 ぎょう nghề nghiệp
+3 曲 まがる rẽ, cong
+3 局 きょく cục, đài
+3 銀 ぎん bạc
+3 区 く quận
+3 苦 くるしい vất vả
+3 具 ぐ dụng cụ
+3 君 きみ bạn
+3 係 かかり người phụ trách
+3 軽 かるい nhẹ
+3 血 ち máu
+3 決 きめる quyết định
+3 研 けん mài giũa
+3 県 けん tỉnh
+3 庫 こ nhà kho
+3 湖 みずうみ hồ nước
+3 向 むく hướng về
+3 幸 しあわせ hạnh phúc
+3 港 みなと bến cảng
+3 号 ごう số hiệu
+3 根 ね rễ cây
+3 祭 まつり lễ hội
+3 皿 さら cái đĩa
+3 仕 し làm việc
+3 死 し chết
+3 使 つかう sử dụng
+3 始 はじめる bắt đầu
+3 指 ゆび ngón tay
+3 歯 は cái răng
+3 詩 し bài thơ
+3 次 つぎ tiếp theo
+3 事 こと sự việc
+3 持 もつ cầm, mang
+3 式 しき nghi lễ
+3 実 み quả
+3 写 うつす chụp, chép
+3 者 もの người
+3 主 ぬし chủ nhân
+3 守 まもる bảo vệ
+3 取 とる lấy
+3 酒 さけ rượu
+3 受 うける nhận
+3 州 しゅう châu, bang
+3 拾 ひろう nhặt lên
+3 終 おわる kết thúc
+3 習 ならう học tập
+3 集 あつまる tụ tập
+3 住 すむ sinh sống
+3 重 おもい nặng
+3 宿 やど nhà trọ
+3 所 ところ nơi chốn
+3 暑 あつい nóng
+3 助 たすける giúp đỡ
+3 昭 しょう sáng sủa
+3 消 けす tắt, xóa
+3 商 しょう buôn bán
+3 章 しょう chương sách
+3 勝 かつ chiến thắng
+3 乗 のる lên xe
+3 植 うえる trồng cây
+3 申 もうす nói
+3 身 み thân thể
+3 神 かみ thần
+3 真 しん chân thật
+3 深 ふかい sâu
+3 進 すすむ tiến lên
+3 世 よ thế gian
+3 整 ととのえる sắp xếp
+3 昔 むかし ngày xưa
+3 全 ぜん toàn bộ
+3 相 あい cùng nhau
+3 送 おくる gửi
+3 想 そう tưởng tượng
+3 息 いき hơi thở
+3 速 はやい nhanh
+3 族 ぞく gia tộc
+3 他 ほか khác
+3 打 うつ đánh
+3 対 たい đối diện
+3 待 まつ chờ đợi
+3 代 だい thay thế
+3 第 だい thứ tự
+3 題 だい đề bài
+3 炭 すみ than
+3 短 みじかい ngắn
+3 談 だん trò chuyện
+3 着 きる mặc
+3 注 そそぐ rót, đổ
+3 柱 はしら cây cột
+3 丁 ちょう khu phố
+3 帳 ちょう cuốn sổ
+3 調 しらべる tìm hiểu
+3 追 おう đuổi theo
+3 定 てい quy định
+3 庭 にわ khu vườn
+3 笛 ふえ cây sáo
+3 鉄 てつ sắt
+3 転 ころぶ té ngã
+3 都 と thủ đô
+3 度 ど độ, lần
+3 投 なげる ném
+3 豆 まめ hạt đậu
+3 島 しま hòn đảo
+3 湯 ゆ nước nóng
+3 登 のぼる leo lên
+3 等 とう bằng nhau
+3 動 うごく chuyển động
+3 童 どう trẻ em
+3 農 のう nông nghiệp
+3 波 なみ con sóng
+3 配 くばる phân phát
+3 倍 ばい gấp đôi
+3 箱 はこ cái hộp
+3 畑 はたけ ruộng rẫy
+3 発 はつ xuất phát
+3 反 はん ngược lại
+3 坂 さか con dốc
+3 板 いた tấm ván
+3 皮 かわ da, vỏ
+3 悲 かなしい buồn
+3 美 うつくしい đẹp
+3 鼻 はな cái mũi
+3 筆 ふで bút lông
+3 氷 こおり nước đá
+3 表 おもて mặt trước
+3 秒 びょう giây
+3 病 びょう bệnh
+3 品 しな hàng hóa
+3 負 まける thua
+3 部 ぶ bộ phận
+3 服 ふく quần áo
+3 福 ふく may mắn
+3 物 もの đồ vật
+3 平 たいら bằng phẳng
+3 返 かえす trả lại
+3 勉 べん chăm chỉ
+3 放 はなす thả ra
+3 味 あじ mùi vị
+3 命 いのち sự sống
+3 面 めん bề mặt
+3 問 とい câu hỏi
+3 役 やく vai trò
+3 薬 くすり thuốc
+3 由 ゆう lý do
+3 油 あぶら dầu
+3 有 ある có
+3 遊 あそぶ chơi
+3 予 よ trước
+3 羊 ひつじ con cừu
+3 洋 よう đại dương
+3 葉 は lá cây
+3 陽 よう ánh nắng
+3 様 さま ngài
+3 落 おちる rơi xuống
+3 流 ながれる chảy
+3 旅 たび chuyến đi
+3 両 りょう cả hai
+3 緑 みどり màu xanh lá
+3 礼 れい lời cảm ơn
+3 列 れつ hàng lối
+3 練 ねる luyện tập
+3 路 ろ con đường
+3 和 わ hòa bình
+4 愛 あい tình yêu
+4 塩 しお muối
+4 芽 め mầm cây
+4 街 まち phố phường
+4 覚 おぼえる ghi nhớ
+4 願 ねがう mong ước
+4 喜 よろこぶ vui mừng
+4 旗 はた lá cờ
+4 器 うつわ đồ đựng
+4 泣 なく khóc
+4 漁 りょう đánh cá
+4 鏡 かがみ cái gương
+4 競 きそう thi đua
+4 好 すき thích
+4 菜 な rau
+4 最 もっとも nhất
+4 昨 さく hôm qua
+4 残 のこる còn lại
+4 児 じ đứa trẻ
+4 失 うしなう đánh mất
+4 借 かりる mượn
+4 種 たね hạt giống
+4 祝 いわう chúc mừng
+4 初 はじめ đầu tiên
+4 松 まつ cây thông
+4 笑 わらう cười
+4 焼 やく nướng
+4 信 しん tin tưởng
+4 静 しずか yên tĩnh
+4 席 せき chỗ ngồi
+4 折 おる gấp, bẻ
+4 説 せつ giải thích
+4 戦 たたかう chiến đấu
+4 選 えらぶ lựa chọn
+4 続 つづく tiếp tục
+4 孫 まご cháu
+4 達 たつ đạt được
+4 低 ひくい thấp
+4 底 そこ đáy
+4 伝 つたえる truyền đạt
+4 灯 とう ngọn đèn
+4 働 はたらく làm việc
+4 特 とく đặc biệt
+4 熱 ねつ nhiệt, sốt
+4 梅 うめ cây mơ
+4 飯 めし cơm
+4 飛 とぶ bay
+4 夫 おっと người chồng
+4 別 べつ riêng biệt
+4 変 かわる thay đổi
+4 便 びん chuyến
+4 望 のぞむ mong muốn
+4 未 み chưa
+4 無 む không có
+4 約 やく khoảng
+4 勇 ゆう dũng cảm
+4 浴 あびる tắm
+4 冷 つめたい lạnh buốt
+4 例 れい ví dụ
+4 老 おいる già đi`;
+const KANJI_SLOT = { 1:'zoo', 2:'car', 3:'food', 4:'job' };
+KANJI_DATA.trim().split('\n').forEach(line => {
+  const [g, e, ja, ...vi] = line.split(' ');
+  ALL_ITEMS.push({ e, en:'', ja, vi: vi.join(' '), kanji:true, theme: KANJI_SLOT[g], id:'kanji:' + e, ci: colorIx++ % BUBBLES.length });
+});
 
 // The game's own icon store: every picture is bundled here (Twemoji, CC-BY 4.0, github.com/jdecked/twemoji),
 // so the animals, vehicles, food, jobs and avatars look the same on every computer and tablet.
@@ -792,11 +1313,14 @@ const emojiProbe = (() => {
   return e => !works || test(e);                                // if the check itself is unreliable, trust the emoji
 })();
 const ITEMS = ALL_ITEMS.filter(d => {
+  if (d.kanji) return true;                                     // drawn as text in a Japanese font
   if (ICONS[d.e]){ d.img = new Image(); d.img.src = ICONS[d.e]; return true; }   // same picture on every device
   return emojiProbe(d.e);                                       // no bundled picture: only if this device can draw it
 });
 const byTheme = t => t === 'all' ? ITEMS : ITEMS.filter(d => d.theme === t);
 let THEME_ITEMS = byTheme('zoo');                               // what the current theme plays with
+// an item's picture: its icon, or for a kanji the character itself
+function setItemIcon(el, d){ if (d.kanji){ el.textContent = d.e; el.classList.add('kj'); } else setIcon(el, d.e); }
 // show an icon from the icon store in an element (plain emoji only if the store has no picture for it)
 function setIcon(el, e){
   el.textContent = '';
@@ -857,14 +1381,14 @@ const wordOf = d => isJa() ? (d.ja || '') : d.en;
 const toKata = s => s.replace(/[\u3041-\u3096]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 0x60));
 // each language keeps its own collection: English under the item id, Japanese under "ja:" + id
 // four ways to play, each with its own collection and leaderboard: abc, ABC, ひらがな, カタカナ
-const MODES = ['abc', 'ABC', 'hira', 'kata'];
-const MODE_LABEL = { abc:'abc', ABC:'ABC', hira:'ひらがな', kata:'カタカナ' };
-const MODE_KEY = { abc:'', ABC:'up:', hira:'ja:', kata:'kata:' };   // collection keys (abc keeps the plain id)
-const MODE_BOARD = { abc:'', ABC:'-up', hira:'-ja', kata:'-kata' };  // leaderboard/<child id><suffix>
-const curMode = () => isJa() ? (settings.kana === 'kata' ? 'kata' : 'hira') : (settings.caps === 'upper' ? 'ABC' : 'abc');
+const MODES = ['abc', 'ABC', 'hira', 'kata', 'kanji'];
+const MODE_LABEL = { abc:'abc', ABC:'ABC', hira:'ひらがな', kata:'カタカナ', kanji:'漢字' };
+const MODE_KEY = { abc:'', ABC:'up:', hira:'ja:', kata:'kata:', kanji:'' };   // collection keys (abc keeps the plain id; kanji ids carry "kanji:")
+const MODE_BOARD = { abc:'', ABC:'-up', hira:'-ja', kata:'-kata', kanji:'-kanji' };  // leaderboard/<child id><suffix>
+const curMode = () => isJa() ? ({ kata:'kata', kanji:'kanji' }[settings.kana] || 'hira') : (settings.caps === 'upper' ? 'ABC' : 'abc');
 const keyFor = (d, mode = curMode()) => MODE_KEY[mode] + d.id;
 const ck = d => keyFor(d);
-const hasName = (d, mode = curMode()) => (mode === 'hira' || mode === 'kata') ? !!d.ja : true;
+const hasName = (d, mode = curMode()) => mode === 'kanji' ? !!d.kanji : !d.kanji && ((mode === 'hira' || mode === 'kata') ? !!d.ja : true);
 const inLang = list => list.filter(d => hasName(d));
 // gold stars: every 5 catches of the same card = 1 star; abc, ABC, ひらがな, カタカナ each count on their own
 const STAR_EVERY = 5;
@@ -891,7 +1415,8 @@ function buildChars(word){
   }
   return out;
 }
-const curLevel = () => isJa() ? Object.assign({}, LEVELS[settings.level], LEVELS_JA[settings.level]) : LEVELS[settings.level];
+const curLevel = () => !isJa() ? LEVELS[settings.level]
+  : Object.assign({}, LEVELS[settings.level], LEVELS_JA[settings.level], curMode() === 'kanji' && settings.level === 'easy' ? { min:1, note:'Dễ: cách đọc 1–2 chữ, mỗi lần 2 chữ Hán, di chuyển chậm. Mỗi thẻ tích tối đa 15.' } : {});
 const pool = () => {
   const L = curLevel(), n = d => keysLen(wordOf(d));
   const items = inLang(THEME_ITEMS);
@@ -976,7 +1501,7 @@ function pad(freq, t0, dur, vol){
 }
 // Japanese voices are quieter than the English ones: while one speaks, the music steps back
 let ducked = false;
-const musicLevel = () => settings.music ? MUSIC_VOL * 2 * settings.musicVol * (ducked ? .4 : 1) : 0;
+const musicLevel = () => settings.music ? MUSIC_VOL * 2 * settings.musicVol * (ducked ? .3 : 1) : 0;
 function duck(on){
   if (ducked === on) return;
   ducked = on;
@@ -1057,6 +1582,9 @@ function pickVoice(lang){
   const list = voices.filter(v => (v.lang || '').toLowerCase().replace('_', '-').startsWith(lang) && !NOVELTY.test(v.name || ''));
   return list.sort((a, b) => voiceScore(b, lang) - voiceScore(a, lang))[0] || null;
 }
+// the Japanese voices speak more softly than the English ones and cannot go past full volume,
+// so the English and Vietnamese voices are turned down to match them
+const VOICE_BALANCE = { en:.75, vi:.75, ja:1 };
 // nothing is said in Vietnamese: the same message in the language being practised, read by that language's voice
 const VI_TO_JA = {
   'Bé được thêm một ngôi sao vàng!':'ほしを ひとつ もらったよ！',
@@ -1065,7 +1593,9 @@ const VI_TO_JA = {
   'Chủ đề vườn thú':'どうぶつ', 'Chủ đề xe cộ':'のりもの', 'Chủ đề rau củ quả':'やさいと くだもの',
   'Chủ đề nghề nghiệp':'おしごと', 'Chủ đề tổng hợp':'ぜんぶ',
   'Mức độ dễ':'かんたん', 'Mức độ vừa':'ふつう', 'Mức độ khó':'むずかしい',
-  'Chữ Hiragana':'ひらがな', 'Chữ Katakana':'カタカナ', 'Tiếng Nhật':'にほんご',
+  'Chữ Hiragana':'ひらがな', 'Chữ Katakana':'カタカナ', 'Chữ Hán':'かんじ', 'Tiếng Nhật':'にほんご',
+  'Chữ Hán lớp một':'いちねんせいの かんじ', 'Chữ Hán lớp hai':'にねんせいの かんじ', 'Chữ Hán lớp ba':'さんねんせいの かんじ',
+  'Chữ Hán lớp bốn':'よねんせいの かんじ', 'Chữ Hán tổng hợp':'ぜんぶの かんじ',
   'Chọn người chơi':'だれが あそぶ？', 'Gia đình':'かぞく', 'Bảng xếp hạng':'ランキング',
   'Đã lưu tên gia đình':'ほぞん しました', 'Đã xoá tên gia đình':'けしました', 'Đã kết nối':'つながりました',
 };
@@ -1089,8 +1619,8 @@ function speakSeq(parts, queue){
   try {
     if (!voices.length) loadVoices();
     if (!queue) speechSynthesis.cancel();
-    parts.forEach(({ text, lang, rate }) => {
-      if (lang === 'vi'){ text = isJa() ? jaFor(text) : enFor(text); lang = isJa() ? 'ja' : 'en'; if (!text) return; }
+    parts.forEach(({ text, lang, rate, keep }) => {           // keep: say it in Vietnamese anyway (a kanji's meaning)
+      if (lang === 'vi' && !keep){ text = isJa() ? jaFor(text) : enFor(text); lang = isJa() ? 'ja' : 'en'; if (!text) return; }
       const v = pickVoice(lang);
       if (!v && lang === 'vi') return;          // no Vietnamese voice on this computer: skip the cheer
       const u = new SpeechSynthesisUtterance(text);
@@ -1100,7 +1630,7 @@ function speakSeq(parts, queue){
       // Vietnamese menu words: a little higher and brighter
       u.rate = rate || (lang === 'vi' ? .95 : lang === 'ja' ? .9 : 1);
       u.pitch = lang === 'vi' ? 1.2 : lang === 'ja' ? 1.1 : 1;
-      u.volume = settings.voiceVol;                            // 1 is the loudest a voice can go
+      u.volume = settings.voiceVol * VOICE_BALANCE[lang];      // 1 is the loudest a voice can go
       if (lang === 'ja'){
         u.onstart = () => duck(true);
         u.onend = u.onerror = () => setTimeout(() => { if (!speechSynthesis.speaking) duck(false); }, 200);
@@ -1284,7 +1814,7 @@ function capture(a){
   const hex = $('#hex'); hex.classList.remove('bump'); void hex.offsetWidth; hex.classList.add('bump');
   // after the spelled letters: the word the child just typed, then the English cheer
   const cheer = showPopup(a.def, isNew, newStars);
-  const lines = [{ text: sayWord(a.def), lang:LANG() }, { text: cheer, lang:LANG() }];
+  const lines = [{ text: sayWord(a.def), lang:LANG() }, ...(a.def.kanji ? [{ text: a.def.vi, lang:'vi', keep:true }] : []), { text: cheer, lang:LANG() }];
   if (newStars > 0){ lines.push({ text: 'Bé được thêm một ngôi sao vàng!', lang:'vi' }); sfx.star(); }
   speakSeq(lines, true);
   flyToShelf(a.def, x, y);
@@ -1299,6 +1829,7 @@ function showPopup(d, isNew, newStars){
   const cheers = isJa() ? PRAISE_JA : PRAISE, cheer = cheers[Math.floor(Math.random() * cheers.length)];
   mk('pp', cheer);
   mk('pw', capsOf(main));
+  if (d.kanji) mk('pmean', d.e + ' = ' + d.vi);
   if (isNew) mk('pnew', isJa() ? 'はじめて！' : THEMES[d.theme].fresh);
   if (newStars > 0) mk('pstar', '⭐ Được thêm ' + newStars + ' sao!');
   popup.hidden = false;
@@ -1313,7 +1844,7 @@ function flyToShelf(d, x, y){
   const sr = stage.getBoundingClientRect(), tr = slot.getBoundingClientRect();
   const sx = sr.left + x, sy = sr.top + y, ex = tr.left + tr.width / 2, ey = tr.top + tr.height / 2 - 8;
   const el = document.createElement('div');
-  el.className = 'flyer'; setIcon(el, d.e);
+  el.className = 'flyer'; setItemIcon(el, d);
   el.style.fontSize = Math.round(R() * 1.25) + 'px';
   el.style.left = sx + 'px'; el.style.top = sy + 'px';
   document.body.appendChild(el);
@@ -1338,10 +1869,10 @@ function renderShelf(){
     b.className = 'slot';
     b.style.setProperty('--tint', TINTS[d.ci]);
     b.innerHTML = '<span class="em"></span><span class="nm"></span><span class="ct" hidden></span><span class="sk" hidden></span>';
-    setIcon(b.querySelector('.em'), d.e);
+    setItemIcon(b.querySelector('.em'), d);
     b.addEventListener('click', () => {
       if (!counts[ck(d)]) return;
-      audio(); speak(sayWord(d), LANG());
+      audio(); speakSeq([{ text: sayWord(d), lang:LANG() }, ...(d.kanji ? [{ text: d.vi, lang:'vi', keep:true }] : [])]);
       b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
     });
     slotEls[d.id] = b; row.appendChild(b);
@@ -1531,6 +2062,11 @@ function drawAnimal(a){
   const sc = 1 + a.flash * .22;
   ctx.save(); ctx.translate(x, y + r * .06); ctx.scale(sc, sc);
   if (a.def.img){ const s = r * 1.3; if (a.def.img.complete) ctx.drawImage(a.def.img, -s / 2, -s / 2 - r * .04, s, s); }
+  else if (a.def.kanji){
+    ctx.font = `700 ${Math.round(r * 1.05)}px "Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans","Yu Gothic",sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = C.ink;
+    ctx.fillText(a.def.e, 0, r * .04);
+  }
   else {
     ctx.font = `${Math.round(r * 1.25)}px ${EMOJI_FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(a.def.e, 0, 0);
@@ -1641,14 +2177,14 @@ function syncSeg(){
   $('#levelNote').textContent = curLevel().note;
   kbd.hidden = false;                                         // the helper keyboard is always shown
   labelKeys();
-  $('#capsBtn').textContent = isJa() ? (settings.kana === 'kata' ? 'ア' : 'あ') : (settings.caps === 'upper' ? 'ABC' : 'abc');
+  $('#capsBtn').textContent = isJa() ? ({ kata:'ア', kanji:'漢' }[settings.kana] || 'あ') : (settings.caps === 'upper' ? 'ABC' : 'abc');
   $('#subEn').classList.toggle('dim', isJa()); $('#subJa').classList.toggle('dim', !isJa());
 }
 // what the menu buttons say out loud (Vietnamese, so the kids know what they picked)
 const SAY = {
   level: { easy:'Mức độ dễ', mid:'Mức độ vừa', hard:'Mức độ khó' },
   caps:  { lower:'Chữ thường', upper:'Chữ in hoa' },
-  kana:  { hira:'Chữ Hiragana', kata:'Chữ Katakana' },
+  kana:  { hira:'Chữ Hiragana', kata:'Chữ Katakana', kanji:'Chữ Hán' },
   lang:  { en:'Tiếng Anh', ja:'Tiếng Nhật' },
 };
 let ovMode = 'start';
@@ -1817,7 +2353,7 @@ const themeBtn = $('#themeBtn');
 setIcon($('#homeIcon'), '🏠');
 function syncTheme(){
   if (!$('#home').hidden) renderHome();
-  const t = THEMES[settings.theme];
+  const t = themeOf(settings.theme);
   setIcon($('#themeIcon'), t.icon);
   $('#themeTitle').textContent = t.vi;
 }
@@ -1827,7 +2363,7 @@ function switchTheme(k){
   THEME_ITEMS = byTheme(k);
   resetField(); renderShelf(); syncTheme();
   $('#shelfRow').scrollLeft = 0;
-  audio(); sfx.pop(); speak(THEMES[k].say, 'vi');
+  audio(); sfx.pop(); speak(themeOf(k).say, 'vi');
 }
 themeBtn.addEventListener('click', () => { audio(); speak('Màn hình chính', 'vi'); showHome(); });
 // ask for the child's name first (on first open, and whenever "Bắt đầu" is pressed without one)
@@ -1856,11 +2392,11 @@ document.querySelectorAll('.seg[data-key]').forEach(seg => seg.addEventListener(
   settings[key] = b.dataset.v; saveSettings();
   if (key === 'level' || key === 'caps'){ me()[key] = b.dataset.v; savePlayers(); cloudSave(me()); }
   if (key === 'level') resetField();
-  if (key === 'lang'){ resetField(); renderShelf(); $('#shelfRow').scrollLeft = 0; renderHome(); }
-  if (key === 'caps' || key === 'kana'){                        // abc/ABC or ひらがな/カタカナ also picks its language
+  if (key === 'lang'){ resetField(); renderShelf(); $('#shelfRow').scrollLeft = 0; syncTheme(); renderHome(); }
+  if (key === 'caps' || key === 'kana'){                        // abc/ABC or ひらがな/カタカナ/漢字 also picks its language
     const lang = key === 'caps' ? 'en' : 'ja';
-    if (settings.lang !== lang){ settings.lang = lang; saveSettings(); resetField(); }
-    renderShelf(); $('#shelfRow').scrollLeft = 0; renderHome();
+    if (settings.lang !== lang || key === 'kana'){ settings.lang = lang; saveSettings(); resetField(); }   // 漢字 plays other cards
+    renderShelf(); $('#shelfRow').scrollLeft = 0; syncTheme(); renderHome();
   }
   syncSeg();
   speak(SAY[key][b.dataset.v], 'vi');
@@ -1874,8 +2410,8 @@ $('#soundBtn').addEventListener('click', () => {
 // abc / ABC next to the music button: switch letter case while playing
 $('#capsBtn').addEventListener('click', () => {
   if (isJa()){                                                  // hiragana <-> katakana
-    settings.kana = settings.kana === 'kata' ? 'hira' : 'kata'; saveSettings();
-    renderShelf();
+    settings.kana = { hira:'kata', kata:'kanji' }[settings.kana] || 'hira'; saveSettings();   // あ → ア → 漢 → あ
+    resetField(); renderShelf(); syncTheme();
     syncSeg(); audio(); speak(SAY.kana[settings.kana], 'vi');
     return;
   }
@@ -2018,7 +2554,7 @@ function renderHome(){
   // themes, "Tổng Hợp" last across the full width
   const ht = $('#homeThemes'); ht.innerHTML = '';
   THEME_ORDER.forEach(k => {
-    const t = THEMES[k], list = byTheme(k), got = gotOf(p, list);
+    const t = themeOf(k), list = byTheme(k), got = gotOf(p, list);
     const b = mkEl('button', 'tcard' + (k === 'all' ? ' all' : ''));
     b.setAttribute('aria-pressed', String(k === settings.theme));
     const ic = mkEl('span', 'ic'); setIcon(ic, t.icon);
@@ -2139,7 +2675,7 @@ function renderRank(){
   const scope = fb ? 'world' : 'home';                           // one board for everyone; our family only when offline
   const tabs = $('#rankTabs'); tabs.innerHTML = '';
   ['all', 'zoo', 'car', 'food', 'job'].forEach(k => {
-    const b = mkEl('button', null, k === 'all' ? 'Tất cả' : THEMES[k].vi);
+    const b = mkEl('button', null, k === 'all' ? 'Tất cả' : themeOf(k, rankMode).vi);
     b.setAttribute('aria-pressed', String(k === rankTheme));
     b.addEventListener('click', () => { rankTheme = k; renderRank(); });
     tabs.appendChild(b);
@@ -2373,7 +2909,7 @@ $('#familyJoinBtn').addEventListener('click', () => { $('#familyJoin').hidden = 
 $('#familyGo').addEventListener('click', joinFamily);
 connectCloud();
 // a newer copy on the server: offer to reload it (the build stamps APP_VERSION; checked only on a web address)
-const APP_VERSION = '20260927212716';
+const APP_VERSION = '20260927213557';
 let newVersion = '', updSnooze = 0;
 async function checkUpdate(){
   if (!/^https?:$/.test(location.protocol) || !/^\d+$/.test(APP_VERSION) || newVersion) return offerUpdate();
