@@ -91,8 +91,6 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .krow:nth-child(2){padding-inline:4%}
 .krow:nth-child(3){padding-inline:13%}
 .key{flex:1 1 0;min-width:0;max-width:77px;height:61px;border-radius:16px;border:0;background:var(--panel);color:var(--ink);font:700 29px/1 var(--text);cursor:pointer;padding:0;box-shadow:0 4px 0 rgba(30,58,95,.16);transition:transform .08s,background .15s,color .15s}
-.key.hint{background:#FFF3C4;box-shadow:0 5px 0 var(--sun)}
-.key.next{background:var(--sun);color:var(--ink);box-shadow:0 5px 0 var(--sun-deep);animation:pulse 1s ease-in-out infinite}
 .key.press{transform:translateY(2px) scale(.92)}
 @media (max-height:600px){ .kbd{display:none} }
 
@@ -244,7 +242,7 @@ details.more[open] summary{margin-bottom:14px}
   100%{opacity:0;transform:translateX(-50%) translateY(-24px)}
 }
 @media (prefers-reduced-motion: reduce){
-  .key.next,.hex.bump,.slot.pop{animation:none}
+  .hex.bump,.slot.pop{animation:none}
   .popup.show{animation-duration:.01s;animation-fill-mode:none}
 }
 </style>
@@ -1156,21 +1154,9 @@ const kbd = $('#kbd'), keyEls = {};
   kbd.appendChild(row);
 });
 function labelKeys(){ for (const k in keyEls) keyEls[k].textContent = settings.caps === 'upper' ? k.toUpperCase() : k; }
-let kbdSig = '';
+// the helper keyboard never lights up the keys to press (the child finds them); it only dims while resting
 function updateKbdHints(){
-  const rest = state === 'play' && resting();
-  kbd.classList.toggle('rest', rest);                           // dimmed while resting after a word
-  let next = '', hints = new Set();
-  if (state === 'play' && !rest && settings.level === 'easy'){     // Vừa / Khó: no lit-up keys, the child finds them
-    if (target) next = target.keys[target.i];
-    else animals.forEach(a => { if (!a.done) hints.add(a.keys[a.i]); });
-  }
-  const sig = next + '|' + [...hints].sort().join('');
-  if (sig === kbdSig) return; kbdSig = sig;
-  for (const k in keyEls){
-    keyEls[k].classList.toggle('next', k === next);
-    keyEls[k].classList.toggle('hint', !next && hints.has(k));
-  }
+  kbd.classList.toggle('rest', state === 'play' && resting());
 }
 function flashKey(k){
   const b = keyEls[k]; if (!b) return;
