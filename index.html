@@ -1717,13 +1717,8 @@ function renderHome(){
   const p = me();
   setIcon($('#heroAv'), p.icon);
   $('#heroHello').textContent = 'Chào ' + p.name + '!';
-  const hf = $('#heroFamily'); hf.innerHTML = ''; hf.hidden = false;
-  if (familyName) hf.textContent = '🏠 ' + familyName;
-  else {                                                        // nudge: a family name shows on the leaderboard
-    const b = mkEl('button', 'linkish', '👪 Đặt tên gia đình'); b.type = 'button';
-    b.addEventListener('click', () => { audio(); speak('Gia đình', 'vi'); showHomeView('family'); const i = $('#familyNameInput'); i.focus(); i.select(); });
-    hf.appendChild(b);
-  }
+  const hf = $('#heroFamily');                                  // the family name, once set (set it via 👪 Gia đình)
+  hf.textContent = familyName ? '🏠 ' + familyName : ''; hf.hidden = !familyName;
   if (document.activeElement !== $('#familyNameInput')) $('#familyNameInput').value = familyName;
   $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + ITEMS.length + ' món';
   // themes, "Tổng Hợp" last across the full width
