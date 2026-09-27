@@ -66,6 +66,7 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 #shelfStars{font:800 15px/1 var(--display);color:#B07A00;margin-right:10px}
 .pstar{display:inline-block;margin:8px 0 0 6px;background:var(--sun);color:var(--ink);font:800 17px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--sun-deep)}
 .madeby{text-align:right;font:700 14px/1.4 var(--text);color:var(--muted);padding-top:6px}
+.pfull{margin-top:8px;color:var(--muted);font:700 15px/1.3 var(--text)}
 .pnew{display:inline-block;margin-top:8px;background:var(--grass);color:#fff;font:800 16px/1 var(--display);padding:8px 14px 5px;border-radius:999px;box-shadow:0 3px 0 var(--grass-deep)}
 
 /* overlay */
@@ -763,15 +764,15 @@ function setIcon(el, e){
 
 
 const LEVELS = {
-  easy: { max:2, speed:26, every:2.4, min:2, len:4, note:'Dễ: tên 2–4 chữ cái, mỗi lần 2 con, di chuyển chậm.' },
-  mid:  { max:3, speed:38, every:2.0, min:4, len:8, note:'Vừa: tên 4–8 chữ cái, mỗi lần 3 con.' },
-  hard: { max:4, speed:52, every:1.6, min:8, len:99, note:'Khó: tên từ 8 chữ cái trở lên, mỗi lần 4 con, di chuyển nhanh hơn.' },
+  easy: { max:2, speed:26, every:2.4, min:2, len:4, note:'Dễ: tên 2–4 chữ cái, mỗi lần 2 con, di chuyển chậm. Mỗi thẻ tích tối đa 15.' },
+  mid:  { max:3, speed:38, every:2.0, min:4, len:8, note:'Vừa: tên 4–8 chữ cái, mỗi lần 3 con. Mỗi thẻ tích tối đa 15.' },
+  hard: { max:4, speed:52, every:1.6, min:8, len:99, note:'Khó: tên từ 8 chữ cái trở lên, mỗi lần 4 con, di chuyển nhanh hơn. Tích thẻ không giới hạn.' },
 };
 // Japanese names are counted in kana (ぎ is one), and are much shorter than the English ones
 const LEVELS_JA = {
-  easy: { min:2, len:2,  note:'Dễ: tên 2 chữ, mỗi lần 2 con, di chuyển chậm.' },
-  mid:  { min:2, len:4,  note:'Vừa: tên 2–4 chữ, mỗi lần 3 con.' },
-  hard: { min:5, len:99, note:'Khó: tên trên 4 chữ, mỗi lần 4 con, di chuyển nhanh hơn.' },
+  easy: { min:2, len:2,  note:'Dễ: tên 2 chữ, mỗi lần 2 con, di chuyển chậm. Mỗi thẻ tích tối đa 15.' },
+  mid:  { min:2, len:4,  note:'Vừa: tên 2–4 chữ, mỗi lần 3 con. Mỗi thẻ tích tối đa 15.' },
+  hard: { min:5, len:99, note:'Khó: tên trên 4 chữ, mỗi lần 4 con, di chuyển nhanh hơn. Tích thẻ không giới hạn.' },
 };
 const PRAISE = ['Great job!','Awesome!','Well done!','Super!','Amazing!','You got it!'];
 const PRAISE_JA = ['すごい！','よくできました！','やったね！','じょうず！','えらいね！'];
@@ -823,6 +824,7 @@ const hasName = (d, mode = curMode()) => (mode === 'hira' || mode === 'kata') ? 
 const inLang = list => list.filter(d => hasName(d));
 // gold stars: every 5 catches of the same card = 1 star; abc, ABC, ひらがな, カタカナ each count on their own
 const STAR_EVERY = 5;
+const CARD_CAP = 15;                                             // Dễ and Vừa stop at 15 of the same card (3 stars); Khó has no limit
 const cardStars = n => Math.floor((n | 0) / STAR_EVERY);
 const modeStars = (q, mode = curMode()) => ALL_ITEMS.reduce((sum, d) => sum + (hasName(d, mode) ? cardStars((q.counts || {})[keyFor(d, mode)]) : 0), 0);
 const totalStars = q => MODES.reduce((sum, m) => sum + modeStars(q, m), 0);
@@ -1186,14 +1188,17 @@ function capture(a){
   burst(x, y, 34, CONFETTI, 320);
   sfx.win();
   const isNew = !counts[ck(a.def)];
-  counts[ck(a.def)] = (counts[ck(a.def)] || 0) + 1;
-  const newStars = counts[ck(a.def)] % STAR_EVERY === 0 ? 1 : 0;
-  savePlayers(); cloudCount(me(), ck(a.def)); publishScore(me());
+  const full = settings.level !== 'hard' && (counts[ck(a.def)] || 0) >= CARD_CAP;
+  if (!full){
+    counts[ck(a.def)] = (counts[ck(a.def)] || 0) + 1;
+    savePlayers(); cloudCount(me(), ck(a.def)); publishScore(me());
+  }
+  const newStars = !full && counts[ck(a.def)] % STAR_EVERY === 0 ? 1 : 0;
   caught++;
   $('#caught').textContent = caught;
   const hex = $('#hex'); hex.classList.remove('bump'); void hex.offsetWidth; hex.classList.add('bump');
   // after the spelled letters: the word the child just typed, then the English cheer
-  const cheer = showPopup(a.def, isNew, newStars);
+  const cheer = showPopup(a.def, isNew, newStars, full);
   const lines = [{ text: sayWord(a.def), lang:LANG() }, { text: cheer, lang:LANG() }];
   if (newStars > 0){ lines.push({ text: 'Bé được thêm một ngôi sao vàng!', lang:'vi' }); sfx.star(); }
   speakSeq(lines, true);
@@ -1202,7 +1207,7 @@ function capture(a){
 
 // ---------- popup + flyer ----------
 const popup = $('#popup'); let popT = 0;
-function showPopup(d, isNew, newStars){
+function showPopup(d, isNew, newStars, full){
   const main = wordOf(d);
   popup.innerHTML = '';
   const mk = (cls, txt) => { const el = document.createElement('div'); el.className = cls; el.textContent = txt; popup.appendChild(el); return el; };
@@ -1211,9 +1216,10 @@ function showPopup(d, isNew, newStars){
   mk('pw', capsOf(main));
   if (isNew) mk('pnew', isJa() ? 'はじめて！' : THEMES[d.theme].fresh);
   if (newStars > 0) mk('pstar', '⭐ Được thêm ' + newStars + ' sao!');
+  if (full) mk('pfull', 'Đủ ' + CARD_CAP + ' thẻ rồi! Chơi mức Khó để tích thêm sao nhé');
   popup.hidden = false;
   popup.classList.remove('show'); void popup.offsetWidth; popup.classList.add('show');
-  clearTimeout(popT); popT = setTimeout(() => { popup.hidden = true; }, newStars > 0 ? 2600 : 1650);
+  clearTimeout(popT); popT = setTimeout(() => { popup.hidden = true; }, newStars > 0 || full ? 2600 : 1650);
   return cheer;
 }
 
