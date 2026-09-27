@@ -46,8 +46,6 @@ body{height:100%;margin:0;background:var(--page);color:var(--ink);font-family:va
 .brand .tn{font:700 13px/1 var(--text);color:var(--ink);background:var(--panel);border-radius:999px;padding:6px 10px 5px;overflow:hidden;text-overflow:ellipsis}
 .brand .caret{font-size:12px;color:var(--muted)}
 .spacer{flex:1}
-.tmenu{left:0;right:auto}
-.tdiv{height:2px;border-radius:2px;background:var(--line);margin:4px 2px}
 .hex{width:40px;height:44px;flex:0 0 40px;background:var(--sun);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font:800 17px/1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums;padding-top:4px}
 .hex.bump{animation:bump .45s ease}
 
@@ -228,12 +226,9 @@ details.more[open] summary{margin-bottom:14px}
 <div id="app">
   <header class="top">
     <button id="pauseBtn" class="icon-btn" aria-label="Tạm dừng"></button>
-    <button id="themeBtn" class="brand" aria-label="Chọn chủ đề" aria-expanded="false" aria-controls="themeMenu"><span id="themeIcon" class="ticon"></span><span class="tt">Learn<span class="bp">Now</span></span><span id="themeTitle" class="tn">Vườn Thú</span><span class="caret" aria-hidden="true">▾</span></button>
-    <div id="themeMenu" class="pmenu tmenu" hidden>
-      <div class="view"><span class="opt-label">Chọn chủ đề</span><div id="themes" class="players"></div></div>
-    </div>
+    <button id="themeBtn" class="brand" aria-label="Về màn hình chính"><span id="themeIcon" class="ticon"></span><span class="tt">Learn<span class="bp">Now</span></span><span id="themeTitle" class="tn">Vườn Thú</span></button>
     <div class="spacer"></div>
-    <button id="playerChip" class="chip" aria-label="Chọn người chơi" aria-expanded="false" aria-controls="playerMenu"><span id="chipAv" class="av"></span><span id="chipName" class="nm"></span><span class="caret" aria-hidden="true">▾</span></button>
+    <button id="playerChip" class="chip" hidden aria-label="Chọn người chơi" aria-expanded="false" aria-controls="playerMenu"><span id="chipAv" class="av"></span><span id="chipName" class="nm"></span><span class="caret" aria-hidden="true">▾</span></button>
     <div id="playerMenu" class="pmenu" hidden>
       <div id="pmList" class="view">
         <span class="opt-label">Ai đang chơi?</span>
@@ -1507,34 +1502,17 @@ $('#pDelete').addEventListener('click', () => {
 });
 chip.addEventListener('click', () => {
   if (!pmenu.hidden){ closeMenu(); return; }
-  closeThemeMenu();
   if (state === 'play') openOverlay('pause');
   audio(); openMenu();
 });
 
-// ---------- themes: picked from the game name at the top left ----------
-const tmenu = $('#themeMenu'), themeBtn = $('#themeBtn');
+// ---------- themes: picked on the home screen; the game name at the top left goes back there ----------
+const themeBtn = $('#themeBtn');
 function syncTheme(){
   if (!$('#home').hidden) renderHome();
   const t = THEMES[settings.theme];
   setIcon($('#themeIcon'), t.icon);
   $('#themeTitle').textContent = t.vi;
-}
-function renderThemes(){
-  const box = $('#themes'); box.innerHTML = '';
-  THEME_ORDER.forEach(k => {
-    if (k === 'all'){ const hr = document.createElement('div'); hr.className = 'tdiv'; box.appendChild(hr); }
-    const t = THEMES[k], list = byTheme(k);
-    const b = document.createElement('button');
-    b.className = 'pl'; b.setAttribute('aria-pressed', String(k === settings.theme));
-    const av = document.createElement('span'); av.className = 'av'; setIcon(av, t.icon);
-    const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = t.vi;
-    const pc = document.createElement('span'); pc.className = 'pc';
-    pc.textContent = list.filter(d => counts[d.id]).length + '/' + list.length;
-    b.append(av, nm, pc);
-    b.addEventListener('click', () => { switchTheme(k); closeThemeMenu(); });
-    box.appendChild(b);
-  });
 }
 function switchTheme(k){
   if (k === settings.theme) return;
@@ -1544,19 +1522,10 @@ function switchTheme(k){
   $('#shelfRow').scrollLeft = 0;
   audio(); sfx.pop(); speak(THEMES[k].say, 'vi');
 }
-function openThemeMenu(){ closeMenu(); renderThemes(); tmenu.hidden = false; themeBtn.setAttribute('aria-expanded', 'true'); }
-function closeThemeMenu(){ tmenu.hidden = true; themeBtn.setAttribute('aria-expanded', 'false'); }
-themeBtn.addEventListener('click', () => {
-  if (!tmenu.hidden){ closeThemeMenu(); return; }
-  if (state === 'play') openOverlay('pause');
-  audio(); openThemeMenu();
-});
-document.addEventListener('pointerdown', e => {
-  if (!tmenu.hidden && !tmenu.contains(e.target) && !themeBtn.contains(e.target)) closeThemeMenu();
-});
+themeBtn.addEventListener('click', () => { audio(); speak('Màn hình chính', 'vi'); showHome(); });
 function go(){
   audio();
-  closeMenu(); closeThemeMenu();
+  closeMenu();
   const fromHome = !$('#home').hidden;
   if (fromHome || !overlay.hidden) speak(fromHome ? 'Bắt đầu nào!' : 'Chơi tiếp nào!', 'vi');
   $('#home').hidden = true;
@@ -1615,7 +1584,6 @@ window.addEventListener('keydown', e => {
     }
     if (!$('#home').hidden && e.key === 'Escape'){ showHomeView('main'); return; }
     if (!pmenu.hidden && e.key === 'Escape'){ closeMenu(); return; }
-    if (!tmenu.hidden && e.key === 'Escape'){ closeThemeMenu(); return; }
     if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button'))){ e.preventDefault(); go(); }
     return;
   }
@@ -1671,9 +1639,9 @@ function showHomeView(v){
 }
 function showHome(){
   state = 'menu'; overlay.hidden = true;
-  closeMenu(); closeThemeMenu(); hideTip();
+  closeMenu(); hideTip();
   $('#home').hidden = false;
-  showHomeView('main'); syncSeg(); syncButtons();
+  showHomeView('main'); syncSeg(); syncButtons(); syncPlayer();
 }
 const gotOf = (q, list) => list.filter(d => (q.counts || {})[d.id]).length;
 function renderHome(){
@@ -1813,7 +1781,6 @@ function onPlayers(snap){
   else THEME_ITEMS.forEach(d => updateSlot(d, false));
   if (moved) resetField();
   syncSeg(); syncPlayer(); syncTheme();
-  if (!tmenu.hidden) renderThemes();
 }
 async function connectCloud(){
   let db = null;
