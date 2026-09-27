@@ -147,6 +147,66 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
 .linkish.danger{margin-left:auto}
 .shelf h2 span{color:var(--ink)}
 
+/* home screen */
+.home{position:fixed;inset:0;z-index:60;overflow-y:auto;background:linear-gradient(180deg,#48BDF7 0%,#98DCFF 40%,#D9F1FF 100%);padding-block:calc(16px + env(safe-area-inset-top, 0px)) calc(24px + env(safe-area-inset-bottom, 0px));padding-inline:16px}
+.home-in{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.home-in > .view{gap:16px}
+.home-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font:800 clamp(46px,9vw,76px)/.9 var(--display);color:var(--coral);text-shadow:0 4px 0 #fff;padding-top:8px}
+.logo span{color:var(--grape)}
+.tag{font:700 16px/1.3 var(--text);color:var(--ink);margin-top:4px}
+.hcard{background:rgba(255,255,255,.94);border-radius:24px;padding:16px;box-shadow:0 6px 0 rgba(30,58,95,.08)}
+.hcard h2{margin:0 0 12px;font:800 21px/1 var(--display);color:var(--ink);padding-top:3px}
+.hero{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero-av{font-size:68px;line-height:1}
+.hero-txt{flex:1;min-width:170px}
+.hero-hello{font:800 30px/1.05 var(--display);color:var(--ink);padding-top:4px}
+.hero-stat{font:700 15px/1.3 var(--text);color:var(--muted);margin-top:4px}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap}
+.hbtn{border:0;border-radius:16px;padding:13px 18px 11px;font:800 18px/1 var(--display);cursor:pointer;background:#E4F4FF;color:var(--ink);box-shadow:0 4px 0 #B9DDF3}
+.hbtn.rank{background:#FFF3C4;box-shadow:0 4px 0 var(--sun)}
+.hbtn:active{transform:translateY(3px);box-shadow:0 1px 0 #B9DDF3}
+.hthemes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:720px){ .hthemes{grid-template-columns:repeat(2,minmax(0,1fr))} }
+.tcard{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;border:4px solid transparent;background:#F4FAFF;cursor:pointer;text-align:left;color:var(--ink);font-family:var(--text)}
+.tcard .ic{font-size:42px;line-height:1}
+.tcard .tx{flex:1;min-width:0}
+.tcard .tnm{font:800 19px/1.1 var(--display);padding-top:2px}
+.tcard .tpc{font:700 12px/1 var(--text);color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.tcard[aria-pressed="true"]{border-color:var(--sky);background:#E1F3FF}
+.tcard.all{grid-column:1 / -1;background:linear-gradient(90deg,#FFE8EE,#FFF5D6,#E6F9EA,#E4F4FF,#F0EAFF)}
+.tcard.all[aria-pressed="true"]{border-color:var(--sky)}
+.bar{height:8px;border-radius:8px;background:#DCEBF6;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--grass);border-radius:8px}
+.seg.big button{font-size:19px;padding:14px 6px}
+details.more summary{cursor:pointer;font:800 19px/1 var(--display);color:var(--ink);padding-top:3px}
+details.more[open] summary{margin-bottom:14px}
+.hplay{position:sticky;bottom:12px;align-self:center;width:min(440px,100%);font-size:34px;padding:18px 16px 13px}
+.hv-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hv-head h2{margin:0;font:800 28px/1 var(--display);color:var(--ink);padding-top:4px}
+.hplayers{display:flex;flex-wrap:wrap;gap:12px}
+.hp{position:relative}
+.tile{width:112px;padding:14px 6px 10px;border-radius:20px;border:4px solid transparent;background:#EEF6FC;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font:700 15px/1.1 var(--text);color:var(--ink)}
+.tile .av{font-size:50px;line-height:1}
+.tile .nm{max-width:96px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile .pc{font:400 12px/1 var(--text);color:var(--muted)}
+.tile[aria-pressed="true"]{border-color:var(--sky);background:#E1F3FF}
+.tile.add{border:4px dashed #C9DDEC;background:transparent;color:var(--muted);justify-content:center;min-height:132px}
+.tile.add .av{font:800 46px/1 var(--display);color:var(--sky)}
+.hp .edit{position:absolute;top:-6px;right:-6px}
+.rank-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.rank-tabs button{border:0;border-radius:999px;padding:9px 13px 8px;font:700 14px/1 var(--text);background:#EEF6FC;color:var(--ink);cursor:pointer}
+.rank-tabs button[aria-pressed="true"]{background:var(--sky);color:#fff}
+.rank{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:8px}
+.rank li{display:grid;grid-template-columns:44px 46px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 14px;border-radius:16px;background:#F4FAFF}
+.rank li.me{background:#E1F3FF;box-shadow:inset 0 0 0 3px var(--sky)}
+.rank .pos{font:800 26px/1 var(--display);text-align:center;color:var(--muted);padding-top:3px}
+.rank .av{font-size:40px;line-height:1}
+.rank .nm{font:800 19px/1.1 var(--display);padding-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank .n{font:800 22px/1 var(--display);color:var(--coral);font-variant-numeric:tabular-nums;padding-top:3px}
+.home-btn{align-self:center}
+.hero-av img,.tcard .ic img{width:1em;height:1em;display:block}
+
 @keyframes bump{40%{transform:scale(1.25)}}
 @keyframes pulse{50%{transform:translateY(-2px) scale(1.08)}}
 @keyframes slotPop{0%{transform:scale(1)}35%{transform:scale(1.3) rotate(-6deg)}70%{transform:scale(.95)}100%{transform:scale(1)}}
@@ -207,18 +267,8 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
         <h1 id="ovTitle">Learn<span>Now</span></h1>
         <p class="lead" id="ovLead">Gõ đúng tên để bắt về bộ sưu tập bên dưới.</p>
         <div id="mainView" class="view">
-        <div class="opts">
-          <div class="opt wide"><span class="opt-label">Mức độ</span>
-            <div class="seg" data-key="level"><button data-v="easy">Dễ</button><button data-v="mid">Vừa</button><button data-v="hard">Khó</button></div></div>
-          <div class="opt"><span class="opt-label">Kiểu chữ</span>
-            <div class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div></div>
-          <div class="opt"><span class="opt-label">Bàn phím gợi ý</span>
-            <div class="seg" data-key="kbd"><button data-v="on">Hiện</button><button data-v="off">Ẩn</button></div></div>
-          <div class="opt wide"><label class="opt-label" for="voiceSel">Giọng đọc tiếng Anh</label>
-            <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button">▶ Nghe thử</button></div></div>
-        </div>
-        <button id="goBtn" class="go">Chơi nào!</button>
-        <p class="fine" id="levelNote"></p>
+        <button id="goBtn" class="go">Chơi tiếp</button>
+        <button id="homeBtn" class="btn-sec home-btn">🏠 Màn hình chính</button>
         </div>
       </div>
     </div>
@@ -230,6 +280,58 @@ button:focus-visible{outline:3px solid var(--grape);outline-offset:2px}
   </section>
 
   <div id="kbd" class="kbd" aria-label="Bàn phím gợi ý"></div>
+</div>
+
+<div id="home" class="home" hidden>
+  <div class="home-in">
+    <div class="home-top">
+      <div><div class="logo">Learn<span>Now</span></div><div class="tag">Luyện chữ tiếng Anh cho bé</div></div>
+      <button id="homeMusic" class="icon-btn" aria-label="Nhạc nền"></button>
+    </div>
+
+    <div id="homeMain" class="view">
+      <section class="hcard hero">
+        <span id="heroAv" class="hero-av"></span>
+        <div class="hero-txt"><div id="heroHello" class="hero-hello"></div><div id="heroStat" class="hero-stat"></div></div>
+        <div class="hero-btns">
+          <button id="toPlayers" class="hbtn">👥 Chọn người chơi</button>
+          <button id="toRank" class="hbtn rank">🏆 Bảng xếp hạng</button>
+        </div>
+      </section>
+      <section class="hcard"><h2>Chọn chủ đề</h2><div id="homeThemes" class="hthemes"></div></section>
+      <section class="hcard"><h2>Mức độ</h2>
+        <div class="seg big" data-key="level"><button data-v="easy">Dễ</button><button data-v="mid">Vừa</button><button data-v="hard">Khó</button></div>
+        <p class="fine" id="levelNote"></p>
+      </section>
+      <details class="hcard more"><summary>⚙️ Cài đặt khác</summary>
+        <div class="opts">
+          <div class="opt"><span class="opt-label">Kiểu chữ</span>
+            <div class="seg" data-key="caps"><button data-v="lower">abc</button><button data-v="upper">ABC</button></div></div>
+          <div class="opt"><span class="opt-label">Bàn phím gợi ý</span>
+            <div class="seg" data-key="kbd"><button data-v="on">Hiện</button><button data-v="off">Ẩn</button></div></div>
+          <div class="opt wide"><label class="opt-label" for="voiceSel">Giọng đọc tiếng Anh</label>
+            <div class="voice-row"><select id="voiceSel"></select><button id="voiceTry" class="btn-sec" type="button">▶ Nghe thử</button></div></div>
+        </div>
+      </details>
+      <button id="homePlay" class="go hplay">Chơi nào!</button>
+    </div>
+
+    <div id="homePlayersView" class="view" hidden>
+      <div class="hv-head"><button class="btn-sec" data-back>← Quay lại</button><h2>Ai đang chơi?</h2></div>
+      <section class="hcard"><div id="homePlayers" class="hplayers"></div></section>
+    </div>
+
+    <div id="homeRankView" class="view" hidden>
+      <div class="hv-head"><button class="btn-sec" data-back>← Quay lại</button><h2>🏆 Bảng xếp hạng</h2></div>
+      <section class="hcard">
+        <div id="rankTabs" class="rank-tabs"></div>
+        <ol id="rankList" class="rank"></ol>
+        <p class="fine">Xếp hạng theo số món khác nhau mỗi bé đã sưu tầm.</p>
+      </section>
+    </div>
+
+    <div id="homeEditSlot" class="hcard" hidden></div>
+  </div>
 </div>
 
 <script>
@@ -1246,6 +1348,7 @@ function syncButtons(){
   sb.setAttribute('aria-label', settings.sound ? 'Tắt tiếng hiệu ứng và giọng đọc' : 'Bật tiếng hiệu ứng và giọng đọc');
   mb.innerHTML = settings.music ? UI_ICONS.music : UI_ICONS.musicOff; mb.classList.toggle('off', !settings.music);
   mb.setAttribute('aria-label', settings.music ? 'Tắt nhạc nền' : 'Bật nhạc nền');
+  const hm = $('#homeMusic'); hm.innerHTML = mb.innerHTML; hm.className = mb.className; hm.setAttribute('aria-label', mb.getAttribute('aria-label'));
 }
 function syncSeg(){
   document.querySelectorAll('.seg').forEach(seg => {
@@ -1275,6 +1378,7 @@ function openOverlay(mode){
 
 // ---------- players ----------
 function syncPlayer(){
+  if (!$('#home').hidden) renderHome();
   const p = me();
   setIcon($('#chipAv'), p.icon);
   $('#chipName').textContent = p.name;
@@ -1333,7 +1437,7 @@ function renderIcons(){
     g.appendChild(b);
   });
 }
-function openEditor(id){
+function openEditor(id, where){
   editingId = id;
   const p = id ? players.find(q => q.id === id) : null;
   const used = new Set(players.map(q => q.icon));
@@ -1344,11 +1448,20 @@ function openEditor(id){
   const del = $('#pDelete');
   del.hidden = !p || players.length < 2; del.textContent = 'Xoá người chơi này'; del.classList.remove('armed');
   $('#edTitle').textContent = p ? 'Sửa người chơi' : 'Thêm bạn chơi mới';
-  $('#pmList').hidden = true; $('#editor').hidden = false;
+  const ed = $('#editor');
+  if (where === 'home'){
+    $('#homeEditSlot').appendChild(ed); $('#homeEditSlot').hidden = false;
+    $('#homeMain').hidden = $('#homePlayersView').hidden = $('#homeRankView').hidden = true;
+  } else $('#pmList').hidden = true;
+  ed.hidden = false;
   setTimeout(() => { const i = $('#pName'); i.focus(); i.select(); }, 0);
 }
 function closeEditor(){
-  $('#editor').hidden = true; $('#pmList').hidden = false;
+  const ed = $('#editor');
+  ed.hidden = true; $('#pmList').hidden = false;
+  if (ed.parentNode.id === 'homeEditSlot'){                     // opened from the home screen: put it back
+    $('#playerMenu').appendChild(ed); $('#homeEditSlot').hidden = true; showHomeView('players');
+  }
 }
 // the player list drops down from the name button next to the music button
 const pmenu = $('#playerMenu'), chip = $('#playerChip');
@@ -1402,6 +1515,7 @@ chip.addEventListener('click', () => {
 // ---------- themes: picked from the game name at the top left ----------
 const tmenu = $('#themeMenu'), themeBtn = $('#themeBtn');
 function syncTheme(){
+  if (!$('#home').hidden) renderHome();
   const t = THEMES[settings.theme];
   setIcon($('#themeIcon'), t.icon);
   $('#themeTitle').textContent = t.vi;
@@ -1443,7 +1557,9 @@ document.addEventListener('pointerdown', e => {
 function go(){
   audio();
   closeMenu(); closeThemeMenu();
-  if (!overlay.hidden) speak(ovMode === 'start' ? 'Bắt đầu nào!' : 'Chơi tiếp nào!', 'vi');
+  const fromHome = !$('#home').hidden;
+  if (fromHome || !overlay.hidden) speak(fromHome ? 'Bắt đầu nào!' : 'Chơi tiếp nào!', 'vi');
+  $('#home').hidden = true;
   if (fieldKey !== settings.level + '|' + settings.theme) resetField();
   target = null;
   overlay.hidden = true; state = 'play'; syncButtons(); showTip();
@@ -1497,6 +1613,7 @@ window.addEventListener('keydown', e => {
       else if (e.key === 'Escape') closeEditor();
       return;
     }
+    if (!$('#home').hidden && e.key === 'Escape'){ showHomeView('main'); return; }
     if (!pmenu.hidden && e.key === 'Escape'){ closeMenu(); return; }
     if (!tmenu.hidden && e.key === 'Escape'){ closeThemeMenu(); return; }
     if (e.key === 'Enter' && !(e.target.closest && e.target.closest('button'))){ e.preventDefault(); go(); }
@@ -1541,7 +1658,89 @@ try { speechSynthesis.addEventListener('voiceschanged', fillVoiceSel); } catch(e
 
 syncTheme();
 renderShelf();
-openOverlay('start');
+
+// ---------- home screen: shown first, and from the pause card ----------
+const mkEl = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+let rankTheme = 'all';
+function showHomeView(v){
+  $('#homeMain').hidden = v !== 'main';
+  $('#homePlayersView').hidden = v !== 'players';
+  $('#homeRankView').hidden = v !== 'rank';
+  renderHome();
+  $('#home').scrollTop = 0;
+}
+function showHome(){
+  state = 'menu'; overlay.hidden = true;
+  closeMenu(); closeThemeMenu(); hideTip();
+  $('#home').hidden = false;
+  showHomeView('main'); syncSeg(); syncButtons();
+}
+const gotOf = (q, list) => list.filter(d => (q.counts || {})[d.id]).length;
+function renderHome(){
+  const p = me();
+  setIcon($('#heroAv'), p.icon);
+  $('#heroHello').textContent = 'Chào ' + p.name + '!';
+  $('#heroStat').textContent = 'Đã sưu tầm ' + gotOf(p, ITEMS) + ' / ' + ITEMS.length + ' món';
+  // themes, "Tổng Hợp" last across the full width
+  const ht = $('#homeThemes'); ht.innerHTML = '';
+  THEME_ORDER.forEach(k => {
+    const t = THEMES[k], list = byTheme(k), got = gotOf(p, list);
+    const b = mkEl('button', 'tcard' + (k === 'all' ? ' all' : ''));
+    b.setAttribute('aria-pressed', String(k === settings.theme));
+    const ic = mkEl('span', 'ic'); setIcon(ic, t.icon);
+    const tx = mkEl('div', 'tx'), bar = mkEl('div', 'bar'), fill = mkEl('i');
+    fill.style.width = (list.length ? got / list.length * 100 : 0) + '%'; bar.appendChild(fill);
+    tx.append(mkEl('div', 'tnm', t.vi), mkEl('div', 'tpc', got + ' / ' + list.length), bar);
+    b.append(ic, tx);
+    b.addEventListener('click', () => { switchTheme(k); renderHome(); });
+    ht.appendChild(b);
+  });
+  // players
+  const hp = $('#homePlayers'); hp.innerHTML = '';
+  players.forEach(q => {
+    const w = mkEl('div', 'hp'), b = mkEl('button', 'tile');
+    b.setAttribute('aria-pressed', String(q.id === currentId));
+    const av = mkEl('span', 'av'); setIcon(av, q.icon);
+    b.append(av, mkEl('span', 'nm', q.name), mkEl('span', 'pc', gotOf(q, ITEMS) + ' món'));
+    b.addEventListener('click', () => { switchPlayer(q.id); showHomeView('main'); });
+    const ed = mkEl('button', 'edit'); setIcon(ed, '✏️'); ed.setAttribute('aria-label', 'Sửa tên và hình của ' + q.name);
+    ed.addEventListener('click', () => openEditor(q.id, 'home'));
+    w.append(b, ed); hp.appendChild(w);
+  });
+  const add = mkEl('button', 'tile add');
+  add.append(mkEl('span', 'av', '+'), mkEl('span', 'nm', 'Thêm bé'));
+  add.addEventListener('click', () => { audio(); speak('Thêm bạn chơi mới', 'vi'); openEditor(null, 'home'); });
+  hp.appendChild(add);
+  // leaderboard: most different items collected first; equal counts share a place
+  const tabs = $('#rankTabs'); tabs.innerHTML = '';
+  ['all', 'zoo', 'car', 'food', 'job'].forEach(k => {
+    const b = mkEl('button', null, k === 'all' ? 'Tất cả' : THEMES[k].vi);
+    b.setAttribute('aria-pressed', String(k === rankTheme));
+    b.addEventListener('click', () => { rankTheme = k; renderHome(); });
+    tabs.appendChild(b);
+  });
+  const list = byTheme(rankTheme), rows = players.map(q => ({ q, n: gotOf(q, list) })).sort((a, b) => b.n - a.n);
+  const ol = $('#rankList'); ol.innerHTML = '';
+  let place = 0, prev = -1;
+  rows.forEach((r, i) => {
+    if (r.n !== prev){ place = i + 1; prev = r.n; }
+    const li = mkEl('li', r.q.id === currentId ? 'me' : null);
+    const pos = mkEl('span', 'pos', r.n > 0 && place <= 3 ? ['🥇', '🥈', '🥉'][place - 1] : String(place));
+    const av = mkEl('span', 'av'); setIcon(av, r.q.icon);
+    const who = mkEl('div', 'who'), bar = mkEl('div', 'bar'), fill = mkEl('i');
+    fill.style.width = (list.length ? r.n / list.length * 100 : 0) + '%'; bar.appendChild(fill);
+    who.append(mkEl('div', 'nm', r.q.name), bar);
+    li.append(pos, av, who, mkEl('span', 'n', r.n + ' / ' + list.length));
+    ol.appendChild(li);
+  });
+}
+$('#toPlayers').addEventListener('click', () => { audio(); speak('Chọn người chơi', 'vi'); showHomeView('players'); });
+$('#toRank').addEventListener('click', () => { audio(); speak('Bảng xếp hạng', 'vi'); showHomeView('rank'); });
+document.querySelectorAll('[data-back]').forEach(b => b.addEventListener('click', () => showHomeView('main')));
+$('#homePlay').addEventListener('click', go);
+$('#homeMusic').addEventListener('click', () => $('#musicBtn').click());
+$('#homeBtn').addEventListener('click', showHome);
+showHome();
 
 // ---------- sync: players and collections shared by every device that opens the online link ----------
 // Each child is one document players/<id> holding name, icon, collection, level, letter case and theme.
